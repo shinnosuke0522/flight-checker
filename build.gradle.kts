@@ -1,9 +1,9 @@
 plugins {
-	kotlin("jvm") version "2.2.21"
-	kotlin("plugin.spring") version "2.2.21"
-	id("org.springframework.boot") version "4.0.5"
-	id("io.spring.dependency-management") version "1.1.7"
-	id("org.graalvm.buildtools.native") version "0.11.5"
+	alias(libs.plugins.kotlin.jvm)
+	alias(libs.plugins.kotlin.spring)
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.spring.dependency.management)
+	alias(libs.plugins.graalvm.native)
 }
 
 group = "com.github.shinnosuke0522"
@@ -19,44 +19,41 @@ repositories {
 	mavenCentral()
 }
 
-extra["springCloudVersion"] = "2025.1.1"
-
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-restclient")
-	implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-	implementation("org.springframework.cloud:spring-cloud-function-web")
-	implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j")
-	implementation("tools.jackson.module:jackson-module-kotlin")
-	implementation("software.amazon.awssdk:dynamodb:2.42.20")
+	// BOM
+	implementation(platform(libs.kotlin.bom))
+	implementation(platform(libs.aws.bom))
+	implementation(platform(libs.spring.cloud.dependencies))
+
+	implementation(libs.spring.boot.starter.restclient)
+	implementation(libs.spring.boot.starter.security)
+	implementation(libs.spring.boot.starter.webflux)
+	implementation(libs.reactor.kotlin.extensions)
+	implementation(libs.kotlin.reflect)
+	implementation(libs.kotlinx.coroutines.reactor)
+	implementation(libs.spring.cloud.function.web)
+	implementation(libs.spring.cloud.starter.circuitbreaker.reactor.resilience4j)
+	implementation(libs.jackson.module.kotlin)
+	implementation(libs.aws.sdk.dynamodb)
 
 	// lambda用
-	implementation("org.springframework.cloud:spring-cloud-function-context")
-	implementation("org.springframework.cloud:spring-cloud-function-adapter-aws")
-	implementation("com.amazonaws:aws-lambda-java-core:1.4.0")
-	implementation("com.amazonaws:aws-lambda-java-events:3.16.1")
+	implementation(libs.spring.cloud.function.context)
+	implementation(libs.spring.cloud.function.adapter.aws)
+	implementation(libs.aws.lambda.java.core)
+	implementation(libs.aws.lambda.java.events)
 
-	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
+	developmentOnly(libs.spring.boot.docker.compose)
 
-	testImplementation("org.springframework.boot:spring-boot-starter-restclient-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+	testImplementation(libs.spring.boot.starter.restclient.test)
+	testImplementation(libs.spring.boot.starter.security.test)
+	testImplementation(libs.spring.boot.starter.webflux.test)
+	testImplementation(libs.kotlin.test.junit5)
+	testImplementation(libs.kotlinx.coroutines.test)
 
-	testImplementation("org.testcontainers:testcontainers-junit-jupiter")
-	testImplementation("org.springframework.boot:spring-boot-testcontainers")
+	testImplementation(libs.testcontainers.junit.jupiter)
+	testImplementation(libs.spring.boot.testcontainers)
 
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-dependencyManagement {
-	imports {
-		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
-	}
+	testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 kotlin {

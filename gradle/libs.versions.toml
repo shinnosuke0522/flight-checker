@@ -1,0 +1,100 @@
+[versions]
+kotlin = "2.2.21"
+spring-boot = "4.0.5"
+spring-dependency-management = "1.1.7"
+graalvm-native = "0.11.5"
+spring-cloud = "2025.1.1"
+aws-sdk-v2 = "2.42.20"
+aws-lambda-core = "1.4.0"
+aws-lambda-events = "3.16.1"
+
+[libraries]
+# Spring Boot
+spring-boot-starter-restclient = { group = "org.springframework.boot", name = "spring-boot-starter-restclient" }
+spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
+spring-boot-starter-webflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux" }
+spring-boot-docker-compose = { group = "org.springframework.boot", name = "spring-boot-docker-compose" }
+
+# Spring Cloud
+spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }
+spring-cloud-starter-circuitbreaker-reactor-resilience4j = { group = "org.springframework.cloud", name = "spring-cloud-starter-circuitbreaker-reactor-resilience4j" }
+spring-cloud-function-context = { group = "org.springframework.cloud", name = "spring-cloud-function-context" }
+
+# Kotlin
+kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
+kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
+kotlinx-coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test" }
+reactor-kotlin-extensions = { group = "io.projectreactor.kotlin", name = "reactor-kotlin-extensions" }
+
+# DB (DynamoDB)
+aws-sdk-dynamodb = { group = "software.amazon.awssdk", name = "dynamodb" }
+
+# AWS SDK & Lambda
+aws-bom = { group = "software.amazon.awssdk", name = "bom", version.ref = "aws-sdk-v2" }
+spring-cloud-function-adapter-aws = { group = "org.springframework.cloud", name = "spring-cloud-function-adapter-aws" }
+aws-lambda-java-core = { group = "com.amazonaws", name = "aws-lambda-java-core", version.ref = "aws-lambda-core" }
+aws-lambda-java-events = { group = "com.amazonaws", name = "aws-lambda-java-events", version.ref = "aws-lambda-events" }
+
+# Others
+arrow-core = { group = "io.arrow-kt", name = "arrow-core", version = "2.2.2.1"}
+kotlin-result = { group = "com.michael-bull.kotlin-result", name = "kotlin-result", version = "2.3.1"}
+jackson-module-kotlin = { group = "tools.jackson.module", name = "jackson-module-kotlin" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+
+# Test dependencies
+spring-boot-starter-restclient-test = { group = "org.springframework.boot", name = "spring-boot-starter-restclient-test" }
+spring-boot-starter-security-test = { group = "org.springframework.boot", name = "spring-boot-starter-security-test" }
+spring-boot-starter-webflux-test = { group = "org.springframework.boot", name = "spring-boot-starter-webflux-test" }
+
+# Testcontainers
+spring-boot-testcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers" }
+testcontainers-junit-jupiter = { group = "org.testcontainers", name = "testcontainers-junit-jupiter" }
+
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
+graalvm-native = { id = "org.graalvm.buildtools.native", version.ref = "graalvm-native" }
+
+[bundles]
+core = [
+    "arrow-core",
+    "kotlin-result",
+    "kotlin-reflect",
+    "kotlinx-coroutines-reactor",
+    "reactor-kotlin-extensions",
+]
+test-core = [
+    "junit-platform-launcher",
+    "kotlin-test-junit5",
+    "kotlinx-coroutines-test",
+]
+spring-core = [
+    "spring-boot-starter-restclient",
+    "spring-cloud-starter-circuitbreaker-reactor-resilience4j",
+]
+spring-api = [
+    "spring-cloud-function-context",
+    "spring-boot-starter-webflux",
+    "spring-boot-starter-security"
+]
+spring-test-core = [
+    "spring-boot-starter-restclient-test"
+]
+spring-api-test = [
+    "spring-boot-starter-webflux-test",
+    "spring-boot-starter-security-test"
+]
+spring-test-container = [
+    "spring-boot-testcontainers",
+    "testcontainers-junit-jupiter",
+]
+lambda-adapter = [
+    "spring-cloud-function-adapter-aws",
+    "aws-lambda-java-core",
+    "aws-lambda-java-events",
+]
