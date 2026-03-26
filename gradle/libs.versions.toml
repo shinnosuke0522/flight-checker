@@ -7,6 +7,7 @@ spring-cloud = "2025.1.1"
 aws-sdk-v2 = "2.42.20"
 aws-lambda-core = "1.4.0"
 aws-lambda-events = "3.16.1"
+detekt = "1.23.8"
 
 [libraries]
 # Spring Boot
@@ -38,6 +39,7 @@ aws-lambda-java-core = { group = "com.amazonaws", name = "aws-lambda-java-core",
 aws-lambda-java-events = { group = "com.amazonaws", name = "aws-lambda-java-events", version.ref = "aws-lambda-events" }
 
 # Others
+ulid = { module = "com.github.f4b6a3:ulid-creator", version = "5.2.3" }
 arrow-core = { group = "io.arrow-kt", name = "arrow-core", version = "2.2.2.1"}
 kotlin-result = { group = "com.michael-bull.kotlin-result", name = "kotlin-result", version = "2.3.1"}
 jackson-module-kotlin = { group = "tools.jackson.module", name = "jackson-module-kotlin" }
@@ -52,6 +54,8 @@ spring-boot-starter-webflux-test = { group = "org.springframework.boot", name = 
 spring-boot-testcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers" }
 testcontainers-junit-jupiter = { group = "org.testcontainers", name = "testcontainers-junit-jupiter" }
 
+# Formatter
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -59,9 +63,12 @@ kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotl
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
 graalvm-native = { id = "org.graalvm.buildtools.native", version.ref = "graalvm-native" }
+detekt-plugin = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+
 
 [bundles]
 core = [
+    "ulid",
     "arrow-core",
     "kotlin-result",
     "kotlin-reflect",
@@ -80,7 +87,8 @@ spring-core = [
 spring-api = [
     "spring-cloud-function-context",
     "spring-boot-starter-webflux",
-    "spring-boot-starter-security"
+    "spring-boot-starter-security",
+    "jackson-module-kotlin",
 ]
 spring-test-core = [
     "spring-boot-starter-restclient-test"

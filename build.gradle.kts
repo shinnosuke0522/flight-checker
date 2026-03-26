@@ -1,67 +1,76 @@
 plugins {
-	alias(libs.plugins.kotlin.jvm)
-	alias(libs.plugins.kotlin.spring)
-	alias(libs.plugins.spring.boot)
-	alias(libs.plugins.spring.dependency.management)
-	alias(libs.plugins.graalvm.native)
+	alias(libs.plugins.detekt.plugin) apply false
+	alias(libs.plugins.kotlin.jvm) apply false
+	alias(libs.plugins.kotlin.spring) apply false
+	alias(libs.plugins.spring.boot) apply false
+	alias(libs.plugins.spring.dependency.management) apply false
 }
 
-group = "com.github.shinnosuke0522"
-version = "0.0.1-SNAPSHOT"
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+allprojects {
+	repositories {
+		mavenCentral()
+		maven { url = uri("https://repo.spring.io/snapshot") }
 	}
 }
 
-repositories {
-	mavenCentral()
-}
+subprojects {
+	group = "com.github.shinnosuke0522"
+	version = "0.0.1-SNAPSHOT"
 
-dependencies {
-	// BOM
-	implementation(platform(libs.kotlin.bom))
-	implementation(platform(libs.aws.bom))
-	implementation(platform(libs.spring.cloud.dependencies))
+	// Version Catalog は rootProject から参照する
+	val libs = rootProject.libs
 
-	implementation(libs.spring.boot.starter.restclient)
-	implementation(libs.spring.boot.starter.security)
-	implementation(libs.spring.boot.starter.webflux)
-	implementation(libs.reactor.kotlin.extensions)
-	implementation(libs.kotlin.reflect)
-	implementation(libs.kotlinx.coroutines.reactor)
-	implementation(libs.spring.cloud.function.web)
-	implementation(libs.spring.cloud.starter.circuitbreaker.reactor.resilience4j)
-	implementation(libs.jackson.module.kotlin)
-	implementation(libs.aws.sdk.dynamodb)
+	//==================================
+	// Common
+	//==================================
 
-	// lambda用
-	implementation(libs.spring.cloud.function.context)
-	implementation(libs.spring.cloud.function.adapter.aws)
-	implementation(libs.aws.lambda.java.core)
-	implementation(libs.aws.lambda.java.events)
+	// Plugin
+	apply(plugin = libs.plugins.detekt.plugin.get().pluginId)
+	apply(plugin = libs.plugins.kotlin.jvm.get().pluginId)
+	apply(plugin = "java-test-fixtures")
 
-	developmentOnly(libs.spring.boot.docker.compose)
-
-	testImplementation(libs.spring.boot.starter.restclient.test)
-	testImplementation(libs.spring.boot.starter.security.test)
-	testImplementation(libs.spring.boot.starter.webflux.test)
-	testImplementation(libs.kotlin.test.junit5)
-	testImplementation(libs.kotlinx.coroutines.test)
-
-	testImplementation(libs.testcontainers.junit.jupiter)
-	testImplementation(libs.spring.boot.testcontainers)
-
-	testRuntimeOnly(libs.junit.platform.launcher)
-}
-
-kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
+	// Detekt Formatting
+	dependencies {
+		add("detektPlugins", libs.detekt.formatting)
 	}
-}
 
-tasks.withType<Test> {
-	useJUnitPlatform()
+	configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+		// Detekt に関する設定ファイル
+		config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+		// 並列処理
+		parallel = true
+		// 自動修正
+		autoCorrect = true
+		// デフォルト設定の上に自分の設定ファイルを適用する
+		buildUponDefaultConfig = true
+		// レポートファイルに出力されるファイルパスのベースとなる
+		basePath = rootDir.absolutePath
+	}
+
+	// Java
+	extensions.configure<JavaPluginExtension> {
+		toolchain {
+			languageVersion.set(JavaLanguageVersion.of(21))
+		}
+	}
+
+	//==================================
+	// App & Infra
+	//==================================
+	if (path.startsWith(":app") || path.startsWith(":infra")) {
+		apply(plugin = libs.plugins.kotlin.spring.get().pluginId)
+		apply(plugin = libs.plugins.spring.boot.get().pluginId)
+		apply(plugin = libs.plugins.spring.dependency.management.get().pluginId)
+
+		apply(plugin = "jvm-test-suite")
+
+		@Suppress("UnstableApiUsage")
+		configure<TestingExtension> {
+			suites {
+				val test by getting(org.gradle.api.plugins.jvm.JvmTestSuite::class) {
+					useJUnitJupiter()
+				}
+			}
+		}
+	}
 }
