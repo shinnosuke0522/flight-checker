@@ -4,10 +4,10 @@ import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.raise.either
 import arrow.core.raise.zipOrAccumulate
-import com.shinnosuke0522.flight.checker.domain.base.model.InvalidFormatError
-import com.shinnosuke0522.flight.checker.domain.base.model.UnKnownValueError
-import com.shinnosuke0522.flight.checker.domain.base.model.ValidationError
-import com.shinnosuke0522.flight.checker.domain.base.model.toCause
+import com.shinnosuke0522.flight.checker.domain.base.error.InvalidFormatError
+import com.shinnosuke0522.flight.checker.domain.base.error.UnKnownValueError
+import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.toCause
 import com.shinnosuke0522.flight.checker.domain.shared.value.CountryCode
 import com.shinnosuke0522.flight.checker.domain.shared.value.AirportCode
 import java.time.LocalTime

@@ -1,9 +1,9 @@
 package com.shinnosuke0522.flight.checker.domain.travel.model
 
-import com.shinnosuke0522.flight.checker.domain.base.model.BusinessRuleError
-import com.shinnosuke0522.flight.checker.domain.base.model.DomainError
-import com.shinnosuke0522.flight.checker.domain.base.model.Error
-import com.shinnosuke0522.flight.checker.domain.base.model.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.BusinessRuleError
+import com.shinnosuke0522.flight.checker.domain.base.error.DomainError
+import com.shinnosuke0522.flight.checker.domain.base.error.Error
+import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 import java.time.LocalDate
 
 sealed interface TravelError: DomainError

@@ -1,10 +1,10 @@
 package com.shinnosuke0522.flight.checker.domain.flight.model
 
-import com.shinnosuke0522.flight.checker.domain.base.model.BusinessRuleError
-import com.shinnosuke0522.flight.checker.domain.base.model.DomainError
-import com.shinnosuke0522.flight.checker.domain.base.model.Error
-import com.shinnosuke0522.flight.checker.domain.base.model.InvariantViolationError
-import com.shinnosuke0522.flight.checker.domain.base.model.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.BusinessRuleError
+import com.shinnosuke0522.flight.checker.domain.base.error.DomainError
+import com.shinnosuke0522.flight.checker.domain.base.error.Error
+import com.shinnosuke0522.flight.checker.domain.base.error.InvariantViolationError
+import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 import com.shinnosuke0522.flight.checker.domain.shared.value.FlightIdentity
 
 interface FlightInfoError : DomainError

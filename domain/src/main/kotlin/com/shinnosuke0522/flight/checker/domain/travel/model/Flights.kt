@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.mapOrAccumulate
 import arrow.core.toNonEmptyListOrNull
-import com.shinnosuke0522.flight.checker.domain.base.model.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 import java.time.LocalDate
 
 data class Flights(

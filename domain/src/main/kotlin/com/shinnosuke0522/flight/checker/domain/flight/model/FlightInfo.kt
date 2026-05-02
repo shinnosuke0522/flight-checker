@@ -7,7 +7,7 @@ import arrow.core.raise.context.bind
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.zipOrAccumulate
-import com.shinnosuke0522.flight.checker.domain.base.model.Error
+import com.shinnosuke0522.flight.checker.domain.base.error.Error
 import com.shinnosuke0522.flight.checker.domain.shared.value.FlightIdentity
 import java.time.Instant
 import java.time.LocalDate

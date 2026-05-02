@@ -3,9 +3,9 @@ package com.shinnosuke0522.flight.checker.domain.travel.model
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.shinnosuke0522.flight.checker.domain.base.model.CannotBeBlankError
-import com.shinnosuke0522.flight.checker.domain.base.model.TooLongError
-import com.shinnosuke0522.flight.checker.domain.base.model.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.CannotBeBlankError
+import com.shinnosuke0522.flight.checker.domain.base.error.TooLongError
+import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 
 @JvmInline
 value class TravelName private constructor(val value: String) {

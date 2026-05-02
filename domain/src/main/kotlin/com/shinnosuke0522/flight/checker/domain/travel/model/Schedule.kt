@@ -3,9 +3,9 @@ package com.shinnosuke0522.flight.checker.domain.travel.model
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.shinnosuke0522.flight.checker.domain.base.model.BusinessRuleError
-import com.shinnosuke0522.flight.checker.domain.base.model.Error
-import com.shinnosuke0522.flight.checker.domain.base.model.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.BusinessRuleError
+import com.shinnosuke0522.flight.checker.domain.base.error.Error
+import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 import java.time.LocalDate
 
 sealed interface Schedule {

@@ -2,7 +2,7 @@ package com.shinnosuke0522.flight.checker.domain.shared.value
 
 import arrow.core.Either
 import arrow.core.raise.either
-import com.shinnosuke0522.flight.checker.domain.base.model.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 import java.time.LocalDate
 
 data class FlightIdentity(
