@@ -11,10 +11,11 @@ import java.time.LocalDate
 
 data class Travel(
     override val id: TravelId,
+    override val version: AggregateVersion = AggregateVersion(),
     val name: TravelName,
     val schedule: Schedule,
     val flights: Flights,
-    override val version: AggregateVersion = AggregateVersion(),
+    val status: TravelStatus = TravelStatus.PLANNED,
 ) : AggregateRoot<TravelId> {
     companion object {
         fun create(
@@ -33,6 +34,7 @@ data class Travel(
                     name = travelName,
                     schedule = schedule,
                     flights = flightSegments,
+                    status = TravelStatus.PLANNED,
                 )
             }
         }
@@ -60,4 +62,11 @@ data class Travel(
                 }
 
     }
+}
+
+enum class TravelStatus {
+    PLANNED,
+    ONGOING,
+    COMPLETED,
+    CANCELED,
 }
