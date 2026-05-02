@@ -3,21 +3,22 @@ package com.shinnosuke0522.flight.checker.domain.flight.model
 import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
-import arrow.core.raise.context.bind
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import arrow.core.raise.zipOrAccumulate
-import com.shinnosuke0522.flight.checker.domain.base.error.Error
+import com.shinnosuke0522.flight.checker.domain.base.model.AggregateRoot
+import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.shared.value.FlightIdentity
 import java.time.Instant
 import java.time.LocalDate
 
-sealed interface FlightInfo {
+sealed interface FlightInfo : AggregateRoot<FlightIdentity> {
     val flightIdentity: FlightIdentity
     val departurePoint: FlightPoint
     val arrivalPoint: FlightPoint
     val scheduledDepartureTime: Instant
     val scheduledArrivalTime: Instant
+
+    override val id: FlightIdentity get() = flightIdentity
 }
 
 @ConsistentCopyVisibility
@@ -27,6 +28,7 @@ data class OnScheduleFlightInfo private constructor(
     override val arrivalPoint: FlightPoint,
     override val scheduledDepartureTime: Instant,
     override val scheduledArrivalTime: Instant,
+    override val version: AggregateVersion = AggregateVersion(),
 ) : FlightInfo {
     companion object {
         operator fun invoke(
@@ -34,7 +36,8 @@ data class OnScheduleFlightInfo private constructor(
             departurePoint: FlightPoint,
             arrivalPoint: FlightPoint,
             scheduledDepartureTime: Instant,
-            scheduledArrivalTime: Instant
+            scheduledArrivalTime: Instant,
+            version: AggregateVersion = AggregateVersion(),
         ): Either<NonEmptyList<FlightInfoValidationError>, OnScheduleFlightInfo> = either {
             ensure(scheduledDepartureTime != scheduledArrivalTime) {
                 nonEmptyListOf(SameFlightPointError)
@@ -47,7 +50,8 @@ data class OnScheduleFlightInfo private constructor(
                 departurePoint = departurePoint,
                 arrivalPoint = arrivalPoint,
                 scheduledDepartureTime = scheduledDepartureTime,
-                scheduledArrivalTime = scheduledArrivalTime
+                scheduledArrivalTime = scheduledArrivalTime,
+                version = version
             )
         }
 
@@ -87,6 +91,7 @@ data class DelayedFlightInfo private constructor(
     override val scheduledArrivalTime: Instant,
     val estimatedDepartureTime: Instant?,
     val estimatedArrivalTime: Instant?,
+    override val version: AggregateVersion = AggregateVersion(),
 ) : FlightInfo {
     companion object {
         operator fun invoke(
@@ -97,6 +102,7 @@ data class DelayedFlightInfo private constructor(
             scheduledArrivalTime: Instant,
             estimatedDepartureTime: Instant? = null,
             estimatedArrivalTime: Instant? = null,
+            version: AggregateVersion = AggregateVersion(),
         ) = DelayedFlightInfo(
             flightIdentity,
             departurePoint,
@@ -104,7 +110,8 @@ data class DelayedFlightInfo private constructor(
             scheduledDepartureTime,
             scheduledArrivalTime,
             estimatedDepartureTime,
-            estimatedArrivalTime
+            estimatedArrivalTime,
+            version
         )
     }
 }
@@ -116,6 +123,7 @@ data class CanceledFlightInfo private constructor(
     override val arrivalPoint: FlightPoint,
     override val scheduledDepartureTime: Instant,
     override val scheduledArrivalTime: Instant,
+    override val version: AggregateVersion = AggregateVersion(),
 ) : FlightInfo {
     companion object {
         operator fun invoke(
@@ -124,12 +132,14 @@ data class CanceledFlightInfo private constructor(
             arrivalPoint: FlightPoint,
             scheduledDepartureTime: Instant,
             scheduledArrivalTime: Instant,
+            version: AggregateVersion = AggregateVersion(),
         ) = CanceledFlightInfo(
             flightIdentity,
             departurePoint,
             arrivalPoint,
             scheduledDepartureTime,
-            scheduledArrivalTime
+            scheduledArrivalTime,
+            version
         )
     }
 }

@@ -5,14 +5,17 @@ import arrow.core.NonEmptyList
 import arrow.core.raise.either
 import arrow.core.raise.zipOrAccumulate
 import arrow.core.right
+import com.shinnosuke0522.flight.checker.domain.base.model.AggregateRoot
+import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import java.time.LocalDate
 
 data class Travel(
-    val id: TravelId,
+    override val id: TravelId,
     val name: TravelName,
     val schedule: Schedule,
-    val flights: Flights
-) {
+    val flights: Flights,
+    override val version: AggregateVersion = AggregateVersion(),
+) : AggregateRoot<TravelId> {
     companion object {
         fun create(
             rawTravelName: String,
@@ -58,4 +61,3 @@ data class Travel(
 
     }
 }
-
