@@ -23,44 +23,12 @@ data class Travel(
             departureDate: LocalDate,
             returnDate: LocalDate? = null,
             rawFlightSegments: NonEmptyList<Pair<String, LocalDate>>
-        ): Either<NonEmptyList<TravelValidationError>, Travel> = either {
-            zipOrAccumulate(
-                { createTravelName(rawTravelName).bind() },
-                { createSchedule(departureDate, returnDate).bind() },
-                { createFlights(rawFlightSegments).bind() }
-            ) { travelName, schedule, flightSegments ->
-                Travel(
-                    id = TravelId.generate(),
-                    name = travelName,
-                    schedule = schedule,
-                    flights = flightSegments,
-                    status = TravelStatus.PLANNED,
-                )
-            }
-        }
-
-        private fun createTravelName(rawTravelName: String) =
-            TravelName(rawTravelName)
-                .mapLeft { InvalidTravelNameError(it.toCause()) }
-
-        private fun createSchedule(
-            departureDate: LocalDate,
-            returnDate: LocalDate?
-        ): Either<TravelValidationError, Schedule> =
-            if (returnDate == null) {
-                OneWayTripSchedule(departureDate).right()
-            } else {
-                RoundTripSchedule(departureDate, returnDate)
-            }
-
-        private fun createFlights(
-            rawFlightSegments: NonEmptyList<Pair<String, LocalDate>>
-        ): Either<NonEmptyList<TravelValidationError>, Flights> =
-            Flights.create(rawFlightSegments)
-                .mapLeft { errors ->
-                    errors.map { InvalidFlightError(it.toCause()) }
-                }
-
+        ): Either<NonEmptyList<TravelValidationError>, Travel> = TravelFactory.create(
+            rawTravelName = rawTravelName,
+            departureDate = departureDate,
+            returnDate = returnDate,
+            rawFlightSegments = rawFlightSegments
+        )
     }
 }
 
@@ -69,4 +37,49 @@ enum class TravelStatus {
     ONGOING,
     COMPLETED,
     CANCELED,
+}
+
+private object TravelFactory {
+    fun create(
+        rawTravelName: String,
+        departureDate: LocalDate,
+        returnDate: LocalDate? = null,
+        rawFlightSegments: NonEmptyList<Pair<String, LocalDate>>
+    ): Either<NonEmptyList<TravelValidationError>, Travel> = either {
+        zipOrAccumulate(
+            { createTravelName(rawTravelName).bind() },
+            { createSchedule(departureDate, returnDate).bind() },
+            { createFlights(rawFlightSegments).bind() }
+        ) { travelName, schedule, flightSegments ->
+            Travel(
+                id = TravelId.generate(),
+                name = travelName,
+                schedule = schedule,
+                flights = flightSegments,
+                status = TravelStatus.PLANNED,
+            )
+        }
+    }
+
+    private fun createTravelName(rawTravelName: String) =
+        TravelName(rawTravelName)
+            .mapLeft { InvalidTravelNameError(it.toCause()) }
+
+    private fun createSchedule(
+        departureDate: LocalDate,
+        returnDate: LocalDate?
+    ): Either<TravelValidationError, Schedule> =
+        if (returnDate == null) {
+            OneWayTripSchedule(departureDate).right()
+        } else {
+            RoundTripSchedule(departureDate, returnDate)
+        }
+
+    private fun createFlights(
+        rawFlightSegments: NonEmptyList<Pair<String, LocalDate>>
+    ): Either<NonEmptyList<TravelValidationError>, Flights> =
+        Flights.create(rawFlightSegments)
+            .mapLeft { errors ->
+                errors.map { InvalidFlightError(it.toCause()) }
+            }
 }

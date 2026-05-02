@@ -5,8 +5,10 @@ import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.either
 import arrow.core.raise.ensure
+import arrow.core.raise.zipOrAccumulate
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateRoot
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
+import com.shinnosuke0522.flight.checker.domain.base.model.MonitoringStatus
 import com.shinnosuke0522.flight.checker.domain.shared.value.FlightIdentity
 import java.time.Instant
 import java.time.LocalDate
@@ -17,6 +19,7 @@ sealed interface FlightInfo : AggregateRoot<FlightIdentity> {
     val arrivalPoint: FlightPoint
     val scheduledDepartureTime: Instant
     val scheduledArrivalTime: Instant
+    val monitoringStatus: MonitoringStatus
 
     override val id: FlightIdentity get() = flightIdentity
 }
@@ -28,6 +31,7 @@ data class OnScheduleFlightInfo private constructor(
     override val arrivalPoint: FlightPoint,
     override val scheduledDepartureTime: Instant,
     override val scheduledArrivalTime: Instant,
+    override val monitoringStatus: MonitoringStatus = MonitoringStatus.IDLE,
     override val version: AggregateVersion = AggregateVersion(),
 ) : FlightInfo {
     companion object {
@@ -37,6 +41,7 @@ data class OnScheduleFlightInfo private constructor(
             arrivalPoint: FlightPoint,
             scheduledDepartureTime: Instant,
             scheduledArrivalTime: Instant,
+            monitoringStatus: MonitoringStatus = MonitoringStatus.IDLE,
             version: AggregateVersion = AggregateVersion(),
         ): Either<NonEmptyList<FlightInfoValidationError>, OnScheduleFlightInfo> = either {
             ensure(scheduledDepartureTime != scheduledArrivalTime) {
@@ -51,6 +56,7 @@ data class OnScheduleFlightInfo private constructor(
                 arrivalPoint = arrivalPoint,
                 scheduledDepartureTime = scheduledDepartureTime,
                 scheduledArrivalTime = scheduledArrivalTime,
+                monitoringStatus = monitoringStatus,
                 version = version
             )
         }
@@ -91,6 +97,7 @@ data class DelayedFlightInfo private constructor(
     override val scheduledArrivalTime: Instant,
     val estimatedDepartureTime: Instant?,
     val estimatedArrivalTime: Instant?,
+    override val monitoringStatus: MonitoringStatus = MonitoringStatus.IDLE,
     override val version: AggregateVersion = AggregateVersion(),
 ) : FlightInfo {
     companion object {
@@ -102,6 +109,7 @@ data class DelayedFlightInfo private constructor(
             scheduledArrivalTime: Instant,
             estimatedDepartureTime: Instant? = null,
             estimatedArrivalTime: Instant? = null,
+            monitoringStatus: MonitoringStatus = MonitoringStatus.IDLE,
             version: AggregateVersion = AggregateVersion(),
         ) = DelayedFlightInfo(
             flightIdentity,
@@ -111,6 +119,7 @@ data class DelayedFlightInfo private constructor(
             scheduledArrivalTime,
             estimatedDepartureTime,
             estimatedArrivalTime,
+            monitoringStatus,
             version
         )
     }
@@ -123,6 +132,7 @@ data class CanceledFlightInfo private constructor(
     override val arrivalPoint: FlightPoint,
     override val scheduledDepartureTime: Instant,
     override val scheduledArrivalTime: Instant,
+    override val monitoringStatus: MonitoringStatus = MonitoringStatus.IDLE,
     override val version: AggregateVersion = AggregateVersion(),
 ) : FlightInfo {
     companion object {
@@ -132,6 +142,7 @@ data class CanceledFlightInfo private constructor(
             arrivalPoint: FlightPoint,
             scheduledDepartureTime: Instant,
             scheduledArrivalTime: Instant,
+            monitoringStatus: MonitoringStatus = MonitoringStatus.IDLE,
             version: AggregateVersion = AggregateVersion(),
         ) = CanceledFlightInfo(
             flightIdentity,
@@ -139,7 +150,77 @@ data class CanceledFlightInfo private constructor(
             arrivalPoint,
             scheduledDepartureTime,
             scheduledArrivalTime,
+            monitoringStatus,
             version
         )
+    }
+}
+
+private object FlightInfoFactory {
+    fun createOnSchedule(
+        flightCode: String,
+        departureDate: LocalDate,
+        departureCountryCode: String,
+        departureAirportCode: String,
+        departureZoneId: String,
+        arrivalCountryCode: String,
+        arrivalAirportCode: String,
+        arrivalZoneId: String,
+        scheduledDepartureTime: Instant,
+        scheduledArrivalTime: Instant,
+    ): Either<NonEmptyList<FlightInfoValidationError>, OnScheduleFlightInfo> = either {
+        zipOrAccumulate(
+            {
+                createFlightIdentity(flightCode, departureDate).bind()
+            },
+            {
+                createDeparturePoint(departureCountryCode, departureAirportCode, departureZoneId).bind()
+            },
+            {
+                createArrivalPoint(arrivalCountryCode, arrivalAirportCode, arrivalZoneId).bind()
+            }
+        ) { identity, departure, arrival ->
+            OnScheduleFlightInfo.Companion(
+                flightIdentity = identity,
+                departurePoint = departure,
+                arrivalPoint = arrival,
+                scheduledDepartureTime = scheduledDepartureTime,
+                scheduledArrivalTime = scheduledArrivalTime
+            ).bind()
+        }
+    }
+
+    private fun createFlightIdentity(
+        flightCode: String,
+        departureDate: LocalDate
+    ): Either<FlightInfoValidationError, FlightIdentity> = FlightIdentity.create(
+        rawFlightCode = flightCode,
+        departureDate = departureDate
+    ).mapLeft {
+        InvalidFlightIdentityError(it.toCause())
+    }
+
+    private fun createDeparturePoint(
+        countryCode: String,
+        airportCode: String,
+        zoneId: String
+    ): Either<NonEmptyList<FlightInfoValidationError>, FlightPoint> = FlightPoint.create(
+        countryCode = countryCode,
+        airportCode = airportCode,
+        zoneId = zoneId
+    ).mapLeft {
+        it.map { error -> InvalidDeparturePoint(error.toCause()) }
+    }
+
+    private fun createArrivalPoint(
+        countryCode: String,
+        airportCode: String,
+        zoneId: String
+    ): Either<NonEmptyList<FlightInfoValidationError>, FlightPoint> = FlightPoint.create(
+        countryCode = countryCode,
+        airportCode = airportCode,
+        zoneId = zoneId
+    ).mapLeft {
+        it.map { error -> InvalidArrivalPoint(error.toCause()) }
     }
 }
