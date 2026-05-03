@@ -10,7 +10,7 @@ import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
 import com.shinnosuke0522.flight.checker.domain.flight.model.ScheduledFlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.model.UncertainFlightInfo
-import com.shinnosuke0522.flight.checker.domain.shared.value.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 import java.time.Instant
 
 /**

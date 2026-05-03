@@ -3,7 +3,7 @@ package com.shinnosuke0522.flight.checker.domain.travel.event
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEvent
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.shared.value.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.travel.model.Flights
 import com.shinnosuke0522.flight.checker.domain.travel.model.Schedule
 import com.shinnosuke0522.flight.checker.domain.travel.model.TravelId
@@ -33,27 +33,13 @@ data class TravelPlanned(
  * 旅行が開始されたことを表すイベント。
  *
  * 旅行の出発日（初日のフライトなど）に達した際に発行される。
- * [FlightSegmentMonitoringActivated] とは異なり、純粋に旅行期間に入ったことを意味する。
+ * 純粋に旅行期間に入ったことを意味する。
  */
 data class TravelStarted(
     override val id: DomainEventId,
     override val aggregateId: TravelId,
     override val sequenceNumber: Long,
     override val meta: DomainEventMeta
-) : TravelEvent
-
-/**
- * 特定のフライトセグメントの監視を有効化すべきタイミングに達したことを表すイベント。
- *
- * 旅行の出発が近づき、システムが対象フライト（FlightInfo）の能動的な監視
- *（外部APIへのWebhook登録など）を開始すべきタイミングで発行される。
- */
-data class FlightSegmentMonitoringActivated(
-    override val id: DomainEventId,
-    override val aggregateId: TravelId,
-    override val sequenceNumber: Long,
-    override val meta: DomainEventMeta,
-    val flightIdentity: FlightIdentity
 ) : TravelEvent
 
 /**

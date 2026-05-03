@@ -1,4 +1,4 @@
-package com.shinnosuke0522.flight.checker.domain.shared.value
+package com.shinnosuke0522.flight.checker.domain.shared.primitive
 
 import arrow.core.Either
 import arrow.core.raise.either
@@ -8,14 +8,16 @@ import com.shinnosuke0522.flight.checker.domain.base.error.InvalidFormatError
 import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 
 /**
- * Represents an IATA 3-letter airport code (e.g., HND, JFK, LHR).
+ * Represents an ISO 3166-1 alpha-2 country code.
  */
 @JvmInline
-value class AirportCode private constructor(val value: String) {
+value class CountryCode private constructor(val value: String) {
     companion object {
-        private val regex = Regex("^[A-Z]{3}$")
+        private val regex = Regex("^[A-Z]{2}$")
 
-        operator fun invoke(value: String): Either<ValidationError, AirportCode> = either {
+        operator fun invoke(
+            value: String,
+        ): Either<ValidationError, CountryCode> = either {
             ensure(value.isNotBlank()) {
                 CannotBeBlankError(valueName = this.javaClass.simpleName)
             }
@@ -26,7 +28,7 @@ value class AirportCode private constructor(val value: String) {
                     regex = regex,
                 )
             }
-            AirportCode(value)
+            CountryCode(value = value)
         }
     }
 }

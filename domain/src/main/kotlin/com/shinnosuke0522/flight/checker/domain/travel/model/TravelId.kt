@@ -1,8 +1,8 @@
 package com.shinnosuke0522.flight.checker.domain.travel.model
 
 import arrow.core.Either
-import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
 import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
 import com.shinnosuke0522.flight.checker.domain.base.primitive.ULID
 
 @JvmInline

@@ -4,22 +4,21 @@ import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.raise.either
 import arrow.core.raise.zipOrAccumulate
-import com.shinnosuke0522.flight.checker.domain.base.error.InvalidFormatError
 import com.shinnosuke0522.flight.checker.domain.base.error.UnKnownValueError
 import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 import com.shinnosuke0522.flight.checker.domain.base.error.toCause
-import com.shinnosuke0522.flight.checker.domain.shared.value.CountryCode
-import com.shinnosuke0522.flight.checker.domain.shared.value.AirportCode
+import com.shinnosuke0522.flight.checker.domain.shared.primitive.AirportCode
+import com.shinnosuke0522.flight.checker.domain.shared.primitive.CountryCode
+import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
-import java.time.Instant
 
 data class FlightPoint(
     val countryCode: CountryCode,
     val airportCode: AirportCode,
     val zoneId: ZoneId
 ) {
-    fun localTime(instant: Instant) : LocalTime =
+    fun localTime(instant: Instant): LocalTime =
         Instant.from(instant).atZone(zoneId).toLocalTime()
 
     companion object {

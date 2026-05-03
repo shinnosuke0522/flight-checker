@@ -1,4 +1,4 @@
-package com.shinnosuke0522.flight.checker.domain.shared.value
+package com.shinnosuke0522.flight.checker.domain.shared.primitive
 
 import arrow.core.Either
 import arrow.core.raise.either
@@ -9,8 +9,8 @@ import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 
 @JvmInline
 value class FlightCode private constructor(val value: String) {
-    val carrierCode get() = regex.find(value)!!.groups[CARRIER_CODE_GROUP]!!.value
-    val flightNumber get() = regex.find(value)!!.groups[FLIGHT_NUMBER_GROUP]!!.value
+    val carrierCode get() = requireNotNull(regex.matchEntire(value)).groupValues[CARRIER_CODE_GROUP]
+    val flightNumber get() = requireNotNull(regex.matchEntire(value)).groupValues[FLIGHT_NUMBER_GROUP]
 
     companion object {
         private const val PATTERN = "^([A-Z0-9]{2})(\\d{1,4}[A-Z]?)$"
@@ -23,11 +23,11 @@ value class FlightCode private constructor(val value: String) {
             value: String,
         ): Either<ValidationError, FlightCode> = either {
             ensure(value.isNotBlank()) {
-                CannotBeBlankError(valueName = this.javaClass.simpleName)
+                CannotBeBlankError(valueName = "FlightCode")
             }
             ensure(regex.matches(value)) {
                 InvalidFormatError(
-                    valueName = this.javaClass.simpleName,
+                    valueName = "FlightCode",
                     value = value,
                     regex = regex,
                 )

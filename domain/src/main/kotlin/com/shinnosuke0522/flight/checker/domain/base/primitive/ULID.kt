@@ -31,10 +31,10 @@ value class ULID private constructor(private val value: Ulid) : Comparable<ULID>
         operator fun invoke(value: String): Either<ValidationError, ULID> = either {
             try {
                 Ulid.from(value).let { ULID(it) }
-            } catch (e: Exception) {
+            } catch (e: IllegalArgumentException) {
                 raise(
                     InvalidValueError(
-                        valueName = this.javaClass.simpleName,
+                        valueName = "ULID",
                         value = value,
                         cause = e.toCause()
                     ),

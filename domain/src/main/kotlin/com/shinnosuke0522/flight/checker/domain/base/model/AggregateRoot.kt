@@ -9,14 +9,14 @@ interface AggregateId : Serializable {
 
 @JvmInline
 value class AggregateVersion(val value: Long) {
+    fun nextVersion() = AggregateVersion(this.value + 1)
+
     companion object {
         // CREATED EVENT適用時に0にならなければならないので、-1としている
         const val INITIAL_VERSION = -1L
 
         operator fun invoke(): AggregateVersion = AggregateVersion(INITIAL_VERSION)
     }
-
-    fun nextVersion() = AggregateVersion(this.value + 1)
 }
 
 interface AggregateRoot<ID : AggregateId> {
@@ -24,8 +24,11 @@ interface AggregateRoot<ID : AggregateId> {
     val version: AggregateVersion
 }
 
-interface EventSourcingAggregateRoot<ID : AggregateId, EVENT : DomainEvent<ID>, SELF : EventSourcingAggregateRoot<ID, EVENT, SELF>> :
-    AggregateRoot<ID> {
+interface EventSourcingAggregateRoot<
+    ID : AggregateId,
+    EVENT : DomainEvent<ID>,
+    SELF : EventSourcingAggregateRoot<ID, EVENT, SELF>
+    > : AggregateRoot<ID> {
 
     fun apply(event: EVENT): SELF
 }

@@ -45,6 +45,13 @@ interface ValueValidationError : ValidationError {
 }
 
 /**
+ * コレクションに関するバリデーションエラー。
+ */
+interface CollectionValidationError : ValidationError {
+    val collectionName: String
+}
+
+/**
  * 複数の値の組み合わせや関係性に対するバリデーションエラー。
  *
  * 「各値単体は正しいが、組み合わせとして不正である」ことを表す。

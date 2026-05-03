@@ -5,9 +5,22 @@ import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.shinnosuke0522.flight.checker.domain.base.model.AggregateRoot
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
-import com.shinnosuke0522.flight.checker.domain.shared.value.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.base.model.EventSourcingAggregateRoot
+import com.shinnosuke0522.flight.checker.domain.flight.error.FlightInfoValidationError
+import com.shinnosuke0522.flight.checker.domain.flight.error.SameFlightPointError
+import com.shinnosuke0522.flight.checker.domain.flight.error.ScheduledArrivalTimeBeforeDepartureTimeError
+import com.shinnosuke0522.flight.checker.domain.flight.event.FlightArrived
+import com.shinnosuke0522.flight.checker.domain.flight.event.FlightCanceled
+import com.shinnosuke0522.flight.checker.domain.flight.event.FlightDelayed
+import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoEvent
+import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoRegistered
+import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringActivated
+import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringCompleted
+import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringFailed
+import com.shinnosuke0522.flight.checker.domain.flight.event.FlightOnScheduleReturned
+import com.shinnosuke0522.flight.checker.domain.flight.event.FlightStatusUncertain
+import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 import java.time.Instant
 
 /**
@@ -15,12 +28,45 @@ import java.time.Instant
  *
  * 主にフライトの監視・追跡の要否を判断し、ユーザーにトラブルを通知するための情報を保持する。
  */
-sealed interface FlightInfo : AggregateRoot<FlightIdentity> {
+sealed interface FlightInfo : EventSourcingAggregateRoot<FlightIdentity, FlightInfoEvent, FlightInfo> {
     val departurePoint: FlightPoint
     val arrivalPoint: FlightPoint
     val scheduledDepartureTime: Instant
     val scheduledArrivalTime: Instant
     val monitoringStatus: MonitoringStatus
+
+    override fun apply(event: FlightInfoEvent): FlightInfo = when (event) {
+        is FlightInfoRegistered -> ScheduledFlightInfo(
+            flightIdentity = event.aggregateId,
+            departurePoint = event.departurePoint,
+            arrivalPoint = event.arrivalPoint,
+            scheduledDepartureTime = event.scheduledDepartureTime,
+            scheduledArrivalTime = event.scheduledArrivalTime,
+            version = AggregateVersion(event.sequenceNumber)
+        ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
+
+        is FlightDelayed -> event.newInfo.withVersion(AggregateVersion(event.sequenceNumber))
+        is FlightCanceled -> event.newInfo.withVersion(AggregateVersion(event.sequenceNumber))
+        is FlightArrived -> event.newInfo.withVersion(AggregateVersion(event.sequenceNumber))
+        is FlightStatusUncertain -> event.newInfo.withVersion(AggregateVersion(event.sequenceNumber))
+        is FlightOnScheduleReturned -> event.newInfo.withVersion(AggregateVersion(event.sequenceNumber))
+
+        is FlightMonitoringActivated -> withMonitoringStatus(
+            MonitoringStatus.ACTIVATED,
+            AggregateVersion(event.sequenceNumber)
+        )
+        is FlightMonitoringCompleted -> withMonitoringStatus(
+            MonitoringStatus.COMPLETED,
+            AggregateVersion(event.sequenceNumber)
+        )
+        is FlightMonitoringFailed -> withMonitoringStatus(
+            MonitoringStatus.FAILED,
+            AggregateVersion(event.sequenceNumber)
+        )
+    }
+
+    fun withVersion(version: AggregateVersion): FlightInfo
+    fun withMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo
 }
 
 /**
@@ -29,13 +75,17 @@ sealed interface FlightInfo : AggregateRoot<FlightIdentity> {
 @ConsistentCopyVisibility
 data class ScheduledFlightInfo private constructor(
     override val id: FlightIdentity,
-    override val version: AggregateVersion = AggregateVersion(),
+    override val version: AggregateVersion,
     override val departurePoint: FlightPoint,
     override val arrivalPoint: FlightPoint,
     override val scheduledDepartureTime: Instant,
     override val scheduledArrivalTime: Instant,
     override val monitoringStatus: MonitoringStatus = MonitoringStatus.IDLE,
 ) : FlightInfo {
+    override fun withVersion(version: AggregateVersion): ScheduledFlightInfo = copy(version = version)
+    override fun withMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): ScheduledFlightInfo =
+        copy(monitoringStatus = status, version = version)
+
     companion object {
         operator fun invoke(
             flightIdentity: FlightIdentity,
@@ -43,8 +93,8 @@ data class ScheduledFlightInfo private constructor(
             arrivalPoint: FlightPoint,
             scheduledDepartureTime: Instant,
             scheduledArrivalTime: Instant,
+            version: AggregateVersion,
             monitoringStatus: MonitoringStatus = MonitoringStatus.IDLE,
-            version: AggregateVersion = AggregateVersion(),
         ): Either<NonEmptyList<FlightInfoValidationError>, ScheduledFlightInfo> = either {
             ensure(scheduledDepartureTime != scheduledArrivalTime) {
                 nonEmptyListOf(SameFlightPointError)
@@ -71,7 +121,7 @@ data class ScheduledFlightInfo private constructor(
 @ConsistentCopyVisibility
 data class DelayedFlightInfo private constructor(
     override val id: FlightIdentity,
-    override val version: AggregateVersion = AggregateVersion(),
+    override val version: AggregateVersion,
     override val departurePoint: FlightPoint,
     override val arrivalPoint: FlightPoint,
     override val scheduledDepartureTime: Instant,
@@ -80,10 +130,14 @@ data class DelayedFlightInfo private constructor(
     val estimatedArrivalTime: Instant?,
     override val monitoringStatus: MonitoringStatus = MonitoringStatus.ACTIVATED,
 ) : FlightInfo {
+    override fun withVersion(version: AggregateVersion): DelayedFlightInfo = copy(version = version)
+    override fun withMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): DelayedFlightInfo =
+        copy(monitoringStatus = status, version = version)
+
     companion object {
         operator fun invoke(
             flightIdentity: FlightIdentity,
-            version: AggregateVersion = AggregateVersion(),
+            version: AggregateVersion,
             departurePoint: FlightPoint,
             arrivalPoint: FlightPoint,
             scheduledDepartureTime: Instant,
@@ -99,7 +153,7 @@ data class DelayedFlightInfo private constructor(
             scheduledDepartureTime = scheduledDepartureTime,
             scheduledArrivalTime = scheduledArrivalTime,
             estimatedDepartureTime = estimatedDepartureTime,
-            estimatedArrivalTime =  estimatedArrivalTime,
+            estimatedArrivalTime = estimatedArrivalTime,
             monitoringStatus = monitoringStatus,
         )
     }
@@ -113,22 +167,26 @@ data class DelayedFlightInfo private constructor(
 @ConsistentCopyVisibility
 data class ArrivedFlightInfo private constructor(
     override val id: FlightIdentity,
-    override val version: AggregateVersion = AggregateVersion(),
+    override val version: AggregateVersion,
     override val departurePoint: FlightPoint,
     override val arrivalPoint: FlightPoint,
     override val scheduledDepartureTime: Instant,
     override val scheduledArrivalTime: Instant,
     override val monitoringStatus: MonitoringStatus = MonitoringStatus.COMPLETED,
 ) : FlightInfo {
+    override fun withVersion(version: AggregateVersion): ArrivedFlightInfo = copy(version = version)
+    override fun withMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): ArrivedFlightInfo =
+        copy(monitoringStatus = status, version = version)
+
     companion object {
         operator fun invoke(
             flightIdentity: FlightIdentity,
+            version: AggregateVersion,
             departurePoint: FlightPoint,
             arrivalPoint: FlightPoint,
             scheduledDepartureTime: Instant,
             scheduledArrivalTime: Instant,
             monitoringStatus: MonitoringStatus = MonitoringStatus.COMPLETED,
-            version: AggregateVersion = AggregateVersion(),
         ) = ArrivedFlightInfo(
             id = flightIdentity,
             version = version,
@@ -149,22 +207,26 @@ data class ArrivedFlightInfo private constructor(
 @ConsistentCopyVisibility
 data class CanceledFlightInfo private constructor(
     override val id: FlightIdentity,
-    override val version: AggregateVersion = AggregateVersion(),
+    override val version: AggregateVersion,
     override val departurePoint: FlightPoint,
     override val arrivalPoint: FlightPoint,
     override val scheduledDepartureTime: Instant,
     override val scheduledArrivalTime: Instant,
     override val monitoringStatus: MonitoringStatus = MonitoringStatus.COMPLETED,
 ) : FlightInfo {
+    override fun withVersion(version: AggregateVersion): CanceledFlightInfo = copy(version = version)
+    override fun withMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): CanceledFlightInfo =
+        copy(monitoringStatus = status, version = version)
+
     companion object {
         operator fun invoke(
             flightIdentity: FlightIdentity,
+            version: AggregateVersion,
             departurePoint: FlightPoint,
             arrivalPoint: FlightPoint,
             scheduledDepartureTime: Instant,
             scheduledArrivalTime: Instant,
             monitoringStatus: MonitoringStatus = MonitoringStatus.COMPLETED,
-            version: AggregateVersion = AggregateVersion(),
         ) = CanceledFlightInfo(
             id = flightIdentity,
             version = version,
@@ -185,7 +247,7 @@ data class CanceledFlightInfo private constructor(
 @ConsistentCopyVisibility
 data class UncertainFlightInfo private constructor(
     override val id: FlightIdentity,
-    override val version: AggregateVersion = AggregateVersion(),
+    override val version: AggregateVersion,
     override val departurePoint: FlightPoint,
     override val arrivalPoint: FlightPoint,
     override val scheduledDepartureTime: Instant,
@@ -193,16 +255,20 @@ data class UncertainFlightInfo private constructor(
     val reason: String,
     override val monitoringStatus: MonitoringStatus = MonitoringStatus.ACTIVATED,
 ) : FlightInfo {
+    override fun withVersion(version: AggregateVersion): UncertainFlightInfo = copy(version = version)
+    override fun withMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): UncertainFlightInfo =
+        copy(monitoringStatus = status, version = version)
+
     companion object {
         operator fun invoke(
             flightIdentity: FlightIdentity,
+            version: AggregateVersion,
             departurePoint: FlightPoint,
             arrivalPoint: FlightPoint,
             scheduledDepartureTime: Instant,
             scheduledArrivalTime: Instant,
             reason: String,
             monitoringStatus: MonitoringStatus = MonitoringStatus.ACTIVATED,
-            version: AggregateVersion = AggregateVersion(),
         ) = UncertainFlightInfo(
             id = flightIdentity,
             version = version,

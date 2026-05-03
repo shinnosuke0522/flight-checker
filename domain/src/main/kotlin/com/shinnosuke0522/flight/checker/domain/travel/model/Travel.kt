@@ -2,84 +2,226 @@ package com.shinnosuke0522.flight.checker.domain.travel.model
 
 import arrow.core.Either
 import arrow.core.NonEmptyList
+import arrow.core.identity
+import arrow.core.mapOrAccumulate
+import arrow.core.raise.context.bind
 import arrow.core.raise.either
-import arrow.core.raise.zipOrAccumulate
-import arrow.core.right
-import com.shinnosuke0522.flight.checker.domain.base.model.AggregateRoot
+import arrow.core.raise.ensure
+import arrow.core.toNonEmptyListOrNull
+import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
-import java.time.LocalDate
+import com.shinnosuke0522.flight.checker.domain.base.model.EventSourcingAggregateRoot
+import com.shinnosuke0522.flight.checker.domain.travel.error.FlightDateOutsideScheduleError
+import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyStartedError
+import com.shinnosuke0522.flight.checker.domain.travel.error.TravelBusinessRuleError
+import com.shinnosuke0522.flight.checker.domain.travel.error.TravelNotOngoingError
+import com.shinnosuke0522.flight.checker.domain.travel.error.TravelValidationError
+import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentAdded
+import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentChangeRequired
+import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentDisrupted
+import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentRemoved
+import com.shinnosuke0522.flight.checker.domain.travel.event.TravelCanceled
+import com.shinnosuke0522.flight.checker.domain.travel.event.TravelCompleted
+import com.shinnosuke0522.flight.checker.domain.travel.event.TravelEvent
+import com.shinnosuke0522.flight.checker.domain.travel.event.TravelPlanned
+import com.shinnosuke0522.flight.checker.domain.travel.event.TravelScheduleChanged
+import com.shinnosuke0522.flight.checker.domain.travel.event.TravelStarted
+import java.time.Instant
 
-data class Travel(
+@ConsistentCopyVisibility
+data class Travel private constructor(
     override val id: TravelId,
-    override val version: AggregateVersion = AggregateVersion(),
+    override val version: AggregateVersion,
     val name: TravelName,
     val schedule: Schedule,
     val flights: Flights,
-    val status: TravelStatus = TravelStatus.PLANNED,
-) : AggregateRoot<TravelId> {
+    val status: TravelStatus,
+) : EventSourcingAggregateRoot<TravelId, TravelEvent, Travel> {
+
+    override fun apply(event: TravelEvent): Travel = when (event) {
+        is TravelPlanned -> from(event)
+
+        is TravelStarted -> Travel(
+            id = id,
+            version = AggregateVersion(event.sequenceNumber),
+            name = name,
+            schedule = schedule,
+            flights = flights,
+            status = TravelStatus.ONGOING,
+        )
+
+        is TravelCompleted -> Travel(
+            id = id,
+            version = AggregateVersion(event.sequenceNumber),
+            name = name,
+            schedule = schedule,
+            flights = flights,
+            status = TravelStatus.COMPLETED,
+        )
+
+        is TravelCanceled -> Travel(
+            id = id,
+            version = AggregateVersion(event.sequenceNumber),
+            name = name,
+            schedule = schedule,
+            flights = flights,
+            status = TravelStatus.CANCELED,
+        )
+
+        is TravelScheduleChanged -> Travel(
+            id = id,
+            version = AggregateVersion(event.sequenceNumber),
+            name = name,
+            schedule = event.newSchedule,
+            flights = flights,
+            status = status,
+        )
+
+        is FlightSegmentAdded -> Travel(
+            id = id,
+            version = AggregateVersion(event.sequenceNumber),
+            name = name,
+            schedule = schedule,
+            flights = flights.addFlightSegment(
+                FlightSegment(identity = event.flightIdentity)
+            ),
+            status = status,
+        )
+
+        is FlightSegmentRemoved -> Travel(
+            id = id,
+            version = version,
+            name = name,
+            schedule = schedule,
+            flights = flights.removeFlightSegment(event.flightIdentity).getOrNull()!!,
+            status = status
+        )
+
+        is FlightSegmentDisrupted -> Travel(
+            id = id,
+            version = AggregateVersion(event.sequenceNumber),
+            name = name,
+            schedule = schedule,
+            flights = flights.updateSegmentStatus(
+                identity = event.flightIdentity,
+                newStatus = FlightSegmentStatus.DISRUPTED
+            ),
+            status = status
+        )
+
+        is FlightSegmentChangeRequired -> Travel(
+            id = id,
+            version = AggregateVersion(event.sequenceNumber),
+            name = name,
+            schedule = schedule,
+            flights = flights.updateSegmentStatus(
+                identity = event.flightIdentity,
+                newStatus = FlightSegmentStatus.CHANGE_REQUIRED
+            ),
+            status = status
+        )
+    }
+
+    fun start(occurredAt: Instant): Either<TravelBusinessRuleError, Pair<Travel, TravelStarted>> = either {
+        ensure(status == TravelStatus.PLANNED) { TravelAlreadyStartedError }
+        val event = TravelStarted(
+            id = DomainEventId.generate(),
+            aggregateId = id,
+            sequenceNumber = version.nextVersion().value,
+            meta = DomainEventMeta.forRootEvent { occurredAt }
+        )
+        val newState = apply(event)
+        Pair(newState, event)
+    }
+
+    fun complete(meta: DomainEventMeta): Either<TravelBusinessRuleError, Pair<Travel, TravelCompleted>> = either {
+        ensure(status == TravelStatus.ONGOING) { TravelNotOngoingError }
+        val event = TravelCompleted(
+            id = DomainEventId.generate(),
+            aggregateId = id,
+            sequenceNumber = version.nextVersion().value,
+            meta = meta
+        )
+        val newState = apply(event)
+        Pair(newState, event)
+    }
+
+    fun cancel(meta: DomainEventMeta): Either<TravelBusinessRuleError, Pair<Travel, TravelCanceled>> = either {
+        ensure(status == TravelStatus.ONGOING) { TravelNotOngoingError }
+        val event = TravelCanceled(
+            id = DomainEventId.generate(),
+            aggregateId = id,
+            sequenceNumber = version.nextVersion().value,
+            meta = meta
+        )
+        val newState = apply(event)
+        Pair(newState, event)
+    }
+
     companion object {
+        operator fun invoke(
+            id: TravelId,
+            version: AggregateVersion,
+            name: TravelName,
+            schedule: Schedule,
+            flights: Flights,
+            status: TravelStatus,
+        ): Either<NonEmptyList<TravelValidationError>, Travel> = either {
+            verifyFlightsWithinSchedule(flights, schedule).bind()
+            Travel(id, version, name, schedule, flights, status)
+        }
+
         fun create(
-            rawTravelName: String,
-            departureDate: LocalDate,
-            returnDate: LocalDate? = null,
-            rawFlightSegments: NonEmptyList<Pair<String, LocalDate>>
-        ): Either<NonEmptyList<TravelValidationError>, Travel> = TravelFactory.create(
-            rawTravelName = rawTravelName,
-            departureDate = departureDate,
-            returnDate = returnDate,
-            rawFlightSegments = rawFlightSegments
+            travelName: TravelName,
+            schedule: Schedule,
+            flights: Flights,
+            createdAt: Instant
+        ): Either<NonEmptyList<TravelValidationError>, Pair<Travel, TravelPlanned>> = either {
+            val event = TravelPlanned(
+                id = DomainEventId.generate(),
+                aggregateId = TravelId.generate(),
+                sequenceNumber = AggregateVersion().nextVersion().value,
+                meta = DomainEventMeta.forRootEvent { createdAt },
+                name = travelName,
+                schedule = schedule,
+                flights = flights
+            )
+            val travel = from(event)
+            Pair(travel, event)
+        }
+
+        fun replay(events: NonEmptyList<TravelEvent>): Travel {
+            val firstEvent = events.head
+            require(firstEvent is TravelPlanned) {
+                "Replay must start with TravelPlanned event, but was ${firstEvent::class.simpleName}"
+            }
+
+            val initialTravel = from(firstEvent)
+
+            return events.tail.fold(initialTravel) { travel, event ->
+                travel.apply(event)
+            }
+        }
+
+        private fun verifyFlightsWithinSchedule(
+            flights: Flights,
+            schedule: Schedule
+        ): Either<NonEmptyList<FlightDateOutsideScheduleError>, Unit> =
+            flights.flightSegments.mapOrAccumulate { segment ->
+                ensure(schedule.contains(segment.identity.departureDate)) {
+                    FlightDateOutsideScheduleError(segment.identity.departureDate, schedule)
+                }
+            }.map { }
+
+        private fun from(planedEvent: TravelPlanned): Travel = Travel(
+            id = planedEvent.aggregateId,
+            version = AggregateVersion(planedEvent.sequenceNumber),
+            name = planedEvent.name,
+            schedule = planedEvent.schedule,
+            flights = planedEvent.flights,
+            status = TravelStatus.PLANNED,
         )
     }
 }
 
-enum class TravelStatus {
-    PLANNED,
-    ONGOING,
-    COMPLETED,
-    CANCELED,
-}
-
-private object TravelFactory {
-    fun create(
-        rawTravelName: String,
-        departureDate: LocalDate,
-        returnDate: LocalDate? = null,
-        rawFlightSegments: NonEmptyList<Pair<String, LocalDate>>
-    ): Either<NonEmptyList<TravelValidationError>, Travel> = either {
-        zipOrAccumulate(
-            { createTravelName(rawTravelName).bind() },
-            { createSchedule(departureDate, returnDate).bind() },
-            { createFlights(rawFlightSegments).bind() }
-        ) { travelName, schedule, flightSegments ->
-            Travel(
-                id = TravelId.generate(),
-                name = travelName,
-                schedule = schedule,
-                flights = flightSegments,
-                status = TravelStatus.PLANNED,
-            )
-        }
-    }
-
-    private fun createTravelName(rawTravelName: String) =
-        TravelName(rawTravelName)
-            .mapLeft { InvalidTravelNameError(it.toCause()) }
-
-    private fun createSchedule(
-        departureDate: LocalDate,
-        returnDate: LocalDate?
-    ): Either<TravelValidationError, Schedule> =
-        if (returnDate == null) {
-            OneWayTripSchedule(departureDate).right()
-        } else {
-            RoundTripSchedule(departureDate, returnDate)
-        }
-
-    private fun createFlights(
-        rawFlightSegments: NonEmptyList<Pair<String, LocalDate>>
-    ): Either<NonEmptyList<TravelValidationError>, Flights> =
-        Flights.create(rawFlightSegments)
-            .mapLeft { errors ->
-                errors.map { InvalidFlightError(it.toCause()) }
-            }
-}

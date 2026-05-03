@@ -1,12 +1,13 @@
-package com.shinnosuke0522.flight.checker.domain.shared.value
+package com.shinnosuke0522.flight.checker.domain.shared.primitive
 
 import arrow.core.Either
 import arrow.core.raise.either
-import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
 import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
 import java.time.LocalDate
 
-data class FlightIdentity(
+@ConsistentCopyVisibility
+data class FlightIdentity private constructor(
     val flightCode: FlightCode,
     val departureDate: LocalDate
 ) : AggregateId {
@@ -21,4 +22,5 @@ data class FlightIdentity(
             FlightIdentity(flightCode, departureDate)
         }
     }
+
 }

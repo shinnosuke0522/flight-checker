@@ -1,8 +1,8 @@
 package com.shinnosuke0522.flight.checker.domain.base.event
 
 import arrow.core.Either
-import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
 import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
 import com.shinnosuke0522.flight.checker.domain.base.primitive.ULID
 import java.time.Instant
 
@@ -30,7 +30,7 @@ data class DomainEventMeta(
     val correlationId: CorrelationId,
     val causationId: DomainEventId? = null
 ) {
-    companion object Factory{
+    companion object Factory {
         fun forRootEvent(
             clock: () -> Instant,
         ): DomainEventMeta = DomainEventMeta(
