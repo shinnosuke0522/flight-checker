@@ -40,8 +40,8 @@ data class FlightDelayed(
     override val aggregateId: FlightIdentity,
     override val sequenceNumber: Long,
     override val meta: DomainEventMeta,
-    val oldInfo: FlightInfo,
-    val newInfo: DelayedFlightInfo
+    val estimatedDepartureTime: Instant?,
+    val estimatedArrivalTime: Instant?
 ) : FlightInfoEvent
 
 /**
@@ -51,9 +51,7 @@ data class FlightCanceled(
     override val id: DomainEventId,
     override val aggregateId: FlightIdentity,
     override val sequenceNumber: Long,
-    override val meta: DomainEventMeta,
-    val oldInfo: FlightInfo,
-    val newInfo: CanceledFlightInfo
+    override val meta: DomainEventMeta
 ) : FlightInfoEvent
 
 /**
@@ -63,9 +61,7 @@ data class FlightArrived(
     override val id: DomainEventId,
     override val aggregateId: FlightIdentity,
     override val sequenceNumber: Long,
-    override val meta: DomainEventMeta,
-    val oldInfo: FlightInfo,
-    val newInfo: ArrivedFlightInfo
+    override val meta: DomainEventMeta
 ) : FlightInfoEvent
 
 /**
@@ -76,8 +72,7 @@ data class FlightStatusUncertain(
     override val aggregateId: FlightIdentity,
     override val sequenceNumber: Long,
     override val meta: DomainEventMeta,
-    val oldInfo: FlightInfo,
-    val newInfo: UncertainFlightInfo
+    val reason: String
 ) : FlightInfoEvent
 
 /**
@@ -87,9 +82,7 @@ data class FlightOnScheduleReturned(
     override val id: DomainEventId,
     override val aggregateId: FlightIdentity,
     override val sequenceNumber: Long,
-    override val meta: DomainEventMeta,
-    val oldInfo: FlightInfo,
-    val newInfo: ScheduledFlightInfo
+    override val meta: DomainEventMeta
 ) : FlightInfoEvent
 
 /**

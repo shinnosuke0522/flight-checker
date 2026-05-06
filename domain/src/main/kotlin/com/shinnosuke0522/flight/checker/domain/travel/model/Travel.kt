@@ -37,48 +37,48 @@ data class Travel private constructor(
     val schedule: Schedule,
     val flights: Flights,
     val status: TravelStatus,
-) : EventSourcingAggregateRoot<TravelId, TravelEvent, Travel> {
+) : EventSourcingAggregateRoot<TravelId, TravelEvent, Travel>() {
 
-    override fun apply(event: TravelEvent): Travel = when (event) {
+    protected override fun apply(event: TravelEvent): Travel = when (event) {
         is TravelPlanned -> from(event)
 
-        is TravelStarted -> Travel(
+        is TravelStarted -> Companion(
             id = id,
             version = AggregateVersion(event.sequenceNumber),
             name = name,
             schedule = schedule,
             flights = flights,
             status = TravelStatus.ONGOING,
-        )
+        ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
 
-        is TravelCompleted -> Travel(
+        is TravelCompleted -> Companion(
             id = id,
             version = AggregateVersion(event.sequenceNumber),
             name = name,
             schedule = schedule,
             flights = flights,
             status = TravelStatus.COMPLETED,
-        )
+        ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
 
-        is TravelCanceled -> Travel(
+        is TravelCanceled -> Companion(
             id = id,
             version = AggregateVersion(event.sequenceNumber),
             name = name,
             schedule = schedule,
             flights = flights,
             status = TravelStatus.CANCELED,
-        )
+        ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
 
-        is TravelScheduleChanged -> Travel(
+        is TravelScheduleChanged -> Companion(
             id = id,
             version = AggregateVersion(event.sequenceNumber),
             name = name,
             schedule = event.newSchedule,
             flights = flights,
             status = status,
-        )
+        ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
 
-        is FlightSegmentAdded -> Travel(
+        is FlightSegmentAdded -> Companion(
             id = id,
             version = AggregateVersion(event.sequenceNumber),
             name = name,
@@ -87,18 +87,18 @@ data class Travel private constructor(
                 FlightSegment(identity = event.flightIdentity)
             ),
             status = status,
-        )
+        ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
 
-        is FlightSegmentRemoved -> Travel(
+        is FlightSegmentRemoved -> Companion(
             id = id,
-            version = version,
+            version = AggregateVersion(event.sequenceNumber),
             name = name,
             schedule = schedule,
             flights = flights.removeFlightSegment(event.flightIdentity).getOrNull()!!,
             status = status
-        )
+        ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
 
-        is FlightSegmentDisrupted -> Travel(
+        is FlightSegmentDisrupted -> Companion(
             id = id,
             version = AggregateVersion(event.sequenceNumber),
             name = name,
@@ -108,9 +108,9 @@ data class Travel private constructor(
                 newStatus = FlightSegmentStatus.DISRUPTED
             ),
             status = status
-        )
+        ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
 
-        is FlightSegmentChangeRequired -> Travel(
+        is FlightSegmentChangeRequired -> Companion(
             id = id,
             version = AggregateVersion(event.sequenceNumber),
             name = name,
@@ -120,7 +120,7 @@ data class Travel private constructor(
                 newStatus = FlightSegmentStatus.CHANGE_REQUIRED
             ),
             status = status
-        )
+        ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
     }
 
     fun start(occurredAt: Instant): Either<TravelBusinessRuleError, Pair<Travel, TravelStarted>> = either {
@@ -214,14 +214,14 @@ data class Travel private constructor(
                 }
             }.map { }
 
-        private fun from(planedEvent: TravelPlanned): Travel = Travel(
+        private fun from(planedEvent: TravelPlanned): Travel = Companion(
             id = planedEvent.aggregateId,
             version = AggregateVersion(planedEvent.sequenceNumber),
             name = planedEvent.name,
             schedule = planedEvent.schedule,
             flights = planedEvent.flights,
             status = TravelStatus.PLANNED,
-        )
+        ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
     }
 }
 

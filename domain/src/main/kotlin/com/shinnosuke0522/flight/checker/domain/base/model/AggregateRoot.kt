@@ -24,11 +24,11 @@ interface AggregateRoot<ID : AggregateId> {
     val version: AggregateVersion
 }
 
-interface EventSourcingAggregateRoot<
+abstract class EventSourcingAggregateRoot<
     ID : AggregateId,
     EVENT : DomainEvent<ID>,
     SELF : EventSourcingAggregateRoot<ID, EVENT, SELF>
     > : AggregateRoot<ID> {
 
-    fun apply(event: EVENT): SELF
+    protected abstract fun apply(event: EVENT): SELF
 }
