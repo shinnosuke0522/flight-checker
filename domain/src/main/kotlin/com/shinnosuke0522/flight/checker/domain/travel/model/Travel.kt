@@ -13,9 +13,11 @@ import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.base.model.EventSourcingAggregateRoot
 import com.shinnosuke0522.flight.checker.domain.travel.error.FlightDateOutsideScheduleError
+import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCanceled
+import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCompleted
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyStartedError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelBusinessRuleError
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelNotOngoingError
+import com.shinnosuke0522.flight.checker.domain.travel.error.TravelNotStartedError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelValidationError
 import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentAdded
 import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentChangeRequired
@@ -48,7 +50,7 @@ data class Travel private constructor(
             name = name,
             schedule = schedule,
             flights = flights,
-            status = TravelStatus.ONGOING,
+            status = TravelStatus.STARTED,
         ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
 
         is TravelCompleted -> Companion(
@@ -124,7 +126,9 @@ data class Travel private constructor(
     }
 
     fun start(occurredAt: Instant): Either<TravelBusinessRuleError, Pair<Travel, TravelStarted>> = either {
-        ensure(status == TravelStatus.PLANNED) { TravelAlreadyStartedError }
+        ensure(status != TravelStatus.STARTED) { TravelAlreadyStartedError(id) }
+        ensure(status != TravelStatus.CANCELED) { TravelAlreadyCanceled(id) }
+        ensure(status != TravelStatus.COMPLETED) { TravelAlreadyCompleted(id) }
         val event = TravelStarted(
             id = DomainEventId.generate(),
             aggregateId = id,
@@ -136,7 +140,9 @@ data class Travel private constructor(
     }
 
     fun complete(meta: DomainEventMeta): Either<TravelBusinessRuleError, Pair<Travel, TravelCompleted>> = either {
-        ensure(status == TravelStatus.ONGOING) { TravelNotOngoingError }
+        ensure(status != TravelStatus.PLANNED) { TravelNotStartedError(id) }
+        ensure(status != TravelStatus.CANCELED) { TravelAlreadyCanceled(id) }
+        ensure(status != TravelStatus.COMPLETED) { TravelAlreadyCompleted(id) }
         val event = TravelCompleted(
             id = DomainEventId.generate(),
             aggregateId = id,
@@ -148,7 +154,8 @@ data class Travel private constructor(
     }
 
     fun cancel(meta: DomainEventMeta): Either<TravelBusinessRuleError, Pair<Travel, TravelCanceled>> = either {
-        ensure(status == TravelStatus.ONGOING) { TravelNotOngoingError }
+        ensure(status != TravelStatus.CANCELED) { TravelAlreadyCanceled(id) }
+        ensure(status != TravelStatus.COMPLETED) { TravelAlreadyCompleted(id) }
         val event = TravelCanceled(
             id = DomainEventId.generate(),
             aggregateId = id,

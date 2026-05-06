@@ -1,5 +1,7 @@
 [versions]
 kotlin = "2.2.21"
+coroutines = "1.10.2"
+kotest = "6.1.11"
 spring-boot = "4.0.5"
 spring-dependency-management = "1.1.7"
 graalvm-native = "0.11.5"
@@ -8,6 +10,9 @@ aws-sdk-v2 = "2.42.20"
 aws-lambda-core = "1.4.0"
 aws-lambda-events = "3.16.1"
 detekt = "1.23.8"
+kover = "0.9.8"
+allure = "4.0.1"
+kotest-allure = "6.1.11"
 
 [libraries]
 # Spring Boot
@@ -15,6 +20,8 @@ spring-boot-starter-restclient = { group = "org.springframework.boot", name = "s
 spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
 spring-boot-starter-webflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux" }
 spring-boot-docker-compose = { group = "org.springframework.boot", name = "spring-boot-docker-compose" }
+jackson-module-kotlin = { group = "tools.jackson.module", name = "jackson-module-kotlin" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 
 # Spring Cloud
 spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }
@@ -23,10 +30,11 @@ spring-cloud-function-context = { group = "org.springframework.cloud", name = "s
 
 # Kotlin
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
+coroutines-bom = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom", version.ref = "coroutines"}
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
-kotlinx-coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor", version = "1.10.1" }
-kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version = "1.10.1" }
+kotlinx-coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test" }
 reactor-kotlin-extensions = { group = "io.projectreactor.kotlin", name = "reactor-kotlin-extensions", version = "1.2.3" }
 
 # DB (DynamoDB)
@@ -41,11 +49,14 @@ aws-lambda-java-events = { group = "com.amazonaws", name = "aws-lambda-java-even
 # Others
 ulid = { module = "com.github.f4b6a3:ulid-creator", version = "5.2.3" }
 arrow-core = { group = "io.arrow-kt", name = "arrow-core", version = "2.2.2.1"}
-kotlin-result = { group = "com.michael-bull.kotlin-result", name = "kotlin-result", version = "2.3.1"}
-jackson-module-kotlin = { group = "tools.jackson.module", name = "jackson-module-kotlin" }
-junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 
-# Test dependencies
+# Kotest
+kotest-bom = { group = "io.kotest", name = "kotest-bom", version.ref = "kotest" }
+kotest-runner = { group = "io.kotest", name = "kotest-runner-junit5" }
+kotest-assertions = { group = "io.kotest", name = "kotest-assertions-core" }
+kotest-property = { group = "io.kotest", name = "kotest-property" }
+
+# Spring Test dependencies
 spring-boot-starter-restclient-test = { group = "org.springframework.boot", name = "spring-boot-starter-restclient-test" }
 spring-boot-starter-security-test = { group = "org.springframework.boot", name = "spring-boot-starter-security-test" }
 spring-boot-starter-webflux-test = { group = "org.springframework.boot", name = "spring-boot-starter-webflux-test" }
@@ -57,6 +68,9 @@ testcontainers-junit-jupiter = { group = "org.testcontainers", name = "testconta
 # Formatter
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
+# Allure
+kotest-extentions-allure = { module = "io.kotest:kotest-extensions-allure", version.ref = "kotest-allure" }
+
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
@@ -64,13 +78,19 @@ spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
 graalvm-native = { id = "org.graalvm.buildtools.native", version.ref = "graalvm-native" }
 detekt-plugin = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+kover-plugin = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+allure = { id = "io.qameta.allure", version.ref = "allure" }
+allure-report = { id = "io.qameta.allure-aggregate-report", version.ref = "allure" }
+allure-adapter = { id = "io.qameta.allure-adapter", version.ref = "allure"}
+gradle-test-fixtures = { id = "java-test-fixtures" }
+gradle-test-suite = { id = "jvm-test-suite" }
+
 
 
 [bundles]
 core = [
     "ulid",
     "arrow-core",
-    "kotlin-result",
     "kotlin-reflect",
     "kotlinx-coroutines-reactor",
     "reactor-kotlin-extensions",
@@ -79,6 +99,9 @@ test-core = [
     "junit-platform-launcher",
     "kotlin-test-junit5",
     "kotlinx-coroutines-test",
+    "kotest-runner",
+    "kotest-assertions",
+    "kotest-property",
 ]
 spring-core = [
     "spring-boot-starter-restclient",

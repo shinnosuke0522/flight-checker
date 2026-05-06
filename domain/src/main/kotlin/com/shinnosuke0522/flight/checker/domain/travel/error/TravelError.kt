@@ -5,6 +5,7 @@ import com.shinnosuke0522.flight.checker.domain.base.error.DomainError
 import com.shinnosuke0522.flight.checker.domain.base.error.Error
 import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 import com.shinnosuke0522.flight.checker.domain.travel.model.Schedule
+import com.shinnosuke0522.flight.checker.domain.travel.model.TravelId
 import java.time.LocalDate
 
 sealed interface TravelError : DomainError
@@ -49,14 +50,25 @@ object AtLeastOneFlightSegmentRequiredError : TravelBusinessRuleError {
 
 sealed interface TravelBusinessRuleError : TravelError, BusinessRuleError
 
-object TravelAlreadyStartedError : TravelBusinessRuleError {
+data class TravelAlreadyStartedError(val id: TravelId) : TravelBusinessRuleError {
     override val cause: Error.Cause? = null
-    override val message: String = "Travel has already started"
+    override val message: String = "Travel $id has already been started"
 }
 
-object TravelNotOngoingError : TravelBusinessRuleError {
+data class TravelAlreadyCanceled(val id: TravelId): TravelBusinessRuleError {
     override val cause: Error.Cause? = null
-    override val message: String = "Travel is not in ongoing status"
+    override val message: String = "Travel $id has already been canceled"
 }
+
+data class TravelAlreadyCompleted(val id: TravelId): TravelBusinessRuleError {
+    override val cause: Error.Cause? = null
+    override val message: String = "Travel $id has already been completed"
+}
+
+data class TravelNotStartedError(val id: TravelId) : TravelBusinessRuleError {
+    override val cause: Error.Cause? = null
+    override val message: String = "Travel has not been started"
+}
+
 
 
