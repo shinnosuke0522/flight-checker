@@ -12,11 +12,14 @@ import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.base.model.EventSourcingAggregateRoot
+import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.travel.error.FlightDateOutsideScheduleError
+import com.shinnosuke0522.flight.checker.domain.travel.error.InvalidFlightError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCanceled
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCompleted
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyStartedError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelBusinessRuleError
+import com.shinnosuke0522.flight.checker.domain.travel.error.TravelError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelNotStartedError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelValidationError
 import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentAdded
@@ -39,9 +42,9 @@ data class Travel private constructor(
     val schedule: Schedule,
     val flights: Flights,
     val status: TravelStatus,
-) : EventSourcingAggregateRoot<TravelId, TravelEvent, Travel>() {
+) : EventSourcingAggregateRoot<TravelId, TravelEvent, Travel> {
 
-    protected override fun apply(event: TravelEvent): Travel = when (event) {
+    override fun apply(event: TravelEvent): Travel = when (event) {
         is TravelPlanned -> from(event)
 
         is TravelStarted -> Companion(
@@ -125,45 +128,9 @@ data class Travel private constructor(
         ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
     }
 
-    fun start(occurredAt: Instant): Either<TravelBusinessRuleError, Pair<Travel, TravelStarted>> = either {
-        ensure(status != TravelStatus.STARTED) { TravelAlreadyStartedError(id) }
+    fun ensureUpdatable(): Either<TravelBusinessRuleError, Unit> = either {
         ensure(status != TravelStatus.CANCELED) { TravelAlreadyCanceled(id) }
         ensure(status != TravelStatus.COMPLETED) { TravelAlreadyCompleted(id) }
-        val event = TravelStarted(
-            id = DomainEventId.generate(),
-            aggregateId = id,
-            sequenceNumber = version.nextVersion().value,
-            meta = DomainEventMeta.forRootEvent { occurredAt }
-        )
-        val newState = apply(event)
-        Pair(newState, event)
-    }
-
-    fun complete(meta: DomainEventMeta): Either<TravelBusinessRuleError, Pair<Travel, TravelCompleted>> = either {
-        ensure(status != TravelStatus.PLANNED) { TravelNotStartedError(id) }
-        ensure(status != TravelStatus.CANCELED) { TravelAlreadyCanceled(id) }
-        ensure(status != TravelStatus.COMPLETED) { TravelAlreadyCompleted(id) }
-        val event = TravelCompleted(
-            id = DomainEventId.generate(),
-            aggregateId = id,
-            sequenceNumber = version.nextVersion().value,
-            meta = meta
-        )
-        val newState = apply(event)
-        Pair(newState, event)
-    }
-
-    fun cancel(meta: DomainEventMeta): Either<TravelBusinessRuleError, Pair<Travel, TravelCanceled>> = either {
-        ensure(status != TravelStatus.CANCELED) { TravelAlreadyCanceled(id) }
-        ensure(status != TravelStatus.COMPLETED) { TravelAlreadyCompleted(id) }
-        val event = TravelCanceled(
-            id = DomainEventId.generate(),
-            aggregateId = id,
-            sequenceNumber = version.nextVersion().value,
-            meta = meta
-        )
-        val newState = apply(event)
-        Pair(newState, event)
     }
 
     companion object {
@@ -211,7 +178,7 @@ data class Travel private constructor(
             }
         }
 
-        private fun verifyFlightsWithinSchedule(
+        internal fun verifyFlightsWithinSchedule(
             flights: Flights,
             schedule: Schedule
         ): Either<NonEmptyList<FlightDateOutsideScheduleError>, Unit> =
