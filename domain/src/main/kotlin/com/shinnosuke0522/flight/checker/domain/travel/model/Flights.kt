@@ -16,21 +16,9 @@ import java.time.LocalDate
 data class Flights(
     val flightSegments: NonEmptyList<FlightSegment>
 ) {
-    companion object {
-        fun create(
-            rawFlightSegments: NonEmptyList<Pair<String, LocalDate>>
-        ): Either<NonEmptyList<ValidationError>, Flights> =
-            rawFlightSegments.mapOrAccumulate { (rawFlightCode, departureDate) ->
-                FlightSegment.create(
-                    rawFlightCode = rawFlightCode,
-                    departureDate = departureDate
-                ).bind()
-            }.map { Flights(it) }
-    }
+    internal fun addFlightSegment(newSegment: FlightSegment): Flights = copy(flightSegments = flightSegments + newSegment)
 
-    fun addFlightSegment(newSegment: FlightSegment): Flights = copy(flightSegments = flightSegments + newSegment)
-
-    fun removeFlightSegment(identity: FlightIdentity): Either<CollectionValidationError, Flights> = either {
+    internal fun removeFlightSegment(identity: FlightIdentity): Either<CollectionValidationError, Flights> = either {
         ensure(flightSegments.any { it.identity == identity }) {
             ElementNotFoundError(collectionName = "flightSegments", target = identity)
         }
@@ -42,7 +30,7 @@ data class Flights(
         copy(flightSegments = nonEmptyUpdatedList)
     }
 
-    fun updateSegmentStatus(identity: FlightIdentity, newStatus: FlightSegmentStatus): Flights =
+    internal fun updateSegmentStatus(identity: FlightIdentity, newStatus: FlightSegmentStatus): Flights =
         copy(
             flightSegments = flightSegments.map { segment ->
                 if (segment.identity == identity) segment.updateStatus(newStatus) else segment

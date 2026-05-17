@@ -28,14 +28,14 @@ import java.time.Instant
  *
  * 主にフライトの監視・追跡の要否を判断し、ユーザーにトラブルを通知するための情報を保持する。
  */
-sealed class FlightInfo : EventSourcingAggregateRoot<FlightIdentity, FlightInfoEvent, FlightInfo>() {
+sealed class FlightInfo : EventSourcingAggregateRoot<FlightIdentity, FlightInfoEvent, FlightInfo> {
     abstract val departurePoint: FlightPoint
     abstract val arrivalPoint: FlightPoint
     abstract val scheduledDepartureTime: Instant
     abstract val scheduledArrivalTime: Instant
     abstract val monitoringStatus: MonitoringStatus
 
-    protected override fun apply(event: FlightInfoEvent): FlightInfo = when (event) {
+    override fun apply(event: FlightInfoEvent): FlightInfo = when (event) {
         is FlightInfoRegistered -> throw IllegalStateException("FlightInfoRegistered must be first event")
 
         is FlightDelayed -> DelayedFlightInfo(
@@ -50,7 +50,7 @@ sealed class FlightInfo : EventSourcingAggregateRoot<FlightIdentity, FlightInfoE
         )
 
         is FlightCanceled -> CanceledFlightInfo(
-            flightIdentity = id,
+            id = id,
             version = AggregateVersion(event.sequenceNumber),
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
@@ -68,7 +68,7 @@ sealed class FlightInfo : EventSourcingAggregateRoot<FlightIdentity, FlightInfoE
         )
 
         is FlightStatusUncertain -> UncertainFlightInfo(
-            flightIdentity = id,
+            id = id,
             version = AggregateVersion(event.sequenceNumber),
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
@@ -78,7 +78,7 @@ sealed class FlightInfo : EventSourcingAggregateRoot<FlightIdentity, FlightInfoE
         )
 
         is FlightOnScheduleReturned -> ScheduledFlightInfo(
-            flightIdentity = id,
+            id = id,
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
             scheduledDepartureTime = scheduledDepartureTime,
@@ -91,10 +91,12 @@ sealed class FlightInfo : EventSourcingAggregateRoot<FlightIdentity, FlightInfoE
             MonitoringStatus.ACTIVATED,
             AggregateVersion(event.sequenceNumber)
         )
+
         is FlightMonitoringCompleted -> updateMonitoringStatus(
             MonitoringStatus.COMPLETED,
             AggregateVersion(event.sequenceNumber)
         )
+
         is FlightMonitoringFailed -> updateMonitoringStatus(
             MonitoringStatus.FAILED,
             AggregateVersion(event.sequenceNumber)
@@ -118,7 +120,7 @@ sealed class FlightInfo : EventSourcingAggregateRoot<FlightIdentity, FlightInfoE
         }
 
         private fun from(event: FlightInfoRegistered): FlightInfo = ScheduledFlightInfo(
-            flightIdentity = event.aggregateId,
+            id = event.aggregateId,
             departurePoint = event.departurePoint,
             arrivalPoint = event.arrivalPoint,
             scheduledDepartureTime = event.scheduledDepartureTime,
@@ -141,25 +143,25 @@ data class ScheduledFlightInfo private constructor(
     override val scheduledArrivalTime: Instant,
     override val monitoringStatus: MonitoringStatus = MonitoringStatus.IDLE,
 ) : FlightInfo() {
-    protected override fun updateMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo =
+    override fun updateMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo =
         Companion(
-            flightIdentity = id,
+            id = id,
+            version = version,
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
             scheduledDepartureTime = scheduledDepartureTime,
             scheduledArrivalTime = scheduledArrivalTime,
-            version = version,
             monitoringStatus = status
         ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
 
     companion object {
         operator fun invoke(
-            flightIdentity: FlightIdentity,
+            id: FlightIdentity,
+            version: AggregateVersion,
             departurePoint: FlightPoint,
             arrivalPoint: FlightPoint,
             scheduledDepartureTime: Instant,
             scheduledArrivalTime: Instant,
-            version: AggregateVersion,
             monitoringStatus: MonitoringStatus = MonitoringStatus.IDLE,
         ): Either<NonEmptyList<FlightInfoValidationError>, ScheduledFlightInfo> = either {
             ensure(scheduledDepartureTime != scheduledArrivalTime) {
@@ -169,7 +171,7 @@ data class ScheduledFlightInfo private constructor(
                 nonEmptyListOf(ScheduledArrivalTimeBeforeDepartureTimeError)
             }
             ScheduledFlightInfo(
-                id = flightIdentity,
+                id = id,
                 departurePoint = departurePoint,
                 arrivalPoint = arrivalPoint,
                 scheduledDepartureTime = scheduledDepartureTime,
@@ -196,7 +198,7 @@ data class DelayedFlightInfo private constructor(
     val estimatedArrivalTime: Instant?,
     override val monitoringStatus: MonitoringStatus = MonitoringStatus.ACTIVATED,
 ) : FlightInfo() {
-    protected override fun updateMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo =
+    override fun updateMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo =
         Companion(
             flightIdentity = id,
             version = version,
@@ -249,7 +251,7 @@ data class ArrivedFlightInfo private constructor(
     override val scheduledArrivalTime: Instant,
     override val monitoringStatus: MonitoringStatus = MonitoringStatus.COMPLETED,
 ) : FlightInfo() {
-    protected override fun updateMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo =
+    override fun updateMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo =
         Companion(
             flightIdentity = id,
             version = version,
@@ -296,9 +298,9 @@ data class CanceledFlightInfo private constructor(
     override val scheduledArrivalTime: Instant,
     override val monitoringStatus: MonitoringStatus = MonitoringStatus.COMPLETED,
 ) : FlightInfo() {
-    protected override fun updateMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo =
+    override fun updateMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo =
         Companion(
-            flightIdentity = id,
+            id = id,
             version = version,
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
@@ -309,7 +311,7 @@ data class CanceledFlightInfo private constructor(
 
     companion object {
         operator fun invoke(
-            flightIdentity: FlightIdentity,
+            id: FlightIdentity,
             version: AggregateVersion,
             departurePoint: FlightPoint,
             arrivalPoint: FlightPoint,
@@ -317,7 +319,7 @@ data class CanceledFlightInfo private constructor(
             scheduledArrivalTime: Instant,
             monitoringStatus: MonitoringStatus = MonitoringStatus.COMPLETED,
         ) = CanceledFlightInfo(
-            id = flightIdentity,
+            id = id,
             version = version,
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
@@ -344,9 +346,9 @@ data class UncertainFlightInfo private constructor(
     val reason: String,
     override val monitoringStatus: MonitoringStatus = MonitoringStatus.ACTIVATED,
 ) : FlightInfo() {
-    protected override fun updateMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo =
+    override fun updateMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo =
         Companion(
-            flightIdentity = id,
+            id = id,
             version = version,
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
@@ -358,7 +360,7 @@ data class UncertainFlightInfo private constructor(
 
     companion object {
         operator fun invoke(
-            flightIdentity: FlightIdentity,
+            id: FlightIdentity,
             version: AggregateVersion,
             departurePoint: FlightPoint,
             arrivalPoint: FlightPoint,
@@ -367,7 +369,7 @@ data class UncertainFlightInfo private constructor(
             reason: String,
             monitoringStatus: MonitoringStatus = MonitoringStatus.ACTIVATED,
         ) = UncertainFlightInfo(
-            id = flightIdentity,
+            id = id,
             version = version,
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
