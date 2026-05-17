@@ -1,9 +1,14 @@
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
+
 plugins {
 	alias(libs.plugins.detekt.plugin) apply false
 	alias(libs.plugins.kotlin.jvm) apply false
 	alias(libs.plugins.kotlin.spring) apply false
 	alias(libs.plugins.spring.boot) apply false
 	alias(libs.plugins.spring.dependency.management) apply false
+	alias(libs.plugins.kover.plugin)
+	alias(libs.plugins.allure.report)
+	alias(libs.plugins.allure.adapter) apply false
 }
 
 allprojects {
@@ -25,13 +30,15 @@ subprojects {
 	//==================================
 
 	// Plugin
-	apply(plugin = libs.plugins.detekt.plugin.get().pluginId)
-	apply(plugin = libs.plugins.kotlin.jvm.get().pluginId)
-	apply(plugin = "java-test-fixtures")
+	pluginManager.apply(libs.plugins.detekt.plugin.get().pluginId)
+	pluginManager.apply(libs.plugins.kotlin.jvm.get().pluginId)
+	pluginManager.apply(libs.plugins.kover.plugin.get().pluginId)
+	pluginManager.apply(libs.plugins.allure.adapter.get().pluginId)
+	pluginManager.apply(libs.plugins.gradle.test.fixtures.get().pluginId)
 
-	// Detekt Formatting
 	dependencies {
 		add("detektPlugins", libs.detekt.formatting)
+		add("testImplementation", libs.kotest.extentions.allure)
 	}
 
 	configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
@@ -58,11 +65,11 @@ subprojects {
 	// App & Infra
 	//==================================
 	if (path.startsWith(":app") || path.startsWith(":infra")) {
-		apply(plugin = libs.plugins.kotlin.spring.get().pluginId)
-		apply(plugin = libs.plugins.spring.boot.get().pluginId)
-		apply(plugin = libs.plugins.spring.dependency.management.get().pluginId)
+		pluginManager.apply(libs.plugins.kotlin.spring.get().pluginId)
+		pluginManager.apply(libs.plugins.spring.boot.get().pluginId)
+		pluginManager.apply(libs.plugins.spring.dependency.management.get().pluginId)
 
-		apply(plugin = "jvm-test-suite")
+		pluginManager.apply(libs.plugins.gradle.test.suite.get().pluginId)
 
 		@Suppress("UnstableApiUsage")
 		configure<TestingExtension> {
@@ -73,4 +80,36 @@ subprojects {
 			}
 		}
 	}
+}
+
+// kover
+dependencies {
+	kover(project(":domain"))
+}
+
+kover {
+	reports {
+		total {
+			filters {
+				includes {
+					classes("com.shinnosuke0522.flight.checker.*")
+				}
+			}
+			html {
+				onCheck = true
+			}
+			verify {
+				rule {
+					bound {
+						coverageUnits.set(CoverageUnit.BRANCH)
+						minValue.set(50)
+					}
+				}
+			}
+		}
+	}
+}
+
+allure {
+	version.set(libs.versions.allure.get())
 }
