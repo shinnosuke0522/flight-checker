@@ -11,12 +11,6 @@ import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCancel
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCompleted
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyStartedError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelNotStartedError
-import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentAdded
-import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentChangeRequired
-import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentDisrupted
-import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentRemoved
-import com.shinnosuke0522.flight.checker.domain.travel.event.TravelCanceled
-import com.shinnosuke0522.flight.checker.domain.travel.event.TravelCompleted
 import com.shinnosuke0522.flight.checker.domain.travel.event.TravelPlanned
 import com.shinnosuke0522.flight.checker.domain.travel.event.TravelStarted
 import com.shinnosuke0522.flight.checker.domain.travel.service.TravelFlightService
@@ -157,7 +151,9 @@ class TravelTest : DescribeSpec({
 
                 it("Then: 成功し、当該フライトの状態が DISRUPTED に更新されること") {
                     val (updatedTravel, event) = result.shouldBeRight()
-                    updatedTravel.flights.flightSegments.find { it.identity == flightIdentity }?.status shouldBe FlightSegmentStatus.DISRUPTED
+                    updatedTravel.flights.flightSegments.find {
+                        it.identity == flightIdentity
+                    }?.status shouldBe FlightSegmentStatus.DISRUPTED
                     event.reason shouldBe reason
                 }
             }
@@ -168,7 +164,9 @@ class TravelTest : DescribeSpec({
 
                 it("Then: 成功し、当該フライトの状態が CHANGE_REQUIRED に更新されること") {
                     val (updatedTravel, _) = result.shouldBeRight()
-                    updatedTravel.flights.flightSegments.find { it.identity == flightIdentity }?.status shouldBe FlightSegmentStatus.CHANGE_REQUIRED
+                    updatedTravel.flights.flightSegments.find {
+                        it.identity == flightIdentity
+                    }?.status shouldBe FlightSegmentStatus.CHANGE_REQUIRED
                 }
             }
         }

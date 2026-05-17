@@ -4,8 +4,8 @@ import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.raise.either
 import arrow.core.raise.zipOrAccumulate
+import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
 import com.shinnosuke0522.flight.checker.domain.base.error.UnKnownValueError
-import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 import com.shinnosuke0522.flight.checker.domain.base.error.toCause
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.AirportCode
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.CountryCode
@@ -26,7 +26,7 @@ data class FlightPoint(
             countryCode: String,
             airportCode: String,
             zoneId: String
-        ): Either<NonEmptyList<ValidationError>, FlightPoint> = either {
+        ): Either<NonEmptyList<InvariantError>, FlightPoint> = either {
             zipOrAccumulate(
                 { CountryCode(value = countryCode).bind() },
                 { AirportCode(value = airportCode).bind() },

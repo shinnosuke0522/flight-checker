@@ -2,7 +2,7 @@ package com.shinnosuke0522.flight.checker.domain.shared.primitive
 
 import arrow.core.Either
 import arrow.core.raise.either
-import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
 import java.time.LocalDate
 
@@ -17,10 +17,9 @@ data class FlightIdentity private constructor(
         fun create(
             rawFlightCode: String,
             departureDate: LocalDate,
-        ): Either<ValidationError, FlightIdentity> = either {
+        ): Either<InvariantError, FlightIdentity> = either {
             val flightCode = FlightCode(value = rawFlightCode).bind()
             FlightIdentity(flightCode, departureDate)
         }
     }
-
 }

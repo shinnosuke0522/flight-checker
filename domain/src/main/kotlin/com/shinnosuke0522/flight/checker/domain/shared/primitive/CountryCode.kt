@@ -5,7 +5,7 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.shinnosuke0522.flight.checker.domain.base.error.CannotBeBlankError
 import com.shinnosuke0522.flight.checker.domain.base.error.InvalidFormatError
-import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
 
 /**
  * Represents an ISO 3166-1 alpha-2 country code.
@@ -17,7 +17,7 @@ value class CountryCode private constructor(val value: String) {
 
         operator fun invoke(
             value: String,
-        ): Either<ValidationError, CountryCode> = either {
+        ): Either<InvariantError, CountryCode> = either {
             ensure(value.isNotBlank()) {
                 CannotBeBlankError(valueName = this.javaClass.simpleName)
             }

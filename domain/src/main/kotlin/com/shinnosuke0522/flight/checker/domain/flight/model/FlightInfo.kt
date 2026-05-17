@@ -7,7 +7,7 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.base.model.EventSourcingAggregateRoot
-import com.shinnosuke0522.flight.checker.domain.flight.error.FlightInfoValidationError
+import com.shinnosuke0522.flight.checker.domain.flight.error.FlightInfoInvariantError
 import com.shinnosuke0522.flight.checker.domain.flight.error.SameFlightPointError
 import com.shinnosuke0522.flight.checker.domain.flight.error.ScheduledArrivalTimeBeforeDepartureTimeError
 import com.shinnosuke0522.flight.checker.domain.flight.event.FlightArrived
@@ -163,7 +163,7 @@ data class ScheduledFlightInfo private constructor(
             scheduledDepartureTime: Instant,
             scheduledArrivalTime: Instant,
             monitoringStatus: MonitoringStatus = MonitoringStatus.IDLE,
-        ): Either<NonEmptyList<FlightInfoValidationError>, ScheduledFlightInfo> = either {
+        ): Either<NonEmptyList<FlightInfoInvariantError>, ScheduledFlightInfo> = either {
             ensure(scheduledDepartureTime != scheduledArrivalTime) {
                 nonEmptyListOf(SameFlightPointError)
             }

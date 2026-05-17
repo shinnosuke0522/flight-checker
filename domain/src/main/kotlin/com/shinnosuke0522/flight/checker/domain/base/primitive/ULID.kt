@@ -5,7 +5,7 @@ import arrow.core.raise.either
 import com.github.f4b6a3.ulid.Ulid
 import com.github.f4b6a3.ulid.UlidCreator
 import com.shinnosuke0522.flight.checker.domain.base.error.InvalidValueError
-import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
 import com.shinnosuke0522.flight.checker.domain.base.error.toCause
 import java.time.Instant
 
@@ -28,7 +28,7 @@ value class ULID private constructor(private val value: Ulid) : Comparable<ULID>
                     throw IllegalArgumentException("Invalid ULID value: $value")
                 }
 
-        operator fun invoke(value: String): Either<ValidationError, ULID> = either {
+        operator fun invoke(value: String): Either<InvariantError, ULID> = either {
             try {
                 Ulid.from(value).let { ULID(it) }
             } catch (e: IllegalArgumentException) {

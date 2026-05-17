@@ -13,8 +13,9 @@
 *   **意図せぬ変更の防止**: Kotlin の `copy` メソッドによる不整合を避けるため、必要に応じて `@ConsistentCopyVisibility` などの制限を検討する。
 
 #### 1.3 不変条件 (Invariants) の担保の方針
-*   **生成時のバリデーション**: ドメインオブジェクト（特に Value Object）は、生成時点で不正な状態を排除する。不正な状態のオブジェクトはシステム内に存在させてはならない。
-*   **Smart Constructor**: `Companion.invoke` や専用の `create` メソッドを隠蔽されたコンストラクタ（`private constructor`）と組み合わせて使用し、バリデーションを経由しないインスタンス化を防ぐ。
+*   **生成時の不変条件チェック**: ドメインオブジェクト（特に Value Object）は、生成時点で不正な状態を排除する。不変条件を満たさない状態のオブジェクトはシステム内に存在させてはならない。
+*   **Smart Constructor**: `Companion.invoke` や専用の `create` メソッドを隠蔽されたコンストラクタ（`private constructor`）と組み合わせて使用し、不変条件チェックを経由しないインスタンス化を防ぐ。
+
 
 #### 1.4 ExceptionではなくErrorベースのエラーハンドリング
 *   **例外スローの禁止**: ドメインルールの違反や入力の不正に対しては、絶対に `throw Exception` を行わない。
@@ -63,7 +64,7 @@
 
 *   **階層構造**: ドメインごとに `sealed interface` を用いてエラーの階層を構築する（例: `TravelError`, `FlightInfoError`）。
 *   **バリデーション vs ビジネスルール**:
-    *   **バリデーションエラー**: 複数の入力項目を同時にチェックし、エラーをすべて収集すべき場合は `Either<NonEmptyList<ValidationError>, Success>` を返す (`mapOrAccumulate` を利用)。
+    *   **不変条件違反**: 複数の入力項目を同時にチェックし、不変条件を満たさないエラーをすべて収集すべき場合は `Either<NonEmptyList<InvariantError>, Success>` を返す (`mapOrAccumulate` を利用)。
     *   **ビジネスルールエラー**: ドメインの前提条件を満たさず、即座に処理を中断すべきエラー。単一のエラーを返す。
 
 ---

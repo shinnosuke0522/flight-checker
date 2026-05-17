@@ -9,11 +9,7 @@ import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.travel.error.FlightDateOutsideScheduleError
 import com.shinnosuke0522.flight.checker.domain.travel.error.InvalidFlightError
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCanceled
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCompleted
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyStartedError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelError
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelNotStartedError
 import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentAdded
 import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentChangeRequired
 import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentDisrupted
@@ -21,7 +17,6 @@ import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentRemove
 import com.shinnosuke0522.flight.checker.domain.travel.event.TravelScheduleChanged
 import com.shinnosuke0522.flight.checker.domain.travel.model.Schedule
 import com.shinnosuke0522.flight.checker.domain.travel.model.Travel
-import com.shinnosuke0522.flight.checker.domain.travel.model.TravelStatus
 import java.time.Instant
 
 object TravelFlightService {

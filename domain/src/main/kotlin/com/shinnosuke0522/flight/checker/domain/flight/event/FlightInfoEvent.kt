@@ -3,13 +3,7 @@ package com.shinnosuke0522.flight.checker.domain.flight.event
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEvent
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.flight.model.ArrivedFlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.model.CanceledFlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.model.DelayedFlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
-import com.shinnosuke0522.flight.checker.domain.flight.model.ScheduledFlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.model.UncertainFlightInfo
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 import java.time.Instant
 

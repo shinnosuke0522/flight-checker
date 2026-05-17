@@ -1,7 +1,7 @@
 package com.shinnosuke0522.flight.checker.domain.travel.model
 
 import arrow.core.Either
-import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
 import com.shinnosuke0522.flight.checker.domain.base.primitive.ULID
 
@@ -14,7 +14,7 @@ value class TravelId private constructor(val value: ULID) : AggregateId, Compara
     companion object {
         fun generate() = TravelId(ULID.generate())
 
-        operator fun invoke(value: String): Either<ValidationError, TravelId> =
+        operator fun invoke(value: String): Either<InvariantError, TravelId> =
             ULID(value).map { TravelId(it) }
     }
 }

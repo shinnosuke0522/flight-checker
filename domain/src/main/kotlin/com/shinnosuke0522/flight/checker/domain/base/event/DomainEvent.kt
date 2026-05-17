@@ -1,7 +1,7 @@
 package com.shinnosuke0522.flight.checker.domain.base.event
 
 import arrow.core.Either
-import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
 import com.shinnosuke0522.flight.checker.domain.base.primitive.ULID
 import java.time.Instant
@@ -20,7 +20,7 @@ value class DomainEventId private constructor(val value: ULID) : Comparable<Doma
     companion object {
         fun generate(): DomainEventId = DomainEventId(ULID.generate())
 
-        operator fun invoke(value: String): Either<ValidationError, DomainEventId> =
+        operator fun invoke(value: String): Either<InvariantError, DomainEventId> =
             ULID(value).map { DomainEventId(it) }
     }
 }
@@ -57,7 +57,7 @@ value class CorrelationId(val value: ULID) : Comparable<CorrelationId> {
     companion object {
         fun generate(): CorrelationId = CorrelationId(ULID.generate())
 
-        operator fun invoke(value: String): Either<ValidationError, CorrelationId> =
+        operator fun invoke(value: String): Either<InvariantError, CorrelationId> =
             ULID(value).map { CorrelationId(it) }
     }
 }

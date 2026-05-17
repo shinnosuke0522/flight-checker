@@ -15,9 +15,9 @@ package com.shinnosuke0522.flight.checker.domain.base.error
 interface DomainError : Error
 
 /**
- * 入力値または値オブジェクト単体の不正を表すエラー。
+ * 不変条件違反を表すエラーの基底インターフェース。
  *
- * 「その値自体がドメイン上成立していない」ことを意味する。
+ * 「その値または組み合わせがドメイン上成立していない」ことを意味する。
  *
  * ## 判断基準
  * - 外部状態（DB・他エンティティ・現在時刻）に依存しないか？ → YES
@@ -26,35 +26,36 @@ interface DomainError : Error
  * - メールアドレスの形式が不正
  * - 文字数制限違反
  * - 数値が範囲外
+ * - 開始日が終了日より後になっている
  *
  * ## 境界
- * - 複数の値の関係性に依存する場合は [InvariantViolationError] を使用する
+ * - 複数の値の関係性に依存する場合は [CompositeInvariantError] を使用する
  * - 外部状態に依存する場合は [BusinessRuleError] を使用する
  */
-interface ValidationError : DomainError
+interface InvariantError : DomainError
 
 /**
- * 単一の値に対するバリデーションエラー。
+ * プリミティブな値に対する不変条件違反エラー。
  *
  * @property valueName 検証対象の名前（例: "email", "age"）
  * @property value 実際に入力された値（nullの場合は未入力などを意味する）
  */
-interface ValueValidationError : ValidationError {
+interface PrimitiveInvariantError : InvariantError {
     val valueName: String
     val value: String?
 }
 
 /**
- * コレクションに関するバリデーションエラー。
+ * コレクションに関する不変条件違反エラー。
  */
-interface CollectionValidationError : ValidationError {
+interface CollectionInvariantError : InvariantError {
     val collectionName: String
 }
 
 /**
- * 複数の値の組み合わせや関係性に対するバリデーションエラー。
+ * 複数の値の組み合わせや関係性に対する不変条件違反エラー。
  *
- * 「各値単体は正しいが、組み合わせとして不正である」ことを表す。
+ * 「各値単体は正しいが、組み合わせとして不変条件を満たしていない」ことを表す。
  *
  * ## 判断基準
  * - 単一の値ではなく、複数の値を同時に見る必要があるか？ → YES
@@ -64,7 +65,7 @@ interface CollectionValidationError : ValidationError {
  * - 開始日が終了日より後になっている
  * - パスワードと確認用パスワードが一致しない
  */
-interface InvariantViolationError : ValidationError
+interface CompositeInvariantError : InvariantError
 
 /**
  * ドメイン上の業務ルール違反を表すエラー。
@@ -81,7 +82,7 @@ interface InvariantViolationError : ValidationError
  * - 不正なステータス遷移を行った
  *
  * ## 境界
- * - 値単体の不正は [ValidationError]
- * - 値の組み合わせのみで判定できる場合は [InvariantViolationError]
+ * - 値単体の不正は [InvariantError]
+ * - 値の組み合わせのみで判定できる場合は [CompositeInvariantError]
  */
 interface BusinessRuleError : DomainError

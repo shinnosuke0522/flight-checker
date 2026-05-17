@@ -4,8 +4,8 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.shinnosuke0522.flight.checker.domain.base.error.CannotBeBlankError
+import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
 import com.shinnosuke0522.flight.checker.domain.base.error.TooLongError
-import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 
 @JvmInline
 value class TravelName private constructor(val value: String) {
@@ -14,7 +14,7 @@ value class TravelName private constructor(val value: String) {
 
         operator fun invoke(
             value: String,
-        ): Either<ValidationError, TravelName> = either {
+        ): Either<InvariantError, TravelName> = either {
             ensure(value.isNotBlank()) {
                 CannotBeBlankError(this.javaClass.simpleName)
             }

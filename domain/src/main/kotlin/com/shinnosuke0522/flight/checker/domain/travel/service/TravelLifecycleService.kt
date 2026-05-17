@@ -5,8 +5,6 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCanceled
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCompleted
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyStartedError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelBusinessRuleError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelNotStartedError

@@ -2,23 +2,22 @@ package com.shinnosuke0522.flight.checker.domain.travel.model
 
 import arrow.core.Either
 import arrow.core.NonEmptyList
-import arrow.core.mapOrAccumulate
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.toNonEmptyListOrNull
 import com.shinnosuke0522.flight.checker.domain.base.error.CannotBeEmptyCollectionError
-import com.shinnosuke0522.flight.checker.domain.base.error.CollectionValidationError
+import com.shinnosuke0522.flight.checker.domain.base.error.CollectionInvariantError
 import com.shinnosuke0522.flight.checker.domain.base.error.ElementNotFoundError
-import com.shinnosuke0522.flight.checker.domain.base.error.ValidationError
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
-import java.time.LocalDate
 
 data class Flights(
     val flightSegments: NonEmptyList<FlightSegment>
 ) {
-    internal fun addFlightSegment(newSegment: FlightSegment): Flights = copy(flightSegments = flightSegments + newSegment)
+    internal fun addFlightSegment(newSegment: FlightSegment): Flights = copy(
+        flightSegments = flightSegments + newSegment
+    )
 
-    internal fun removeFlightSegment(identity: FlightIdentity): Either<CollectionValidationError, Flights> = either {
+    internal fun removeFlightSegment(identity: FlightIdentity): Either<CollectionInvariantError, Flights> = either {
         ensure(flightSegments.any { it.identity == identity }) {
             ElementNotFoundError(collectionName = "flightSegments", target = identity)
         }
@@ -36,5 +35,4 @@ data class Flights(
                 if (segment.identity == identity) segment.updateStatus(newStatus) else segment
             }
         )
-
 }

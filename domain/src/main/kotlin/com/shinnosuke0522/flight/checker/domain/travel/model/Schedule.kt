@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.shinnosuke0522.flight.checker.domain.travel.error.ReturnDateBeforeDepartureDateError
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelValidationError
+import com.shinnosuke0522.flight.checker.domain.travel.error.TravelInvariantError
 import java.time.LocalDate
 
 sealed interface Schedule {
@@ -32,7 +32,7 @@ data class RoundTripSchedule private constructor(
         operator fun invoke(
             departureDate: LocalDate,
             returnDate: LocalDate
-        ): Either<TravelValidationError, RoundTripSchedule> = either {
+        ): Either<TravelInvariantError, RoundTripSchedule> = either {
             ensure(departureDate.isBefore(returnDate)) {
                 ReturnDateBeforeDepartureDateError
             }

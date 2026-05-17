@@ -7,21 +7,15 @@ import arrow.core.mapOrAccumulate
 import arrow.core.raise.context.bind
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import arrow.core.toNonEmptyListOrNull
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.base.model.EventSourcingAggregateRoot
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.travel.error.FlightDateOutsideScheduleError
-import com.shinnosuke0522.flight.checker.domain.travel.error.InvalidFlightError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCanceled
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyCompleted
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelAlreadyStartedError
 import com.shinnosuke0522.flight.checker.domain.travel.error.TravelBusinessRuleError
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelError
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelNotStartedError
-import com.shinnosuke0522.flight.checker.domain.travel.error.TravelValidationError
+import com.shinnosuke0522.flight.checker.domain.travel.error.TravelInvariantError
 import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentAdded
 import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentChangeRequired
 import com.shinnosuke0522.flight.checker.domain.travel.event.FlightSegmentDisrupted
@@ -141,7 +135,7 @@ data class Travel private constructor(
             schedule: Schedule,
             flights: Flights,
             status: TravelStatus,
-        ): Either<NonEmptyList<TravelValidationError>, Travel> = either {
+        ): Either<NonEmptyList<TravelInvariantError>, Travel> = either {
             verifyFlightsWithinSchedule(flights, schedule).bind()
             Travel(id, version, name, schedule, flights, status)
         }
@@ -151,7 +145,7 @@ data class Travel private constructor(
             schedule: Schedule,
             flights: Flights,
             createdAt: Instant
-        ): Either<NonEmptyList<TravelValidationError>, Pair<Travel, TravelPlanned>> = either {
+        ): Either<NonEmptyList<TravelInvariantError>, Pair<Travel, TravelPlanned>> = either {
             val event = TravelPlanned(
                 id = DomainEventId.generate(),
                 aggregateId = TravelId.generate(),
@@ -198,4 +192,3 @@ data class Travel private constructor(
         ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
     }
 }
-
