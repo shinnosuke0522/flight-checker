@@ -21,13 +21,6 @@ value class ULID private constructor(private val value: Ulid) : Comparable<ULID>
     companion object {
         fun generate(): ULID = ULID(UlidCreator.getUlid())
 
-        fun of(value: String) =
-            runCatching { Ulid.from(value) }
-                .map { ULID(it) }
-                .recoverCatching {
-                    throw IllegalArgumentException("Invalid ULID value: $value")
-                }
-
         operator fun invoke(value: String): Either<InvariantError, ULID> = either {
             try {
                 Ulid.from(value).let { ULID(it) }
