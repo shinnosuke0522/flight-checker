@@ -36,7 +36,7 @@ sealed class FlightInfo : EventSourcingAggregateRoot<FlightIdentity, FlightInfoE
     abstract val monitoringStatus: MonitoringStatus
 
     override fun apply(event: FlightInfoEvent): FlightInfo = when (event) {
-        is FlightInfoRegistered -> throw IllegalStateException("FlightInfoRegistered must be first event")
+        is FlightInfoRegistered -> from(event)
 
         is FlightDelayed -> DelayedFlightInfo(
             flightIdentity = id,

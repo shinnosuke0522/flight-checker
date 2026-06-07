@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.21"
+kotlin = "2.0.21"
 coroutines = "1.10.2"
 kotest = "6.1.11"
 spring-boot = "4.0.5"
@@ -19,6 +19,7 @@ kotest-allure = "6.1.11"
 spring-boot-starter-restclient = { group = "org.springframework.boot", name = "spring-boot-starter-restclient" }
 spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
 spring-boot-starter-webflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux" }
+spring-boot-graphql-starter = { group = "org.springframework.boot", name = "spring-boot-starter-graphql"}
 spring-boot-docker-compose = { group = "org.springframework.boot", name = "spring-boot-docker-compose" }
 jackson-module-kotlin = { group = "tools.jackson.module", name = "jackson-module-kotlin" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
@@ -55,6 +56,7 @@ kotest-bom = { group = "io.kotest", name = "kotest-bom", version.ref = "kotest" 
 kotest-runner = { group = "io.kotest", name = "kotest-runner-junit5" }
 kotest-assertions = { group = "io.kotest", name = "kotest-assertions-core" }
 kotest-property = { group = "io.kotest", name = "kotest-property" }
+kotest-assertions-arrow = { group = "io.kotest", name = "kotest-assertions-arrow" }
 
 # Spring Test dependencies
 spring-boot-starter-restclient-test = { group = "org.springframework.boot", name = "spring-boot-starter-restclient-test" }
@@ -84,7 +86,7 @@ allure-report = { id = "io.qameta.allure-aggregate-report", version.ref = "allur
 allure-adapter = { id = "io.qameta.allure-adapter", version.ref = "allure"}
 gradle-test-fixtures = { id = "java-test-fixtures" }
 gradle-test-suite = { id = "jvm-test-suite" }
-
+dgs-codegen = {id = "com.netflix.dgs.codegen", version = "8.5.0" }
 
 
 [bundles]

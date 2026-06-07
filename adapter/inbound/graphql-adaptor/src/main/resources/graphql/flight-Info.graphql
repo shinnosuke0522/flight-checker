@@ -1,0 +1,95 @@
+extend type Query {
+    flightInfo(id: FlightIdentityInput!): FlightInfo!
+    flightInfos(ids: [FlightIdentityInput!]): [FlightInfo]!
+}
+
+scalar DateTime
+scalar Date
+
+input FlightIdentityInput {
+    flightCode: String!
+    departureDate: Date!
+}
+
+type FlightIdentity {
+    flightCode: String!
+    departureDate: Date!
+}
+
+interface FlightInfo {
+    id: ID!
+    identity: FlightIdentity!
+    departurePoint: FlightPoint!
+    arrivalPoint: FlightPoint!
+    scheduledDepartureTime: DateTime!
+    scheduledArrivalTime: DateTime!
+    monitoringStatus: MonitoringStatus!
+}
+
+type ScheduledFlightInfo implements FlightInfo {
+    id: ID!
+    identity: FlightIdentity!
+    departurePoint: FlightPoint!
+    arrivalPoint: FlightPoint!
+    scheduledDepartureTime: DateTime!
+    scheduledArrivalTime: DateTime!
+    monitoringStatus: MonitoringStatus!
+}
+
+type DelayedFlightInfo implements FlightInfo {
+    id: ID!
+    identity: FlightIdentity!
+    departurePoint: FlightPoint!
+    arrivalPoint: FlightPoint!
+    scheduledDepartureTime: DateTime!
+    scheduledArrivalTime: DateTime!
+    monitoringStatus: MonitoringStatus!
+    estimatedDepartureTime: DateTime
+    estimatedArrivalTime: DateTime
+}
+
+type ArrivedFlightInfo implements FlightInfo {
+    id: ID!
+    identity: FlightIdentity!
+    departurePoint: FlightPoint!
+    arrivalPoint: FlightPoint!
+    scheduledDepartureTime: DateTime!
+    scheduledArrivalTime: DateTime!
+    monitoringStatus: MonitoringStatus!
+}
+
+type CanceledFlightInfo implements FlightInfo {
+    id: ID!
+    identity: FlightIdentity!
+    departurePoint: FlightPoint!
+    arrivalPoint: FlightPoint!
+    scheduledDepartureTime: DateTime!
+    scheduledArrivalTime: DateTime!
+    monitoringStatus: MonitoringStatus!
+}
+
+type UncertainFlightInfo implements FlightInfo {
+    id: ID!
+    identity: FlightIdentity!
+    version: Int!
+    departurePoint: FlightPoint!
+    arrivalPoint: FlightPoint!
+    scheduledDepartureTime: DateTime!
+    scheduledArrivalTime: DateTime!
+    monitoringStatus: MonitoringStatus!
+    reason: String!
+}
+
+enum MonitoringStatus {
+    IDLE
+    ACTIVATED
+    COMPLETED
+    FAILED
+}
+
+type FlightPoint {
+    countryCode: String!
+    airportCode: String!
+    zoneId: String!
+}
+

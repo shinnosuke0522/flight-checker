@@ -1,5 +1,4 @@
 rootProject.name = "flight-checker"
 
 include(":domain")
-//include(":app")
-//include(":infra")
+include(":adapter:inbound:graphql-adaptor")

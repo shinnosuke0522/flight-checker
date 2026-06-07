@@ -19,6 +19,11 @@ allprojects {
 }
 
 subprojects {
+	// 中間ディレクトリ (adapter, adapter/inbound など) を除外するため、build.gradle(.kts) があるプロジェクトのみ設定する
+	if (!file("build.gradle").exists() && !file("build.gradle.kts").exists()) {
+		return@subprojects
+	}
+
 	group = "com.github.shinnosuke0522"
 	version = "0.0.1-SNAPSHOT"
 
@@ -64,7 +69,7 @@ subprojects {
 	//==================================
 	// App & Infra
 	//==================================
-	if (path.startsWith(":app") || path.startsWith(":infra")) {
+	if (path.startsWith(":app") || path.startsWith(":adapter")) {
 		pluginManager.apply(libs.plugins.kotlin.spring.get().pluginId)
 		pluginManager.apply(libs.plugins.spring.boot.get().pluginId)
 		pluginManager.apply(libs.plugins.spring.dependency.management.get().pluginId)
