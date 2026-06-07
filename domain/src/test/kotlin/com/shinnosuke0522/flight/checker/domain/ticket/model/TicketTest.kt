@@ -7,7 +7,6 @@ import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyAcknowledged
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyDetected
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyRecovered
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFinished
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
