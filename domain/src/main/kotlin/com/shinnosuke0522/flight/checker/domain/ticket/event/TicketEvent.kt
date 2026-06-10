@@ -4,6 +4,9 @@ import com.shinnosuke0522.flight.checker.domain.base.event.DomainEvent
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.ticket.model.Anomaly
+import com.shinnosuke0522.flight.checker.domain.ticket.model.AnomalyDelayed
+import com.shinnosuke0522.flight.checker.domain.ticket.model.AnomalyUncertain
 import com.shinnosuke0522.flight.checker.domain.ticket.model.FinishReason
 import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.ticket.model.UserId
@@ -26,14 +29,35 @@ data class TicketRegistered(
 ) : TicketEvent
 
 /**
- * フライトの異常（遅延・欠航など）を検知したことを表すイベント。
+ * フライトの遅延を検知したことを表すイベント。
  */
-data class TicketAnomalyDetected(
+data class TicketFlightDelayed(
     override val id: DomainEventId,
     override val aggregateId: TicketId,
     override val sequenceNumber: Long,
     override val meta: DomainEventMeta,
-    val statusSummary: String,
+    val detail: AnomalyDelayed,
+) : TicketEvent
+
+/**
+ * フライトの欠航を検知したことを表すイベント。
+ */
+data class TicketFlightCanceled(
+    override val id: DomainEventId,
+    override val aggregateId: TicketId,
+    override val sequenceNumber: Long,
+    override val meta: DomainEventMeta,
+) : TicketEvent
+
+/**
+ * フライトの動静が不確実であることを検知したことを表すイベント。
+ */
+data class TicketFlightUncertain(
+    override val id: DomainEventId,
+    override val aggregateId: TicketId,
+    override val sequenceNumber: Long,
+    override val meta: DomainEventMeta,
+    val detail: AnomalyUncertain,
 ) : TicketEvent
 
 /**
@@ -54,7 +78,7 @@ data class TicketAnomalyAcknowledged(
     override val aggregateId: TicketId,
     override val sequenceNumber: Long,
     override val meta: DomainEventMeta,
-    val acknowledgedStatusSummary: String,
+    val acknowledgedAnomaly: Anomaly,
 ) : TicketEvent
 
 /**

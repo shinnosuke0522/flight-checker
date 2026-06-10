@@ -5,10 +5,12 @@ import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.base.model.EventSourcingAggregateRoot
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyAcknowledged
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyDetected
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyRecovered
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketEvent
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFinished
+import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightCanceled
+import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightDelayed
+import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightUncertain
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketRegistered
 
 /**
@@ -20,37 +22,51 @@ sealed class Ticket : EventSourcingAggregateRoot<TicketId, TicketEvent, Ticket> 
 
     override fun apply(event: TicketEvent): Ticket = when (this) {
         is FinishedTicket -> this // 終端状態パターン: 終了済みなら状態は変わらない
-        is NormalTicket, is AlertTicket -> when (event) {
+        is NormalTicket, is AlertTicket, is AcknowledgedTicket -> when (event) {
             is TicketRegistered -> NormalTicket(
                 id = event.aggregateId,
                 version = AggregateVersion(event.sequenceNumber),
                 userId = event.userId,
-                flightIdentity = event.flightIdentity,
-                acknowledgedStatusSummary = null
+                flightIdentity = event.flightIdentity
             )
 
-            is TicketAnomalyDetected -> AlertTicket(
+            is TicketFlightDelayed -> AlertTicket(
                 id = id,
                 version = AggregateVersion(event.sequenceNumber),
                 userId = userId,
                 flightIdentity = flightIdentity,
-                currentStatusSummary = event.statusSummary
+                currentAnomaly = event.detail
+            )
+
+            is TicketFlightCanceled -> AlertTicket(
+                id = id,
+                version = AggregateVersion(event.sequenceNumber),
+                userId = userId,
+                flightIdentity = flightIdentity,
+                currentAnomaly = AnomalyCanceled
+            )
+
+            is TicketFlightUncertain -> AlertTicket(
+                id = id,
+                version = AggregateVersion(event.sequenceNumber),
+                userId = userId,
+                flightIdentity = flightIdentity,
+                currentAnomaly = event.detail
             )
 
             is TicketAnomalyRecovered -> NormalTicket(
                 id = id,
                 version = AggregateVersion(event.sequenceNumber),
                 userId = userId,
-                flightIdentity = flightIdentity,
-                acknowledgedStatusSummary = null
+                flightIdentity = flightIdentity
             )
 
-            is TicketAnomalyAcknowledged -> NormalTicket(
+            is TicketAnomalyAcknowledged -> AcknowledgedTicket(
                 id = id,
                 version = AggregateVersion(event.sequenceNumber),
                 userId = userId,
                 flightIdentity = flightIdentity,
-                acknowledgedStatusSummary = event.acknowledgedStatusSummary
+                acknowledgedAnomaly = event.acknowledgedAnomaly
             )
 
             is TicketFinished -> FinishedTicket(
@@ -78,8 +94,7 @@ sealed class Ticket : EventSourcingAggregateRoot<TicketId, TicketEvent, Ticket> 
                 id = firstEvent.aggregateId,
                 version = AggregateVersion(0),
                 userId = firstEvent.userId,
-                flightIdentity = firstEvent.flightIdentity,
-                acknowledgedStatusSummary = null
+                flightIdentity = firstEvent.flightIdentity
             )
             return events.fold(initial as Ticket) { ticket, event ->
                 ticket.apply(event)
@@ -97,21 +112,19 @@ sealed class Ticket : EventSourcingAggregateRoot<TicketId, TicketEvent, Ticket> 
             id = id,
             version = AggregateVersion(1),
             userId = userId,
-            flightIdentity = flightIdentity,
-            acknowledgedStatusSummary = null
+            flightIdentity = flightIdentity
         )
     }
 }
 
 /**
- * 正常、または特定の異常状態をユーザーが承諾済みの監視状態。
+ * 正常な監視状態。
  */
 data class NormalTicket(
     override val id: TicketId,
     override val version: AggregateVersion,
     override val userId: UserId,
     override val flightIdentity: FlightIdentity,
-    val acknowledgedStatusSummary: String? = null
 ) : Ticket()
 
 /**
@@ -122,7 +135,18 @@ data class AlertTicket(
     override val version: AggregateVersion,
     override val userId: UserId,
     override val flightIdentity: FlightIdentity,
-    val currentStatusSummary: String,
+    val currentAnomaly: Anomaly,
+) : Ticket()
+
+/**
+ * 異常が発生しているが、ユーザーがその事実をすでに確認（承諾）済みの状態。
+ */
+data class AcknowledgedTicket(
+    override val id: TicketId,
+    override val version: AggregateVersion,
+    override val userId: UserId,
+    override val flightIdentity: FlightIdentity,
+    val acknowledgedAnomaly: Anomaly,
 ) : Ticket()
 
 /**
