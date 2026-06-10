@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.0.21"
+kotlin = "2.3.21"
 coroutines = "1.10.2"
 kotest = "6.1.11"
 spring-boot = "4.0.5"
@@ -16,6 +16,7 @@ kotest-allure = "6.1.11"
 
 [libraries]
 # Spring Boot
+spring-boot-bom = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "spring-boot" }
 spring-boot-starter-restclient = { group = "org.springframework.boot", name = "spring-boot-starter-restclient" }
 spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
 spring-boot-starter-webflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux" }

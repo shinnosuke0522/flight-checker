@@ -4,6 +4,8 @@ plugins {
 
 dependencies {
     // BOM
+    implementation(platform(libs.spring.boot.bom))
+    implementation(platform(libs.spring.cloud.dependencies))
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.coroutines.bom))
     testImplementation(platform(libs.kotest.bom))
