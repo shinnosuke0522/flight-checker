@@ -7,7 +7,7 @@ import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAlreadyFinishedError
 import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAlreadyOnScheduleError
-import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAnomalyAlreadySynchronizedError
+import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAnomalyAlreadyReflectedError
 import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketError
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyRecovered
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketEvent
@@ -33,17 +33,17 @@ object TicketStatusReflector {
      */
     fun reflect(
         ticket: Ticket,
-        command: TicketSyncCommand
+        command: TicketStatusReflectCommand
     ): Either<TicketError, Pair<Ticket, TicketEvent>> = either {
         // 終端状態ガード: 終了済みのチケットはいかなる状況反映も受け付けない
         ensure(ticket !is FinishedTicket) { TicketAlreadyFinishedError(ticket.id) }
 
         when (command) {
-            is TicketSyncArrivedCommand -> reflectArrival(ticket, command).bind()
-            is TicketSyncFlightDelayedCommand -> reflectDelayed(ticket, command).bind()
-            is TicketSyncFlightCanceledCommand -> reflectCanceled(ticket, command).bind()
-            is TicketSyncFlightUncertainCommand -> reflectUncertain(ticket, command).bind()
-            is TicketSyncOnScheduleCommand -> reflectReturnToSchedule(ticket, command).bind()
+            is TicketArrivedReflectCommand -> reflectArrival(ticket, command).bind()
+            is TicketFlightDelayedReflectCommand -> reflectDelayed(ticket, command).bind()
+            is TicketFlightCanceledReflectCommand -> reflectCanceled(ticket, command).bind()
+            is TicketFlightUncertainReflectCommand -> reflectUncertain(ticket, command).bind()
+            is TicketOnScheduleReflectCommand -> reflectReturnToSchedule(ticket, command).bind()
         }
     }
 
@@ -52,7 +52,7 @@ object TicketStatusReflector {
      */
     fun reflectArrival(
         ticket: Ticket,
-        command: TicketSyncArrivedCommand
+        command: TicketArrivedReflectCommand
     ): Either<TicketError, Pair<Ticket, TicketEvent>> = either {
         ensure(ticket !is FinishedTicket) { TicketAlreadyFinishedError(ticket.id) }
 
@@ -71,13 +71,13 @@ object TicketStatusReflector {
      */
     fun reflectDelayed(
         ticket: Ticket,
-        command: TicketSyncFlightDelayedCommand
+        command: TicketFlightDelayedReflectCommand
     ): Either<TicketError, Pair<Ticket, TicketEvent>> = either {
         ensure(ticket !is FinishedTicket) { TicketAlreadyFinishedError(ticket.id) }
         val newAnomaly = command.detail
 
         ensure(shouldUpdate(ticket, newAnomaly)) {
-            TicketAnomalyAlreadySynchronizedError(ticket.id, newAnomaly)
+            TicketAnomalyAlreadyReflectedError(ticket.id, newAnomaly)
         }
 
         val event = TicketFlightDelayed(
@@ -95,13 +95,13 @@ object TicketStatusReflector {
      */
     fun reflectCanceled(
         ticket: Ticket,
-        command: TicketSyncFlightCanceledCommand
+        command: TicketFlightCanceledReflectCommand
     ): Either<TicketError, Pair<Ticket, TicketEvent>> = either {
         ensure(ticket !is FinishedTicket) { TicketAlreadyFinishedError(ticket.id) }
         val newAnomaly = AnomalyCanceled
 
         ensure(shouldUpdate(ticket, newAnomaly)) {
-            TicketAnomalyAlreadySynchronizedError(ticket.id, newAnomaly)
+            TicketAnomalyAlreadyReflectedError(ticket.id, newAnomaly)
         }
 
         val event = TicketFlightCanceled(
@@ -118,13 +118,13 @@ object TicketStatusReflector {
      */
     fun reflectUncertain(
         ticket: Ticket,
-        command: TicketSyncFlightUncertainCommand
+        command: TicketFlightUncertainReflectCommand
     ): Either<TicketError, Pair<Ticket, TicketEvent>> = either {
         ensure(ticket !is FinishedTicket) { TicketAlreadyFinishedError(ticket.id) }
         val newAnomaly = command.detail
 
         ensure(shouldUpdate(ticket, newAnomaly)) {
-            TicketAnomalyAlreadySynchronizedError(ticket.id, newAnomaly)
+            TicketAnomalyAlreadyReflectedError(ticket.id, newAnomaly)
         }
 
         val event = TicketFlightUncertain(
@@ -144,7 +144,7 @@ object TicketStatusReflector {
      */
     fun reflectReturnToSchedule(
         ticket: Ticket,
-        command: TicketSyncOnScheduleCommand
+        command: TicketOnScheduleReflectCommand
     ): Either<TicketError, Pair<Ticket, TicketEvent>> = either {
         ensure(ticket !is FinishedTicket) { TicketAlreadyFinishedError(ticket.id) }
 
@@ -176,7 +176,7 @@ object TicketStatusReflector {
         return currentAnomaly != newAnomaly
     }
 
-    private fun createMeta(command: TicketSyncCommand): DomainEventMeta = DomainEventMeta.forCausedEvent(
+    private fun createMeta(command: TicketStatusReflectCommand): DomainEventMeta = DomainEventMeta.forCausedEvent(
         clock = { command.occurredAt },
         correlationId = command.correlationId,
         causationId = command.causationId

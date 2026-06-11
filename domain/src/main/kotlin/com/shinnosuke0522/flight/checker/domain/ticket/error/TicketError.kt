@@ -32,16 +32,16 @@ data class TicketAlreadyFinishedError(
 }
 
 /**
- * すでに同じ内容の異常が検知または承諾されている際のエラー。
+ * すでに同じ内容の異常が反映済みである際のエラー。
  * 同一の異常に対する重複通知を避けるために使用される。
  */
-data class TicketAnomalyAlreadySynchronizedError(
+data class TicketAnomalyAlreadyReflectedError(
     val ticketId: TicketId,
     val detail: Anomaly
 ) : TicketBusinessRuleError {
     override val cause: Error.Cause? = null
     override val message: String =
-        "Anomaly for ticket ${ticketId.asString()} is already synchronized with: ${detail.toSummary()}"
+        "Anomaly for ticket ${ticketId.asString()} is already reflected with: ${detail.toSummary()}"
 }
 
 /**

@@ -6,7 +6,7 @@ import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAlreadyFinishedError
 import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAlreadyOnScheduleError
-import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAnomalyAlreadySynchronizedError
+import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAnomalyAlreadyReflectedError
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyRecovered
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightCanceled
 import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightDelayed
@@ -38,7 +38,7 @@ class TicketStatusReflectorTest : DescribeSpec({
         val ticket = Ticket.initial(ticketId, userId, flightIdentity)
 
         context("When: フライトが欠航したという事実を受け取った場合") {
-            val command = TicketSyncFlightCanceledCommand(
+            val command = TicketFlightCanceledReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId
@@ -53,7 +53,7 @@ class TicketStatusReflectorTest : DescribeSpec({
 
         context("When: フライトが遅延したという事実を受け取った場合") {
             val detail = AnomalyDelayed("2026-06-07T10:00:00Z")
-            val command = TicketSyncFlightDelayedCommand(
+            val command = TicketFlightDelayedReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId,
@@ -69,7 +69,7 @@ class TicketStatusReflectorTest : DescribeSpec({
         }
 
         context("When: フライトが予定通り (OnSchedule) であるという事実を受け取った場合") {
-            val command = TicketSyncOnScheduleCommand(
+            val command = TicketOnScheduleReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId
@@ -93,7 +93,7 @@ class TicketStatusReflectorTest : DescribeSpec({
         )
 
         context("When: 前回と同じ遅延状態であるという事実を受け取った場合") {
-            val command = TicketSyncFlightDelayedCommand(
+            val command = TicketFlightDelayedReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId,
@@ -101,14 +101,14 @@ class TicketStatusReflectorTest : DescribeSpec({
             )
             val result = TicketStatusReflector.reflect(ticket, command)
 
-            it("Then: 二重通知を防ぐため、エラー (TicketAnomalyAlreadySynchronizedError) が返されること") {
-                result shouldBeLeft TicketAnomalyAlreadySynchronizedError(ticket.id, detail)
+            it("Then: 二重通知を防ぐため、エラー (TicketAnomalyAlreadyReflectedError) が返されること") {
+                result shouldBeLeft TicketAnomalyAlreadyReflectedError(ticket.id, detail)
             }
         }
 
         context("When: 前回の遅延から時刻が更新された事実を受け取った場合") {
             val newDetail = AnomalyDelayed("2026-06-07T11:00:00Z")
-            val command = TicketSyncFlightDelayedCommand(
+            val command = TicketFlightDelayedReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId,
@@ -136,7 +136,7 @@ class TicketStatusReflectorTest : DescribeSpec({
 
         context("When: さらに遅延が更新されたという事実を受け取った場合") {
             val newDelay = AnomalyDelayed("2026-06-07T11:00:00Z")
-            val command = TicketSyncFlightDelayedCommand(
+            val command = TicketFlightDelayedReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId,
@@ -152,7 +152,7 @@ class TicketStatusReflectorTest : DescribeSpec({
         }
 
         context("When: 前回と同じ遅延状態であるという事実を受け取った場合") {
-            val command = TicketSyncFlightDelayedCommand(
+            val command = TicketFlightDelayedReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId,
@@ -160,13 +160,13 @@ class TicketStatusReflectorTest : DescribeSpec({
             )
             val result = TicketStatusReflector.reflect(ticket, command)
 
-            it("Then: リマインドを抑制するため、エラー (TicketAnomalyAlreadySynchronizedError) が返されること") {
-                result shouldBeLeft TicketAnomalyAlreadySynchronizedError(ticket.id, initialDetail)
+            it("Then: リマインドを抑制するため、エラー (TicketAnomalyAlreadyReflectedError) が返されること") {
+                result shouldBeLeft TicketAnomalyAlreadyReflectedError(ticket.id, initialDetail)
             }
         }
 
         context("When: 状態が予定通り (Normal) に復帰したという事実を受け取った場合") {
-            val command = TicketSyncOnScheduleCommand(
+            val command = TicketOnScheduleReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId
@@ -190,7 +190,7 @@ class TicketStatusReflectorTest : DescribeSpec({
         )
 
         context("When: 何らかの事実を受け取り反映させようとすると") {
-            val command = TicketSyncOnScheduleCommand(
+            val command = TicketOnScheduleReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId
