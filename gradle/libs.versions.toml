@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.0.21"
+kotlin = "2.3.21"
 coroutines = "1.10.2"
 kotest = "6.1.11"
 spring-boot = "4.0.5"
@@ -16,6 +16,7 @@ kotest-allure = "6.1.11"
 
 [libraries]
 # Spring Boot
+spring-boot-bom = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "spring-boot" }
 spring-boot-starter-restclient = { group = "org.springframework.boot", name = "spring-boot-starter-restclient" }
 spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
 spring-boot-starter-webflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux" }
@@ -50,6 +51,7 @@ aws-lambda-java-events = { group = "com.amazonaws", name = "aws-lambda-java-even
 # Others
 ulid = { module = "com.github.f4b6a3:ulid-creator", version = "5.2.3" }
 arrow-core = { group = "io.arrow-kt", name = "arrow-core", version = "2.2.2.1"}
+graphql-extended-validation = { group = "com.graphql-java", name = "graphql-java-extended-validation", version = "24.0" }
 
 # Kotest
 kotest-bom = { group = "io.kotest", name = "kotest-bom", version.ref = "kotest" }

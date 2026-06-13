@@ -4,6 +4,6 @@ import com.shinnosuke0522.flight.checker.adapter.inbound.graphql.model.FlightIde
 import com.shinnosuke0522.flight.checker.adapter.inbound.graphql.model.FlightInfo
 
 interface FlightInfoQueryResolver {
-    suspend fun flightInfo(id: FlightIdentityInput): FlightInfo
-    suspend fun flightInfos(ids: List<FlightIdentityInput>): List<FlightInfo>
+    suspend fun flightInfo(identity: FlightIdentityInput): FlightInfo
+    suspend fun flightInfos(identities: List<FlightIdentityInput>): List<FlightInfo>
 }

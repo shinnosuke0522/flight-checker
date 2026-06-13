@@ -1,0 +1,6 @@
+[tasks.format]
+description = "Run detekt with auto-correct"
+run = "./gradlew detekt --auto-correct --continue"
+
+[tools]
+kotlin = "2.3.21"
