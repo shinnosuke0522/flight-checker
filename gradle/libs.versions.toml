@@ -51,6 +51,7 @@ aws-lambda-java-events = { group = "com.amazonaws", name = "aws-lambda-java-even
 # Others
 ulid = { module = "com.github.f4b6a3:ulid-creator", version = "5.2.3" }
 arrow-core = { group = "io.arrow-kt", name = "arrow-core", version = "2.2.2.1"}
+graphql-extended-validation = { group = "com.graphql-java", name = "graphql-java-extended-validation", version = "24.0" }
 
 # Kotest
 kotest-bom = { group = "io.kotest", name = "kotest-bom", version.ref = "kotest" }
