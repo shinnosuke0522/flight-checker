@@ -22,8 +22,7 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import java.time.Instant
 import java.time.LocalDate
 
-class TravelTest : DescribeSpec() {
-    init {
+class TravelTest : DescribeSpec({
     describe("Travel aggregate state transitions and business rules") {
 
         context("Given: A newly planned travel (PLANNED)") {
@@ -208,6 +207,7 @@ class TravelTest : DescribeSpec() {
             }
         }
     }
+}) {
 
     companion object {
         val now = Instant.now()

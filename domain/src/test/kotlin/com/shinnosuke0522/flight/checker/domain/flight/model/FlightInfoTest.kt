@@ -39,231 +39,231 @@ data class FlightInfoReplayTestCase(
 ) : WithDataTestName {
     override fun dataTestName() = name
 }
-class FlightInfoTest : FunSpec() {
-    init {
-        context("イベントの適用 (Apply) による状態遷移が正しく行われること") {
-            withData(
-                FlightInfoApplyTestCase(
-                    name = "ScheduledFlightInfo に遅延イベントを適用すると、DelayedFlightInfo に遷移する",
-                    initialFlightInfo = initialFlightInfo,
-                    event = FlightDelayed(
+
+class FlightInfoTest : FunSpec({
+    context("イベントの適用 (Apply) による状態遷移が正しく行われること") {
+        withData(
+            FlightInfoApplyTestCase(
+                name = "ScheduledFlightInfo に遅延イベントを適用すると、DelayedFlightInfo に遷移する",
+                initialFlightInfo = initialFlightInfo,
+                event = FlightDelayed(
+                    id = DomainEventId.generate(),
+                    aggregateId = flightIdentity,
+                    sequenceNumber = 1,
+                    meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
+                    estimatedDepartureTime = newDepartureTime,
+                    estimatedArrivalTime = newArrivalTime
+                ),
+                expectedFlightInfo = DelayedFlightInfo(
+                    flightIdentity = flightIdentity,
+                    version = AggregateVersion(1),
+                    departurePoint = departurePoint,
+                    arrivalPoint = arrivalPoint,
+                    scheduledDepartureTime = departureTime,
+                    scheduledArrivalTime = arrivalTime,
+                    estimatedDepartureTime = newDepartureTime,
+                    estimatedArrivalTime = newArrivalTime,
+                    monitoringStatus = MonitoringStatus.ACTIVATED
+                )
+            ),
+            FlightInfoApplyTestCase(
+                name = "ScheduledFlightInfo に欠航イベントを適用すると、CanceledFlightInfo に遷移する",
+                initialFlightInfo = initialFlightInfo,
+                event = FlightCanceled(
+                    id = DomainEventId.generate(),
+                    aggregateId = flightIdentity,
+                    sequenceNumber = 1,
+                    meta = DomainEventMeta(Instant.now(), CorrelationId.generate())
+                ),
+                expectedFlightInfo = CanceledFlightInfo(
+                    id = flightIdentity,
+                    version = AggregateVersion(1),
+                    departurePoint = departurePoint,
+                    arrivalPoint = arrivalPoint,
+                    scheduledDepartureTime = departureTime,
+                    scheduledArrivalTime = arrivalTime,
+                    monitoringStatus = MonitoringStatus.COMPLETED
+                )
+            )
+        ) { testCase ->
+            val result = testCase.initialFlightInfo.apply(testCase.event)
+            result shouldBe testCase.expectedFlightInfo
+        }
+    }
+
+    test("CanceledFlightInfo (終端状態) にイベントを適用しようとすると、IllegalStateException がスローされること") {
+        val canceledInfo = CanceledFlightInfo(
+            id = flightIdentity,
+            version = AggregateVersion(1),
+            departurePoint = departurePoint,
+            arrivalPoint = arrivalPoint,
+            scheduledDepartureTime = departureTime,
+            scheduledArrivalTime = arrivalTime,
+            monitoringStatus = MonitoringStatus.COMPLETED
+        )
+        val event = FlightDelayed(
+            id = DomainEventId.generate(),
+            aggregateId = flightIdentity,
+            sequenceNumber = 2,
+            meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
+            estimatedDepartureTime = newDepartureTime,
+            estimatedArrivalTime = newArrivalTime
+        )
+
+        shouldThrow<IllegalStateException> {
+            canceledInfo.apply(event)
+        }
+    }
+
+    context("イベント履歴から各状態を復元 (Replay) できること") {
+        withData(
+            FlightInfoReplayTestCase(
+                name = "ScheduledFlightInfo に復元できること",
+                additionalEvents = emptyList(),
+                expectedFlightInfo = ScheduledFlightInfo(
+                    id = flightIdentity,
+                    version = AggregateVersion(0),
+                    departurePoint = departurePoint,
+                    arrivalPoint = arrivalPoint,
+                    scheduledDepartureTime = departureTime,
+                    scheduledArrivalTime = arrivalTime,
+                    monitoringStatus = MonitoringStatus.IDLE
+                ).getOrElse { error(it) }
+            ),
+            FlightInfoReplayTestCase(
+                name = "DelayedFlightInfo に復元できること",
+                additionalEvents = listOf(
+                    FlightDelayed(
                         id = DomainEventId.generate(),
                         aggregateId = flightIdentity,
                         sequenceNumber = 1,
                         meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
                         estimatedDepartureTime = newDepartureTime,
                         estimatedArrivalTime = newArrivalTime
-                    ),
-                    expectedFlightInfo = DelayedFlightInfo(
-                        flightIdentity = flightIdentity,
-                        version = AggregateVersion(1),
-                        departurePoint = departurePoint,
-                        arrivalPoint = arrivalPoint,
-                        scheduledDepartureTime = departureTime,
-                        scheduledArrivalTime = arrivalTime,
-                        estimatedDepartureTime = newDepartureTime,
-                        estimatedArrivalTime = newArrivalTime,
-                        monitoringStatus = MonitoringStatus.ACTIVATED
                     )
                 ),
-                FlightInfoApplyTestCase(
-                    name = "ScheduledFlightInfo に欠航イベントを適用すると、CanceledFlightInfo に遷移する",
-                    initialFlightInfo = initialFlightInfo,
-                    event = FlightCanceled(
+                expectedFlightInfo = DelayedFlightInfo(
+                    flightIdentity = flightIdentity,
+                    version = AggregateVersion(1),
+                    departurePoint = departurePoint,
+                    arrivalPoint = arrivalPoint,
+                    scheduledDepartureTime = departureTime,
+                    scheduledArrivalTime = arrivalTime,
+                    estimatedDepartureTime = newDepartureTime,
+                    estimatedArrivalTime = newArrivalTime,
+                    monitoringStatus = MonitoringStatus.ACTIVATED
+                )
+            ),
+            FlightInfoReplayTestCase(
+                name = "UncertainFlightInfo に復元できること",
+                additionalEvents = listOf(
+                    FlightStatusUncertain(
+                        id = DomainEventId.generate(),
+                        aggregateId = flightIdentity,
+                        sequenceNumber = 1,
+                        meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
+                        reason = "Weather condition"
+                    )
+                ),
+                expectedFlightInfo = UncertainFlightInfo(
+                    id = flightIdentity,
+                    version = AggregateVersion(1),
+                    departurePoint = departurePoint,
+                    arrivalPoint = arrivalPoint,
+                    scheduledDepartureTime = departureTime,
+                    scheduledArrivalTime = arrivalTime,
+                    reason = "Weather condition",
+                    monitoringStatus = MonitoringStatus.ACTIVATED
+                )
+            ),
+            FlightInfoReplayTestCase(
+                name = "CanceledFlightInfo に復元できること",
+                additionalEvents = listOf(
+                    FlightCanceled(
                         id = DomainEventId.generate(),
                         aggregateId = flightIdentity,
                         sequenceNumber = 1,
                         meta = DomainEventMeta(Instant.now(), CorrelationId.generate())
-                    ),
-                    expectedFlightInfo = CanceledFlightInfo(
-                        id = flightIdentity,
-                        version = AggregateVersion(1),
-                        departurePoint = departurePoint,
-                        arrivalPoint = arrivalPoint,
-                        scheduledDepartureTime = departureTime,
-                        scheduledArrivalTime = arrivalTime,
-                        monitoringStatus = MonitoringStatus.COMPLETED
                     )
+                ),
+                expectedFlightInfo = CanceledFlightInfo(
+                    id = flightIdentity,
+                    version = AggregateVersion(1),
+                    departurePoint = departurePoint,
+                    arrivalPoint = arrivalPoint,
+                    scheduledDepartureTime = departureTime,
+                    scheduledArrivalTime = arrivalTime,
+                    monitoringStatus = MonitoringStatus.COMPLETED
                 )
-            ) { testCase ->
-                val result = testCase.initialFlightInfo.apply(testCase.event)
-                result shouldBe testCase.expectedFlightInfo
-            }
-        }
-
-        test("CanceledFlightInfo (終端状態) にイベントを適用しようとすると、IllegalStateException がスローされること") {
-            val canceledInfo = CanceledFlightInfo(
-                id = flightIdentity,
-                version = AggregateVersion(1),
-                departurePoint = departurePoint,
-                arrivalPoint = arrivalPoint,
-                scheduledDepartureTime = departureTime,
-                scheduledArrivalTime = arrivalTime,
-                monitoringStatus = MonitoringStatus.COMPLETED
-            )
-            val event = FlightDelayed(
-                id = DomainEventId.generate(),
-                aggregateId = flightIdentity,
-                sequenceNumber = 2,
-                meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
-                estimatedDepartureTime = newDepartureTime,
-                estimatedArrivalTime = newArrivalTime
-            )
-
-            shouldThrow<IllegalStateException> {
-                canceledInfo.apply(event)
-            }
-        }
-
-        context("イベント履歴から各状態を復元 (Replay) できること") {
-            withData(
-                FlightInfoReplayTestCase(
-                    name = "ScheduledFlightInfo に復元できること",
-                    additionalEvents = emptyList(),
-                    expectedFlightInfo = ScheduledFlightInfo(
-                        id = flightIdentity,
-                        version = AggregateVersion(0),
-                        departurePoint = departurePoint,
-                        arrivalPoint = arrivalPoint,
-                        scheduledDepartureTime = departureTime,
-                        scheduledArrivalTime = arrivalTime,
-                        monitoringStatus = MonitoringStatus.IDLE
-                    ).getOrElse { error(it) }
-                ),
-                FlightInfoReplayTestCase(
-                    name = "DelayedFlightInfo に復元できること",
-                    additionalEvents = listOf(
-                        FlightDelayed(
-                            id = DomainEventId.generate(),
-                            aggregateId = flightIdentity,
-                            sequenceNumber = 1,
-                            meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
-                            estimatedDepartureTime = newDepartureTime,
-                            estimatedArrivalTime = newArrivalTime
-                        )
-                    ),
-                    expectedFlightInfo = DelayedFlightInfo(
-                        flightIdentity = flightIdentity,
-                        version = AggregateVersion(1),
-                        departurePoint = departurePoint,
-                        arrivalPoint = arrivalPoint,
-                        scheduledDepartureTime = departureTime,
-                        scheduledArrivalTime = arrivalTime,
-                        estimatedDepartureTime = newDepartureTime,
-                        estimatedArrivalTime = newArrivalTime,
-                        monitoringStatus = MonitoringStatus.ACTIVATED
+            ),
+            FlightInfoReplayTestCase(
+                name = "ArrivedFlightInfo に復元できること",
+                additionalEvents = listOf(
+                    FlightArrived(
+                        id = DomainEventId.generate(),
+                        aggregateId = flightIdentity,
+                        sequenceNumber = 1,
+                        meta = DomainEventMeta(Instant.now(), CorrelationId.generate())
                     )
                 ),
-                FlightInfoReplayTestCase(
-                    name = "UncertainFlightInfo に復元できること",
-                    additionalEvents = listOf(
-                        FlightStatusUncertain(
-                            id = DomainEventId.generate(),
-                            aggregateId = flightIdentity,
-                            sequenceNumber = 1,
-                            meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
-                            reason = "Weather condition"
-                        )
-                    ),
-                    expectedFlightInfo = UncertainFlightInfo(
-                        id = flightIdentity,
-                        version = AggregateVersion(1),
-                        departurePoint = departurePoint,
-                        arrivalPoint = arrivalPoint,
-                        scheduledDepartureTime = departureTime,
-                        scheduledArrivalTime = arrivalTime,
-                        reason = "Weather condition",
-                        monitoringStatus = MonitoringStatus.ACTIVATED
-                    )
-                ),
-                FlightInfoReplayTestCase(
-                    name = "CanceledFlightInfo に復元できること",
-                    additionalEvents = listOf(
-                        FlightCanceled(
-                            id = DomainEventId.generate(),
-                            aggregateId = flightIdentity,
-                            sequenceNumber = 1,
-                            meta = DomainEventMeta(Instant.now(), CorrelationId.generate())
-                        )
-                    ),
-                    expectedFlightInfo = CanceledFlightInfo(
-                        id = flightIdentity,
-                        version = AggregateVersion(1),
-                        departurePoint = departurePoint,
-                        arrivalPoint = arrivalPoint,
-                        scheduledDepartureTime = departureTime,
-                        scheduledArrivalTime = arrivalTime,
-                        monitoringStatus = MonitoringStatus.COMPLETED
-                    )
-                ),
-                FlightInfoReplayTestCase(
-                    name = "ArrivedFlightInfo に復元できること",
-                    additionalEvents = listOf(
-                        FlightArrived(
-                            id = DomainEventId.generate(),
-                            aggregateId = flightIdentity,
-                            sequenceNumber = 1,
-                            meta = DomainEventMeta(Instant.now(), CorrelationId.generate())
-                        )
-                    ),
-                    expectedFlightInfo = ArrivedFlightInfo(
-                        flightIdentity = flightIdentity,
-                        version = AggregateVersion(1),
-                        departurePoint = departurePoint,
-                        arrivalPoint = arrivalPoint,
-                        scheduledDepartureTime = departureTime,
-                        scheduledArrivalTime = arrivalTime,
-                        monitoringStatus = MonitoringStatus.COMPLETED
-                    )
-                ),
-                FlightInfoReplayTestCase(
-                    name = "ScheduledFlightInfo (監視完了状態) に復元できること",
-                    additionalEvents = listOf(
-                        FlightMonitoringCompleted(
-                            id = DomainEventId.generate(),
-                            aggregateId = flightIdentity,
-                            sequenceNumber = 1,
-                            meta = DomainEventMeta(Instant.now(), CorrelationId.generate())
-                        )
-                    ),
-                    expectedFlightInfo = ScheduledFlightInfo(
-                        id = flightIdentity,
-                        version = AggregateVersion(1),
-                        departurePoint = departurePoint,
-                        arrivalPoint = arrivalPoint,
-                        scheduledDepartureTime = departureTime,
-                        scheduledArrivalTime = arrivalTime,
-                        monitoringStatus = MonitoringStatus.COMPLETED
-                    ).getOrElse { error(it) }
-                ),
-                FlightInfoReplayTestCase(
-                    name = "ScheduledFlightInfo (監視失敗状態) に復元できること",
-                    additionalEvents = listOf(
-                        FlightMonitoringFailed(
-                            id = DomainEventId.generate(),
-                            aggregateId = flightIdentity,
-                            sequenceNumber = 1,
-                            meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
-                            reason = "Webhook registration failed"
-                        )
-                    ),
-                    expectedFlightInfo = ScheduledFlightInfo(
-                        id = flightIdentity,
-                        version = AggregateVersion(1),
-                        departurePoint = departurePoint,
-                        arrivalPoint = arrivalPoint,
-                        scheduledDepartureTime = departureTime,
-                        scheduledArrivalTime = arrivalTime,
-                        monitoringStatus = MonitoringStatus.FAILED
-                    ).getOrElse { error(it) }
+                expectedFlightInfo = ArrivedFlightInfo(
+                    flightIdentity = flightIdentity,
+                    version = AggregateVersion(1),
+                    departurePoint = departurePoint,
+                    arrivalPoint = arrivalPoint,
+                    scheduledDepartureTime = departureTime,
+                    scheduledArrivalTime = arrivalTime,
+                    monitoringStatus = MonitoringStatus.COMPLETED
                 )
-            ) { testCase ->
-                val events = nonEmptyListOf(registeredEvent, *testCase.additionalEvents.toTypedArray())
-                val flightInfo = FlightInfo.replay(events)
-                flightInfo shouldBe testCase.expectedFlightInfo
-            }
+            ),
+            FlightInfoReplayTestCase(
+                name = "ScheduledFlightInfo (監視完了状態) に復元できること",
+                additionalEvents = listOf(
+                    FlightMonitoringCompleted(
+                        id = DomainEventId.generate(),
+                        aggregateId = flightIdentity,
+                        sequenceNumber = 1,
+                        meta = DomainEventMeta(Instant.now(), CorrelationId.generate())
+                    )
+                ),
+                expectedFlightInfo = ScheduledFlightInfo(
+                    id = flightIdentity,
+                    version = AggregateVersion(1),
+                    departurePoint = departurePoint,
+                    arrivalPoint = arrivalPoint,
+                    scheduledDepartureTime = departureTime,
+                    scheduledArrivalTime = arrivalTime,
+                    monitoringStatus = MonitoringStatus.COMPLETED
+                ).getOrElse { error(it) }
+            ),
+            FlightInfoReplayTestCase(
+                name = "ScheduledFlightInfo (監視失敗状態) に復元できること",
+                additionalEvents = listOf(
+                    FlightMonitoringFailed(
+                        id = DomainEventId.generate(),
+                        aggregateId = flightIdentity,
+                        sequenceNumber = 1,
+                        meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
+                        reason = "Webhook registration failed"
+                    )
+                ),
+                expectedFlightInfo = ScheduledFlightInfo(
+                    id = flightIdentity,
+                    version = AggregateVersion(1),
+                    departurePoint = departurePoint,
+                    arrivalPoint = arrivalPoint,
+                    scheduledDepartureTime = departureTime,
+                    scheduledArrivalTime = arrivalTime,
+                    monitoringStatus = MonitoringStatus.FAILED
+                ).getOrElse { error(it) }
+            )
+        ) { testCase ->
+            val events = nonEmptyListOf(registeredEvent, *testCase.additionalEvents.toTypedArray())
+            val flightInfo = FlightInfo.replay(events)
+            flightInfo shouldBe testCase.expectedFlightInfo
         }
     }
+}) {
 
     companion object {
         val flightIdentity = FlightIdentity.create("JL123", LocalDate.of(2026, 5, 1)).getOrElse { error(it) }
