@@ -35,72 +35,78 @@ sealed class FlightInfo : EventSourcingAggregateRoot<FlightIdentity, FlightInfoE
     abstract val scheduledArrivalTime: Instant
     abstract val monitoringStatus: MonitoringStatus
 
-    override fun apply(event: FlightInfoEvent): FlightInfo = when (event) {
-        is FlightInfoRegistered -> from(event)
+    @Suppress("LongMethod")
+    override fun apply(event: FlightInfoEvent): FlightInfo {
+        if (this is CanceledFlightInfo || this is ArrivedFlightInfo) {
+            error("Cannot apply ${event.javaClass} to ${this.javaClass.simpleName}")
+        }
+        return when (event) {
+            is FlightInfoRegistered -> from(event)
 
-        is FlightDelayed -> DelayedFlightInfo(
-            flightIdentity = id,
-            version = AggregateVersion(event.sequenceNumber),
-            departurePoint = departurePoint,
-            arrivalPoint = arrivalPoint,
-            scheduledDepartureTime = scheduledDepartureTime,
-            scheduledArrivalTime = scheduledArrivalTime,
-            estimatedDepartureTime = event.estimatedDepartureTime,
-            estimatedArrivalTime = event.estimatedArrivalTime,
-        )
+            is FlightDelayed -> DelayedFlightInfo(
+                flightIdentity = id,
+                version = AggregateVersion(event.sequenceNumber),
+                departurePoint = departurePoint,
+                arrivalPoint = arrivalPoint,
+                scheduledDepartureTime = scheduledDepartureTime,
+                scheduledArrivalTime = scheduledArrivalTime,
+                estimatedDepartureTime = event.estimatedDepartureTime,
+                estimatedArrivalTime = event.estimatedArrivalTime,
+            )
 
-        is FlightCanceled -> CanceledFlightInfo(
-            id = id,
-            version = AggregateVersion(event.sequenceNumber),
-            departurePoint = departurePoint,
-            arrivalPoint = arrivalPoint,
-            scheduledDepartureTime = scheduledDepartureTime,
-            scheduledArrivalTime = scheduledArrivalTime,
-        )
+            is FlightCanceled -> CanceledFlightInfo(
+                id = id,
+                version = AggregateVersion(event.sequenceNumber),
+                departurePoint = departurePoint,
+                arrivalPoint = arrivalPoint,
+                scheduledDepartureTime = scheduledDepartureTime,
+                scheduledArrivalTime = scheduledArrivalTime,
+            )
 
-        is FlightArrived -> ArrivedFlightInfo(
-            flightIdentity = id,
-            version = AggregateVersion(event.sequenceNumber),
-            departurePoint = departurePoint,
-            arrivalPoint = arrivalPoint,
-            scheduledDepartureTime = scheduledDepartureTime,
-            scheduledArrivalTime = scheduledArrivalTime,
-        )
+            is FlightArrived -> ArrivedFlightInfo(
+                flightIdentity = id,
+                version = AggregateVersion(event.sequenceNumber),
+                departurePoint = departurePoint,
+                arrivalPoint = arrivalPoint,
+                scheduledDepartureTime = scheduledDepartureTime,
+                scheduledArrivalTime = scheduledArrivalTime,
+            )
 
-        is FlightStatusUncertain -> UncertainFlightInfo(
-            id = id,
-            version = AggregateVersion(event.sequenceNumber),
-            departurePoint = departurePoint,
-            arrivalPoint = arrivalPoint,
-            scheduledDepartureTime = scheduledDepartureTime,
-            scheduledArrivalTime = scheduledArrivalTime,
-            reason = event.reason,
-        )
+            is FlightStatusUncertain -> UncertainFlightInfo(
+                id = id,
+                version = AggregateVersion(event.sequenceNumber),
+                departurePoint = departurePoint,
+                arrivalPoint = arrivalPoint,
+                scheduledDepartureTime = scheduledDepartureTime,
+                scheduledArrivalTime = scheduledArrivalTime,
+                reason = event.reason,
+            )
 
-        is FlightOnScheduleReturned -> ScheduledFlightInfo(
-            id = id,
-            departurePoint = departurePoint,
-            arrivalPoint = arrivalPoint,
-            scheduledDepartureTime = scheduledDepartureTime,
-            scheduledArrivalTime = scheduledArrivalTime,
-            version = AggregateVersion(event.sequenceNumber),
-            monitoringStatus = monitoringStatus
-        ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
+            is FlightOnScheduleReturned -> ScheduledFlightInfo(
+                id = id,
+                departurePoint = departurePoint,
+                arrivalPoint = arrivalPoint,
+                scheduledDepartureTime = scheduledDepartureTime,
+                scheduledArrivalTime = scheduledArrivalTime,
+                version = AggregateVersion(event.sequenceNumber),
+                monitoringStatus = monitoringStatus
+            ).fold({ error -> throw IllegalStateException(error.toString()) }, { it })
 
-        is FlightMonitoringActivated -> updateMonitoringStatus(
-            MonitoringStatus.ACTIVATED,
-            AggregateVersion(event.sequenceNumber)
-        )
+            is FlightMonitoringActivated -> updateMonitoringStatus(
+                MonitoringStatus.ACTIVATED,
+                AggregateVersion(event.sequenceNumber)
+            )
 
-        is FlightMonitoringCompleted -> updateMonitoringStatus(
-            MonitoringStatus.COMPLETED,
-            AggregateVersion(event.sequenceNumber)
-        )
+            is FlightMonitoringCompleted -> updateMonitoringStatus(
+                MonitoringStatus.COMPLETED,
+                AggregateVersion(event.sequenceNumber)
+            )
 
-        is FlightMonitoringFailed -> updateMonitoringStatus(
-            MonitoringStatus.FAILED,
-            AggregateVersion(event.sequenceNumber)
-        )
+            is FlightMonitoringFailed -> updateMonitoringStatus(
+                MonitoringStatus.FAILED,
+                AggregateVersion(event.sequenceNumber)
+            )
+        }
     }
 
     protected abstract fun updateMonitoringStatus(status: MonitoringStatus, version: AggregateVersion): FlightInfo

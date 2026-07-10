@@ -104,12 +104,10 @@ class TicketTest : DescribeSpec({
                     sequenceNumber = 3,
                     meta = DomainEventMeta.forRootEvent { now }
                 )
-                val result = ticket.apply(event)
-
-                it("Then: should remain in FinishedTicket state without changing version") {
-                    result.shouldBeInstanceOf<FinishedTicket>()
-                    result.reason shouldBe FinishReason.ARRIVED
-                    result.version shouldBe AggregateVersion(2)
+                it("Then: should throw IllegalStateException") {
+                    io.kotest.assertions.throwables.shouldThrow<IllegalStateException> {
+                        ticket.apply(event)
+                    }
                 }
             }
         }

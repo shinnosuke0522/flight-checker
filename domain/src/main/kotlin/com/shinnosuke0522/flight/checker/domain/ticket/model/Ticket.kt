@@ -20,9 +20,11 @@ sealed class Ticket : EventSourcingAggregateRoot<TicketId, TicketEvent, Ticket> 
     abstract val userId: UserId
     abstract val flightIdentity: FlightIdentity
 
-    override fun apply(event: TicketEvent): Ticket = when (this) {
-        is FinishedTicket -> this // 終端状態パターン: 終了済みなら状態は変わらない
-        is NormalTicket, is AlertTicket, is AcknowledgedTicket -> when (event) {
+    override fun apply(event: TicketEvent): Ticket {
+        if (this is FinishedTicket) {
+            error("Cannot apply event to a FinishedTicket")
+        }
+        return when (event) {
             is TicketRegistered -> NormalTicket(
                 id = event.aggregateId,
                 version = AggregateVersion(event.sequenceNumber),
