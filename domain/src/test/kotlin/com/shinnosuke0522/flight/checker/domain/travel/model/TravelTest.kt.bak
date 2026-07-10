@@ -22,11 +22,8 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import java.time.Instant
 import java.time.LocalDate
 
-class TravelTest : DescribeSpec({
-    val now = Instant.now()
-    val departureDate = LocalDate.of(2026, 5, 5)
-    val returnDate = LocalDate.of(2026, 5, 10)
-
+class TravelTest : DescribeSpec() {
+    init {
     describe("Travel aggregate state transitions and business rules") {
 
         context("Given: A newly planned travel (PLANNED)") {
@@ -211,7 +208,13 @@ class TravelTest : DescribeSpec({
             }
         }
     }
-})
+
+    companion object {
+        val now = Instant.now()
+        val departureDate = LocalDate.of(2026, 5, 5)
+        val returnDate = LocalDate.of(2026, 5, 10)
+    }
+}
 
 private fun givenTravel(vararg events: TravelEvent): Travel {
     return Travel.replay(nonEmptyListOf(events[0], *events.sliceArray(1 until events.size)))

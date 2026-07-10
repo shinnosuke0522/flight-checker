@@ -1,5 +1,6 @@
 package com.shinnosuke0522.flight.checker.domain.ticket.service
 
+import arrow.core.getOrElse
 import com.shinnosuke0522.flight.checker.domain.base.event.CorrelationId
 import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
@@ -20,38 +21,27 @@ import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.ticket.model.UserId
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
-import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import java.time.Instant
 import java.time.LocalDate
 
-class TicketStatusReflectorTest : DescribeSpec({
-    val userId = UserId.generate()
-    val flightIdentity = FlightIdentity.create("JL123", LocalDate.of(2026, 6, 7)).shouldBeRight()
-    val ticketId = TicketId.generate()
-    val now = Instant.now()
-    val correlationId = CorrelationId.generate()
-    val causationId = DomainEventId.generate()
-
-    describe("Given: 監視中の通常のチケット (NormalTicket) がある場合") {
-        val ticket = Ticket.initial(ticketId, userId, flightIdentity)
-
-        context("When: フライトが欠航したという事実を受け取った場合") {
+class TicketStatusReflectorTest : FunSpec() {
+    init {
+        test("監視中の通常のチケット (NormalTicket) がフライト欠航の事実を受け取った場合、欠航検知イベントが発行されること") {
             val command = TicketFlightCanceledReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId
             )
-            val result = TicketStatusReflector.reflect(ticket, command)
+            val result = TicketStatusReflector.reflect(normalTicket, command)
 
-            it("Then: 欠航検知イベント (TicketFlightCanceled) が発行されること") {
-                val (_, event) = result.shouldBeRight()
-                event.shouldBeInstanceOf<TicketFlightCanceled>()
-            }
+            val (_, event) = result.shouldBeRight()
+            event.shouldBeInstanceOf<TicketFlightCanceled>()
         }
 
-        context("When: フライトが遅延したという事実を受け取った場合") {
+        test("監視中の通常のチケット (NormalTicket) がフライト遅延の事実を受け取った場合、遅延検知イベントが発行されること") {
             val detail = AnomalyDelayed("2026-06-07T10:00:00Z")
             val command = TicketFlightDelayedReflectCommand(
                 occurredAt = now,
@@ -59,54 +49,37 @@ class TicketStatusReflectorTest : DescribeSpec({
                 causationId = causationId,
                 detail = detail
             )
-            val result = TicketStatusReflector.reflect(ticket, command)
+            val result = TicketStatusReflector.reflect(normalTicket, command)
 
-            it("Then: 遅延検知イベント (TicketFlightDelayed) が発行されること") {
-                val (_, event) = result.shouldBeRight()
-                event.shouldBeInstanceOf<TicketFlightDelayed>()
-                (event as TicketFlightDelayed).detail shouldBe detail
-            }
+            val (_, event) = result.shouldBeRight()
+            event.shouldBeInstanceOf<TicketFlightDelayed>()
+            (event as TicketFlightDelayed).detail shouldBe detail
         }
 
-        context("When: フライトが予定通り (OnSchedule) であるという事実を受け取った場合") {
+        test("監視中の通常のチケット (NormalTicket) が予定通りであるという事実を受け取った場合、エラーが返されること") {
             val command = TicketOnScheduleReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId
             )
-            val result = TicketStatusReflector.reflect(ticket, command)
+            val result = TicketStatusReflector.reflect(normalTicket, command)
 
-            it("Then: すでに正常であるため、エラー (TicketAlreadyOnScheduleError) が返されること") {
-                result shouldBeLeft TicketAlreadyOnScheduleError(ticket.id)
-            }
+            result shouldBeLeft TicketAlreadyOnScheduleError(normalTicket.id)
         }
-    }
 
-    describe("Given: すでに異常を検知しているチケット (AlertTicket) がある場合") {
-        val detail = AnomalyDelayed("2026-06-07T10:00:00Z")
-        val ticket = AlertTicket(
-            id = ticketId,
-            version = AggregateVersion(2),
-            userId = userId,
-            flightIdentity = flightIdentity,
-            currentAnomaly = detail
-        )
-
-        context("When: 前回と同じ遅延状態であるという事実を受け取った場合") {
+        test("異常検知済みのチケット (AlertTicket) が前回と同じ遅延状態であるという事実を受け取った場合、二重通知を防ぐエラーが返されること") {
             val command = TicketFlightDelayedReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId,
-                detail = detail
+                detail = initialAlertDetail
             )
-            val result = TicketStatusReflector.reflect(ticket, command)
+            val result = TicketStatusReflector.reflect(alertTicket, command)
 
-            it("Then: 二重通知を防ぐため、エラー (TicketAnomalyAlreadyReflectedError) が返されること") {
-                result shouldBeLeft TicketAnomalyAlreadyReflectedError(ticket.id, detail)
-            }
+            result shouldBeLeft TicketAnomalyAlreadyReflectedError(alertTicket.id, initialAlertDetail)
         }
 
-        context("When: 前回の遅延から時刻が更新された事実を受け取った場合") {
+        test("異常検知済みのチケット (AlertTicket) が前回の遅延から時刻が更新された事実を受け取った場合、新しい遅延検知イベントが発行されること") {
             val newDetail = AnomalyDelayed("2026-06-07T11:00:00Z")
             val command = TicketFlightDelayedReflectCommand(
                 occurredAt = now,
@@ -114,27 +87,14 @@ class TicketStatusReflectorTest : DescribeSpec({
                 causationId = causationId,
                 detail = newDetail
             )
-            val result = TicketStatusReflector.reflect(ticket, command)
+            val result = TicketStatusReflector.reflect(alertTicket, command)
 
-            it("Then: 情報が更新されたため、新しい遅延検知イベントが発行されること") {
-                val (_, event) = result.shouldBeRight()
-                event.shouldBeInstanceOf<TicketFlightDelayed>()
-                (event as TicketFlightDelayed).detail shouldBe newDetail
-            }
+            val (_, event) = result.shouldBeRight()
+            event.shouldBeInstanceOf<TicketFlightDelayed>()
+            (event as TicketFlightDelayed).detail shouldBe newDetail
         }
-    }
 
-    describe("Given: すでに異常を承諾済みのチケット (AcknowledgedTicket) がある場合") {
-        val initialDetail = AnomalyDelayed("2026-06-07T10:00:00Z")
-        val ticket = AcknowledgedTicket(
-            id = ticketId,
-            version = AggregateVersion(2),
-            userId = userId,
-            flightIdentity = flightIdentity,
-            acknowledgedAnomaly = initialDetail
-        )
-
-        context("When: さらに遅延が更新されたという事実を受け取った場合") {
+        test("異常承諾済みのチケット (AcknowledgedTicket) がさらに遅延が更新された事実を受け取った場合、再度遅延検知イベントが発行されること") {
             val newDelay = AnomalyDelayed("2026-06-07T11:00:00Z")
             val command = TicketFlightDelayedReflectCommand(
                 occurredAt = now,
@@ -142,64 +102,81 @@ class TicketStatusReflectorTest : DescribeSpec({
                 causationId = causationId,
                 detail = newDelay
             )
-            val result = TicketStatusReflector.reflect(ticket, command)
+            val result = TicketStatusReflector.reflect(acknowledgedTicket, command)
 
-            it("Then: 内容が更新されたため、再度遅延検知イベント (TicketFlightDelayed) が発行されること") {
-                val (_, event) = result.shouldBeRight()
-                event.shouldBeInstanceOf<TicketFlightDelayed>()
-                (event as TicketFlightDelayed).detail shouldBe newDelay
-            }
+            val (_, event) = result.shouldBeRight()
+            event.shouldBeInstanceOf<TicketFlightDelayed>()
+            (event as TicketFlightDelayed).detail shouldBe newDelay
         }
 
-        context("When: 前回と同じ遅延状態であるという事実を受け取った場合") {
+        test("異常承諾済みのチケット (AcknowledgedTicket) が前回と同じ遅延状態である事実を受け取った場合、リマインドを抑制するエラーが返されること") {
             val command = TicketFlightDelayedReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId,
-                detail = initialDetail
+                detail = initialAlertDetail
             )
-            val result = TicketStatusReflector.reflect(ticket, command)
+            val result = TicketStatusReflector.reflect(acknowledgedTicket, command)
 
-            it("Then: リマインドを抑制するため、エラー (TicketAnomalyAlreadyReflectedError) が返されること") {
-                result shouldBeLeft TicketAnomalyAlreadyReflectedError(ticket.id, initialDetail)
-            }
+            result shouldBeLeft TicketAnomalyAlreadyReflectedError(acknowledgedTicket.id, initialAlertDetail)
         }
 
-        context("When: 状態が予定通り (Normal) に復帰したという事実を受け取った場合") {
+        test("異常承諾済みのチケット (AcknowledgedTicket) が予定通りに復帰した事実を受け取った場合、復旧イベントが発行されること") {
             val command = TicketOnScheduleReflectCommand(
                 occurredAt = now,
                 correlationId = correlationId,
                 causationId = causationId
             )
-            val result = TicketStatusReflector.reflect(ticket, command)
+            val result = TicketStatusReflector.reflect(acknowledgedTicket, command)
 
-            it("Then: 復旧イベント (TicketAnomalyRecovered) が発行されること") {
-                val (_, event) = result.shouldBeRight()
-                event.shouldBeInstanceOf<TicketAnomalyRecovered>()
-            }
+            val (_, event) = result.shouldBeRight()
+            event.shouldBeInstanceOf<TicketAnomalyRecovered>()
+        }
+
+        test("終了済みのチケット (FinishedTicket) が何らかの事実を受け取った場合、変更不可能であることを示すエラーが返されること") {
+            val finishedTicket = FinishedTicket(
+                id = ticketId,
+                version = AggregateVersion(2),
+                userId = userId,
+                flightIdentity = flightIdentity,
+                reason = FinishReason.ARRIVED
+            )
+            val command = TicketOnScheduleReflectCommand(
+                occurredAt = now,
+                correlationId = correlationId,
+                causationId = causationId
+            )
+            val result = TicketStatusReflector.reflect(finishedTicket, command)
+
+            result shouldBeLeft TicketAlreadyFinishedError(finishedTicket.id)
         }
     }
 
-    describe("Given: すでに終了したチケット (FinishedTicket) がある場合") {
-        val ticket = FinishedTicket(
+    companion object {
+        val userId = UserId.generate()
+        val flightIdentity = FlightIdentity.create("JL123", LocalDate.of(2026, 6, 7)).getOrElse { error(it) }
+        val ticketId = TicketId.generate()
+        val now = Instant.now()
+        val correlationId = CorrelationId.generate()
+        val causationId = DomainEventId.generate()
+
+        val normalTicket = Ticket.initial(ticketId, userId, flightIdentity)
+
+        val initialAlertDetail = AnomalyDelayed("2026-06-07T10:00:00Z")
+        val alertTicket = AlertTicket(
             id = ticketId,
             version = AggregateVersion(2),
             userId = userId,
             flightIdentity = flightIdentity,
-            reason = FinishReason.ARRIVED
+            currentAnomaly = initialAlertDetail
         )
 
-        context("When: 何らかの事実を受け取り反映させようとすると") {
-            val command = TicketOnScheduleReflectCommand(
-                occurredAt = now,
-                correlationId = correlationId,
-                causationId = causationId
-            )
-            val result = TicketStatusReflector.reflect(ticket, command)
-
-            it("Then: 変更不可能であることを示すエラー (TicketAlreadyFinishedError) が返されること") {
-                result shouldBeLeft TicketAlreadyFinishedError(ticket.id)
-            }
-        }
+        val acknowledgedTicket = AcknowledgedTicket(
+            id = ticketId,
+            version = AggregateVersion(2),
+            userId = userId,
+            flightIdentity = flightIdentity,
+            acknowledgedAnomaly = initialAlertDetail
+        )
     }
-})
+}
