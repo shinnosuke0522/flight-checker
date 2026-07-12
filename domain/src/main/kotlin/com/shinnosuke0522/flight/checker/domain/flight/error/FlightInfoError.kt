@@ -65,3 +65,32 @@ data class FlightInfoNotFound(
     override val cause: Error.Cause? = null
     override val message = "Flight info not found: $flightIdentity"
 }
+
+data class FlightInfoAlreadyFinishedError(
+    val flightIdentity: FlightIdentity
+) : FlightInfoBusinessRuleError {
+    override val cause: Error.Cause? = null
+    override val message =
+        "Cannot modify flight info ${flightIdentity.asString()} because it is already in a finished state."
+}
+
+data class FlightInfoAlreadyOnScheduleError(
+    val flightIdentity: FlightIdentity
+) : FlightInfoBusinessRuleError {
+    override val cause: Error.Cause? = null
+    override val message = "Flight info ${flightIdentity.asString()} is already on schedule."
+}
+
+data class FlightMonitoringAlreadyActivatedError(
+    val flightIdentity: FlightIdentity
+) : FlightInfoBusinessRuleError {
+    override val cause: Error.Cause? = null
+    override val message = "Monitoring for flight ${flightIdentity.asString()} is already activated or finished."
+}
+
+data class FlightMonitoringNotActivatedError(
+    val flightIdentity: FlightIdentity
+) : FlightInfoBusinessRuleError {
+    override val cause: Error.Cause? = null
+    override val message = "Monitoring for flight ${flightIdentity.asString()} is not activated."
+}
