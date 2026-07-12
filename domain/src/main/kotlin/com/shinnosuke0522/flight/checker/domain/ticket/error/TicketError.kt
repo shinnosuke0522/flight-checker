@@ -53,3 +53,10 @@ data class TicketAlreadyOnScheduleError(
     override val cause: Error.Cause? = null
     override val message: String = "Ticket ${ticketId.asString()} is already on schedule."
 }
+
+data class TicketNotAlertStateError(
+    val ticketId: TicketId
+) : TicketBusinessRuleError {
+    override val cause: Error.Cause? = null
+    override val message: String = "Ticket ${ticketId.asString()} is not in an alert state and cannot be acknowledged."
+}
