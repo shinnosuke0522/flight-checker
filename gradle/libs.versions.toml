@@ -24,6 +24,10 @@ spring-boot-graphql-starter = { group = "org.springframework.boot", name = "spri
 spring-boot-docker-compose = { group = "org.springframework.boot", name = "spring-boot-docker-compose" }
 jackson-module-kotlin = { group = "tools.jackson.module", name = "jackson-module-kotlin" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+spring-context = { group = "org.springframework", name = "spring-context" }
+spring-tx = { group = "org.springframework", name = "spring-tx" }
+spring-boot-core = { group = "org.springframework.boot", name = "spring-boot" }
+spring-boot-autoconfigure = { group = "org.springframework.boot", name = "spring-boot-autoconfigure" }
 
 # Spring Cloud
 spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }
@@ -38,15 +42,20 @@ kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit
 kotlinx-coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test" }
 reactor-kotlin-extensions = { group = "io.projectreactor.kotlin", name = "reactor-kotlin-extensions", version = "1.2.3" }
+kotlinx-coroutines-jdk8 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8" }
 
 # DB (DynamoDB)
 aws-sdk-dynamodb = { group = "software.amazon.awssdk", name = "dynamodb" }
+aws-sdk-dynamodb-enhanced = { group = "software.amazon.awssdk", name = "dynamodb-enhanced" }
 
 # AWS SDK & Lambda
 aws-bom = { group = "software.amazon.awssdk", name = "bom", version.ref = "aws-sdk-v2" }
 spring-cloud-function-adapter-aws = { group = "org.springframework.cloud", name = "spring-cloud-function-adapter-aws" }
 aws-lambda-java-core = { group = "com.amazonaws", name = "aws-lambda-java-core", version.ref = "aws-lambda-core" }
 aws-lambda-java-events = { group = "com.amazonaws", name = "aws-lambda-java-events", version.ref = "aws-lambda-events" }
+aws-sdk-core = { group = "software.amazon.awssdk", name = "sdk-core" }
+aws-sdk-auth = { group = "software.amazon.awssdk", name = "auth" }
+aws-sdk-regions = { group = "software.amazon.awssdk", name = "regions" }
 
 # Others
 ulid = { module = "com.github.f4b6a3:ulid-creator", version = "5.2.3" }
@@ -107,26 +116,9 @@ test-core = [
     "kotest-assertions",
     "kotest-property",
 ]
-spring-core = [
-    "spring-boot-starter-restclient",
-    "spring-cloud-starter-circuitbreaker-reactor-resilience4j",
-]
-spring-api = [
-    "spring-cloud-function-context",
-    "spring-boot-starter-webflux",
-    "spring-boot-starter-security",
-    "jackson-module-kotlin",
-]
-spring-test-core = [
-    "spring-boot-starter-restclient-test"
-]
-spring-api-test = [
-    "spring-boot-starter-webflux-test",
-    "spring-boot-starter-security-test"
-]
-spring-test-container = [
-    "spring-boot-testcontainers",
-    "testcontainers-junit-jupiter",
+spring-boot-base = [
+    "spring-boot-core",
+    "spring-boot-autoconfigure",
 ]
 lambda-adapter = [
     "spring-cloud-function-adapter-aws",
