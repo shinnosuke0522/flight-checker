@@ -74,10 +74,6 @@ class TicketRepositoryDynamoDbImpl(
     override suspend fun findByFlightIdentity(
         flightIdentity: FlightIdentity
     ): List<Ticket> = withContext(Dispatchers.IO) {
-        // Warning: DynamoDB Enhanced Client query requires partition key.
-        // If flightIdentity is not the partition key, we need a Global Secondary Index (GSI).
-        // For now, this is a placeholder or full scan if not indexed properly.
-        // Assuming there is a GSI named "FlightIdentityIndex"
         val index = snapshotTable.index("FlightIdentityIndex")
         val key = Key.builder().partitionValue(flightIdentity.asString()).build()
 

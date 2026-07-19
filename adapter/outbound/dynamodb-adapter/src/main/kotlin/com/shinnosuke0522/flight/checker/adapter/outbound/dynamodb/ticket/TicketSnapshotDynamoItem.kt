@@ -17,6 +17,7 @@ import com.shinnosuke0522.flight.checker.domain.ticket.model.UserId
 import software.amazon.awssdk.enhanced.dynamodb.extensions.annotations.DynamoDbVersionAttribute
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecondaryPartitionKey
 
 @Suppress("DataClassShouldBeImmutable")
 @DynamoDbBean
@@ -25,7 +26,9 @@ data class TicketSnapshotDynamoItem(
     var id: String = "",
     @get:DynamoDbVersionAttribute
     var version: Long? = null,
+    @get:DynamoDbSecondaryPartitionKey(indexNames = ["UserIdIndex"])
     var userId: String = "",
+    @get:DynamoDbSecondaryPartitionKey(indexNames = ["FlightIdentityIndex"])
     var flightIdentity: String = "",
     var type: String = "",
     var currentAnomaly: String? = null,
