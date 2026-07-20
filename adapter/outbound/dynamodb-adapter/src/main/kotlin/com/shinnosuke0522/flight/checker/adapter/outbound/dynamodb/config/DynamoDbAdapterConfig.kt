@@ -29,9 +29,11 @@ final class DynamoDbAdapterConfig {
 
     @Bean
     @ConditionalOnAwsDisabled
-    fun dynamoDbEnhancedClientForLocal(): DynamoDbClient =
+    fun dynamoDbEnhancedClientForLocal(
+        props: DynamoDBLocalProps
+    ): DynamoDbClient =
         DynamoDbClient.builder()
-            .endpointOverride(URI.create(System.getenv("DYNAMODB_ENDPOINT")))
+            .endpointOverride(URI.create(props.endpoint))
             .region(Region.AP_NORTHEAST_1)
             .credentialsProvider(
                 StaticCredentialsProvider.create(

@@ -14,7 +14,6 @@ import com.shinnosuke0522.flight.checker.domain.ticket.model.NormalTicket
 import com.shinnosuke0522.flight.checker.domain.ticket.model.Ticket
 import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.ticket.model.UserId
-import software.amazon.awssdk.enhanced.dynamodb.extensions.annotations.DynamoDbVersionAttribute
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecondaryPartitionKey
@@ -24,8 +23,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecon
 data class TicketSnapshotDynamoItem(
     @get:DynamoDbPartitionKey
     var id: String = "",
-    @get:DynamoDbVersionAttribute
-    var version: Long? = null,
+    var version: Long = 0L,
     @get:DynamoDbSecondaryPartitionKey(indexNames = ["UserIdIndex"])
     var userId: String = "",
     @get:DynamoDbSecondaryPartitionKey(indexNames = ["FlightIdentityIndex"])
@@ -38,7 +36,7 @@ data class TicketSnapshotDynamoItem(
     fun toDomain(): Ticket {
         val ticketId = TicketId.fromString(id)
             .fold({ error(it.toString()) }, { it })
-        val aggregateVersion = AggregateVersion(version ?: 1L)
+        val domainVersion = AggregateVersion(version)
         val uid = UserId.fromString(userId)
             .fold({ error(it.toString()) }, { it })
 
@@ -48,13 +46,13 @@ data class TicketSnapshotDynamoItem(
         return when (type) {
             "Normal" -> NormalTicket(
                 id = ticketId,
-                version = aggregateVersion,
+                version = domainVersion,
                 userId = uid,
                 flightIdentity = identity
             )
             "Alert" -> AlertTicket(
                 id = ticketId,
-                version = aggregateVersion,
+                version = domainVersion,
                 userId = uid,
                 flightIdentity = identity,
                 currentAnomaly = parseAnomaly(
@@ -63,7 +61,7 @@ data class TicketSnapshotDynamoItem(
             )
             "Acknowledged" -> AcknowledgedTicket(
                 id = ticketId,
-                version = aggregateVersion,
+                version = domainVersion,
                 userId = uid,
                 flightIdentity = identity,
                 acknowledgedAnomaly = parseAnomaly(
@@ -72,7 +70,7 @@ data class TicketSnapshotDynamoItem(
             )
             "Finished" -> FinishedTicket(
                 id = ticketId,
-                version = aggregateVersion,
+                version = domainVersion,
                 userId = uid,
                 flightIdentity = identity,
                 reason = FinishReason.valueOf(reason ?: error("FinishedTicket must have reason"))

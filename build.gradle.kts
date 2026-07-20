@@ -1,3 +1,4 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 
 plugins {
@@ -122,12 +123,15 @@ subprojects {
     // Java
     extensions.configure<JavaPluginExtension> {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(24))
+            languageVersion.set(JavaLanguageVersion.of(21))
         }
     }
 
-    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    tasks.withType<Detekt>().configureEach {
         jvmTarget = "21"
+
+        setSource(files("src"))
+        include("**/*.kt", "**/*.kts")
     }
 
     // ==================================

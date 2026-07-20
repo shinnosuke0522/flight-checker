@@ -8,7 +8,7 @@ import org.springframework.test.context.TestPropertySource
 @Import(DynamoDbContainerConfig::class, DynamoDbTableInitializerConfig::class)
 @TestPropertySource(
     properties = [
-        "infrastracture.aws.enabled=false"
+        "infrastructure.aws.enabled=false"
     ]
 )
 annotation class EnableDynamoDbContainer

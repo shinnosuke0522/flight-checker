@@ -10,7 +10,6 @@ import com.shinnosuke0522.flight.checker.domain.flight.model.MonitoringStatus
 import com.shinnosuke0522.flight.checker.domain.flight.model.ScheduledFlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.model.UncertainFlightInfo
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
-import software.amazon.awssdk.enhanced.dynamodb.extensions.annotations.DynamoDbVersionAttribute
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 import java.time.Instant
@@ -20,8 +19,7 @@ import java.time.Instant
 data class FlightInfoSnapshotDynamoItem(
     @get:DynamoDbPartitionKey
     var flightIdentity: String = "",
-    @get:DynamoDbVersionAttribute
-    var version: Long? = null,
+    var version: Long = 0L,
     var type: String = "",
     var monitoringStatus: String = "",
     var departureCountryCode: String = "",
@@ -40,7 +38,7 @@ data class FlightInfoSnapshotDynamoItem(
         val identity = FlightIdentity.fromString(flightIdentity)
             .fold({ error(it.toString()) }, { it })
 
-        val aggregateVersion = AggregateVersion(version ?: 1L)
+        val domainVersion = AggregateVersion(version)
         val status = MonitoringStatus.valueOf(monitoringStatus)
 
         val departurePoint = FlightPoint.create(
@@ -61,7 +59,7 @@ data class FlightInfoSnapshotDynamoItem(
         return when (type) {
             "Scheduled" -> ScheduledFlightInfo(
                 id = identity,
-                version = aggregateVersion,
+                version = domainVersion,
                 departurePoint = departurePoint,
                 arrivalPoint = arrivalPoint,
                 scheduledDepartureTime = scheduledDepTime,
@@ -70,7 +68,7 @@ data class FlightInfoSnapshotDynamoItem(
             ).fold({ error(it.toString()) }, { it })
             "Delayed" -> DelayedFlightInfo(
                 flightIdentity = identity,
-                version = aggregateVersion,
+                version = domainVersion,
                 departurePoint = departurePoint,
                 arrivalPoint = arrivalPoint,
                 scheduledDepartureTime = scheduledDepTime,
@@ -81,7 +79,7 @@ data class FlightInfoSnapshotDynamoItem(
             )
             "Arrived" -> ArrivedFlightInfo(
                 flightIdentity = identity,
-                version = aggregateVersion,
+                version = domainVersion,
                 departurePoint = departurePoint,
                 arrivalPoint = arrivalPoint,
                 scheduledDepartureTime = scheduledDepTime,
@@ -90,7 +88,7 @@ data class FlightInfoSnapshotDynamoItem(
             )
             "Canceled" -> CanceledFlightInfo(
                 id = identity,
-                version = aggregateVersion,
+                version = domainVersion,
                 departurePoint = departurePoint,
                 arrivalPoint = arrivalPoint,
                 scheduledDepartureTime = scheduledDepTime,
@@ -99,7 +97,7 @@ data class FlightInfoSnapshotDynamoItem(
             )
             "Uncertain" -> UncertainFlightInfo(
                 id = identity,
-                version = aggregateVersion,
+                version = domainVersion,
                 departurePoint = departurePoint,
                 arrivalPoint = arrivalPoint,
                 scheduledDepartureTime = scheduledDepTime,
