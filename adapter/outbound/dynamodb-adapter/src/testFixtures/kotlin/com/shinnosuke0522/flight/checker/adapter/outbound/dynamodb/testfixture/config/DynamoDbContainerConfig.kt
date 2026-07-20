@@ -1,4 +1,4 @@
-package config
+package com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.testfixture.config
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean

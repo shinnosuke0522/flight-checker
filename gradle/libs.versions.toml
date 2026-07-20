@@ -27,6 +27,7 @@ spring-context = { group = "org.springframework", name = "spring-context" }
 spring-tx = { group = "org.springframework", name = "spring-tx" }
 spring-boot-core = { group = "org.springframework.boot", name = "spring-boot" }
 spring-boot-autoconfigure = { group = "org.springframework.boot", name = "spring-boot-autoconfigure" }
+spring-boot-jackson = { group = "org.springframework.boot", name = "spring-boot-jackson" }
 
 # Spring Cloud
 spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }
@@ -125,6 +126,7 @@ container-test-base = [
 spring-boot-base = [
     "spring-boot-core",
     "spring-boot-autoconfigure",
+    "spring-boot-jackson",
 ]
 lambda-adapter = [
     "spring-cloud-function-adapter-aws",
