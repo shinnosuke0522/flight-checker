@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.withType
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
     alias(libs.plugins.dgs.codegen)
 }
@@ -32,4 +35,8 @@ tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {
 
 tasks.withType<Jar> {
     enabled = true
+}
+
+tasks.withType<BootJar> {
+    enabled = false
 }
