@@ -17,7 +17,7 @@ import software.amazon.awssdk.enhanced.dynamodb.model.TransactWriteItemsEnhanced
 import software.amazon.awssdk.services.dynamodb.model.TransactionCanceledException
 
 @Repository
-class FlightInfoRepositoryDynamoDbImpl(
+final class FlightInfoRepositoryDynamoDbImpl(
     private val enhancedClient: DynamoDbEnhancedClient,
     eventPayloadCodec: FlightInfoEventDynamoPayloadCodec,
 ) : FlightInfoRepository {

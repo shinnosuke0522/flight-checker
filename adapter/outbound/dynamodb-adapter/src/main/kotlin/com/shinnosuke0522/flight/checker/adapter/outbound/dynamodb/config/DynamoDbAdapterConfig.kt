@@ -12,8 +12,8 @@ import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import java.net.URI
 
-@Configuration
-class DynamoDbAdapterConfig {
+@Configuration(proxyBeanMethods = false)
+final class DynamoDbAdapterConfig {
 
     @Bean
     @ConditionalOnAwsEnabled

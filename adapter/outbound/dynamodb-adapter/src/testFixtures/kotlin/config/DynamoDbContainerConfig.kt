@@ -7,7 +7,7 @@ import org.testcontainers.containers.GenericContainer
 import org.testcontainers.utility.DockerImageName
 
 @TestConfiguration
-class DynamoDbContainerConfig {
+final class DynamoDbContainerConfig {
 
     @Bean
     fun dynamoDbContainer(registry: DynamicPropertyRegistry): GenericContainer<*> {

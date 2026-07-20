@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 
 @Component
-class TicketEventDynamoPayloadCodec(
+final class TicketEventDynamoPayloadCodec(
     private val objectMapper: ObjectMapper
 ) {
     fun serialize(): (TicketEvent) -> String = { event ->
