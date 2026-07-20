@@ -17,7 +17,6 @@ dependencies {
     implementation(libs.spring.boot.graphql.starter)
     implementation(libs.graphql.extended.validation)
     testImplementation(libs.bundles.test.core)
-    testImplementation(libs.kotest.assertions.arrow)
 }
 
 tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {

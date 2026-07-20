@@ -3,10 +3,9 @@ kotlin = "2.3.21"
 coroutines = "1.10.2"
 kotest = "6.1.11"
 spring-boot = "4.0.5"
-spring-dependency-management = "1.1.7"
 graalvm-native = "0.11.5"
 spring-cloud = "2025.1.1"
-aws-sdk-v2 = "2.42.20"
+aws-sdk-v2 = "2.47.6"
 aws-lambda-core = "1.4.0"
 aws-lambda-events = "3.16.1"
 detekt = "1.23.8"
@@ -42,20 +41,21 @@ kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit
 kotlinx-coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test" }
 reactor-kotlin-extensions = { group = "io.projectreactor.kotlin", name = "reactor-kotlin-extensions", version = "1.2.3" }
-kotlinx-coroutines-jdk8 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8" }
 
-# DB (DynamoDB)
-aws-sdk-dynamodb = { group = "software.amazon.awssdk", name = "dynamodb" }
-aws-sdk-dynamodb-enhanced = { group = "software.amazon.awssdk", name = "dynamodb-enhanced" }
-
-# AWS SDK & Lambda
+# AWS SDK
 aws-bom = { group = "software.amazon.awssdk", name = "bom", version.ref = "aws-sdk-v2" }
 spring-cloud-function-adapter-aws = { group = "org.springframework.cloud", name = "spring-cloud-function-adapter-aws" }
-aws-lambda-java-core = { group = "com.amazonaws", name = "aws-lambda-java-core", version.ref = "aws-lambda-core" }
-aws-lambda-java-events = { group = "com.amazonaws", name = "aws-lambda-java-events", version.ref = "aws-lambda-events" }
 aws-sdk-core = { group = "software.amazon.awssdk", name = "sdk-core" }
 aws-sdk-auth = { group = "software.amazon.awssdk", name = "auth" }
 aws-sdk-regions = { group = "software.amazon.awssdk", name = "regions" }
+
+# AWS DynamoDB
+aws-sdk-dynamodb = { group = "software.amazon.awssdk", name = "dynamodb" }
+aws-sdk-dynamodb-enhanced = { group = "software.amazon.awssdk", name = "dynamodb-enhanced" }
+
+# AWS Lambda
+aws-lambda-java-core = { group = "com.amazonaws", name = "aws-lambda-java-core", version.ref = "aws-lambda-core" }
+aws-lambda-java-events = { group = "com.amazonaws", name = "aws-lambda-java-events", version.ref = "aws-lambda-events" }
 
 # Others
 ulid = { module = "com.github.f4b6a3:ulid-creator", version = "5.2.3" }
@@ -88,7 +88,6 @@ kotest-extentions-allure = { module = "io.kotest:kotest-extensions-allure", vers
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
-spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
 graalvm-native = { id = "org.graalvm.buildtools.native", version.ref = "graalvm-native" }
 detekt-plugin = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kover-plugin = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
@@ -115,6 +114,11 @@ test-core = [
     "kotest-runner",
     "kotest-assertions",
     "kotest-property",
+    "kotest-assertions-arrow",
+]
+testcontainers-base = [
+    "testcontainers-junit-jupiter",
+    "spring-boot-testcontainers"
 ]
 spring-boot-base = [
     "spring-boot-core",

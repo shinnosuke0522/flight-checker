@@ -1,5 +1,13 @@
 # Coding Conventions
 
+## 全プロジェクト共通
+
+### 依存関係管理 (Dependency Management)
+
+#### 1. Version Catalog の徹底
+*   **Version Catalog (libs.versions.toml) の利用**: すべてのモジュール (`build.gradle.kts`) における依存ライブラリやプラグインの定義は、必ず `gradle/libs.versions.toml` (Version Catalog) で一元管理すること。
+*   **ハードコードの禁止**: `build.gradle.kts` 内にバージョン番号やライブラリのGAV (Group, Artifact, Version) を直接記述（ハードコード）してはならない。新たに追加するライブラリも必ず `libs.versions.toml` に定義し、`libs.xxx` の形式で参照すること。
+
 ---
 
 ## Domain Layer

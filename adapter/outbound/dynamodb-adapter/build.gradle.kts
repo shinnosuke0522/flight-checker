@@ -18,11 +18,8 @@ dependencies {
 
     implementation(libs.aws.sdk.dynamodb)
     implementation(libs.aws.sdk.dynamodb.enhanced)
-    implementation(libs.kotlinx.coroutines.jdk8)
     implementation(libs.jackson.module.kotlin)
-    testImplementation(libs.kotest.assertions.arrow)
     implementation(libs.spring.tx)
-    implementation("com.fasterxml.jackson.core:jackson-databind")
 }
 
 tasks.withType<BootJar> {
