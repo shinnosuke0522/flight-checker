@@ -70,6 +70,7 @@ kotest-property = { group = "io.kotest", name = "kotest-property" }
 kotest-assertions-arrow = { group = "io.kotest", name = "kotest-assertions-arrow" }
 
 # Spring Test dependencies
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 spring-boot-starter-restclient-test = { group = "org.springframework.boot", name = "spring-boot-starter-restclient-test" }
 spring-boot-starter-security-test = { group = "org.springframework.boot", name = "spring-boot-starter-security-test" }
 spring-boot-starter-webflux-test = { group = "org.springframework.boot", name = "spring-boot-starter-webflux-test" }
@@ -116,9 +117,10 @@ test-core = [
     "kotest-property",
     "kotest-assertions-arrow",
 ]
-testcontainers-base = [
+container-test-base = [
+    "spring-boot-starter-test",
+    "spring-boot-testcontainers",
     "testcontainers-junit-jupiter",
-    "spring-boot-testcontainers"
 ]
 spring-boot-base = [
     "spring-boot-core",

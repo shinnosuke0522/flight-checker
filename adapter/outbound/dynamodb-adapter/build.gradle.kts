@@ -8,10 +8,9 @@ dependencies {
     implementation(platform(libs.aws.bom))
     testImplementation(platform(libs.kotest.bom))
 
-    // Dependencies
+    // For Production
     implementation(libs.bundles.core)
     implementation(libs.bundles.spring.boot.base)
-    testImplementation(libs.bundles.test.core)
 
     implementation(project(":domain"))
     implementation(project(":libs:aws"))
@@ -20,6 +19,15 @@ dependencies {
     implementation(libs.aws.sdk.dynamodb.enhanced)
     implementation(libs.jackson.module.kotlin)
     implementation(libs.spring.tx)
+
+    // For Test
+    listOf(
+        "integrationTestImplementation",
+        "testFixturesImplementation",
+    ).forEach { configuration ->
+        add(configuration, libs.bundles.test.core)
+        add(configuration, libs.bundles.container.test.base)
+    }
 }
 
 tasks.withType<BootJar> {

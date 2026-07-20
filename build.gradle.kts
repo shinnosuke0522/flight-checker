@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.kover.plugin)
     alias(libs.plugins.allure.report)
     alias(libs.plugins.allure.adapter) apply false
-    }
+}
 
 allprojects {
     repositories {
@@ -51,6 +51,7 @@ subprojects {
                 useJUnitJupiter()
                 dependencies {
                     implementation(project())
+                    implementation(testFixtures(project()))
                 }
                 targets {
                     all {
@@ -64,6 +65,7 @@ subprojects {
                 useJUnitJupiter()
                 dependencies {
                     implementation(project())
+                    implementation(testFixtures(project()))
                 }
                 targets {
                     all {
@@ -74,6 +76,28 @@ subprojects {
                     }
                 }
             }
+        }
+    }
+
+    // 独自テストスイートが、標準の test スイートの依存関係（implementationやKotestなど）を引き継ぐように設定
+    configurations {
+        named("testFixturesImplementation") {
+            extendsFrom(configurations.getByName("implementation"))
+        }
+        named("testFixturesRuntimeOnly") {
+            extendsFrom(configurations.getByName("runtimeOnly"))
+        }
+        named("integrationTestImplementation") {
+            extendsFrom(configurations.getByName("testImplementation"))
+        }
+        named("integrationTestRuntimeOnly") {
+            extendsFrom(configurations.getByName("testRuntimeOnly"))
+        }
+        named("componentTestImplementation") {
+            extendsFrom(configurations.getByName("testImplementation"))
+        }
+        named("componentTestRuntimeOnly") {
+            extendsFrom(configurations.getByName("testRuntimeOnly"))
         }
     }
 
