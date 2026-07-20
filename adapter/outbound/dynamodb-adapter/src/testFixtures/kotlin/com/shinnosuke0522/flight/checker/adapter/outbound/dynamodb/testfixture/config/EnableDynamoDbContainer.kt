@@ -5,7 +5,7 @@ import org.springframework.test.context.TestPropertySource
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-@Import(DynamoDbContainerConfig::class)
+@Import(DynamoDbContainerConfig::class, DynamoDbTableInitializerConfig::class)
 @TestPropertySource(
     properties = [
         "infrastracture.aws.enabled=false"

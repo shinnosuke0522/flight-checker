@@ -2,23 +2,26 @@ package com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.testfixture.
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertyRegistrar
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.utility.DockerImageName
 
 @TestConfiguration
-final class DynamoDbContainerConfig {
+open class DynamoDbContainerConfig {
 
     @Bean
-    fun dynamoDbContainer(registry: DynamicPropertyRegistry): GenericContainer<*> {
-        val container = GenericContainer(
-            DockerImageName.parse(DYNAMODB_CONTAINER_IMAGE_NAME)
-        ).withExposedPorts(DYNAMODB_CONTAINER_PORT)
+    open fun dynamoDbContainer(): GenericContainer<*> {
+        return GenericContainer(DockerImageName.parse(DYNAMODB_CONTAINER_IMAGE_NAME))
+            .withExposedPorts(DYNAMODB_CONTAINER_PORT)
+    }
 
-        registry.add("infrastructure.aws.dynamodb.endpoint") {
-            "http://${container.host}:${container.firstMappedPort}"
+    @Bean
+    open fun dynamoDbProperties(dynamoDbContainer: GenericContainer<*>): DynamicPropertyRegistrar {
+        return DynamicPropertyRegistrar { registry ->
+            registry.add("infrastructure.aws.dynamodb.endpoint") {
+                "http://${dynamoDbContainer.host}:${dynamoDbContainer.firstMappedPort}"
+            }
         }
-        return container
     }
 
     companion object {
