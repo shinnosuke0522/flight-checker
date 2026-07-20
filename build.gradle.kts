@@ -39,10 +39,49 @@ subprojects {
     pluginManager.apply(libs.plugins.kover.plugin.get().pluginId)
     pluginManager.apply(libs.plugins.allure.adapter.get().pluginId)
     pluginManager.apply(libs.plugins.gradle.test.fixtures.get().pluginId)
+    pluginManager.apply(libs.plugins.gradle.test.suite.get().pluginId)
+
+    @Suppress("UnstableApiUsage")
+    configure<TestingExtension> {
+        suites {
+            val test by getting(JvmTestSuite::class) {
+                useJUnitJupiter()
+            }
+            register<JvmTestSuite>("integrationTest") {
+                useJUnitJupiter()
+                dependencies {
+                    implementation(project())
+                }
+                targets {
+                    all {
+                        testTask.configure {
+                            shouldRunAfter(test)
+                        }
+                    }
+                }
+            }
+            register<JvmTestSuite>("componentTest") {
+                useJUnitJupiter()
+                dependencies {
+                    implementation(project())
+                }
+                targets {
+                    all {
+                        testTask.configure {
+                            shouldRunAfter(test)
+                            shouldRunAfter(suites.named("integrationTest"))
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     dependencies {
         add("detektPlugins", libs.detekt.formatting)
         add("testImplementation", libs.kotest.extentions.allure)
+        add("integrationTestImplementation", libs.kotest.extentions.allure)
+        add("componentTestImplementation", libs.kotest.extentions.allure)
     }
 
     configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
@@ -69,17 +108,6 @@ subprojects {
     if (path.startsWith(":app") || path.startsWith(":adapter")) {
         pluginManager.apply(libs.plugins.kotlin.spring.get().pluginId)
         pluginManager.apply(libs.plugins.spring.boot.get().pluginId)
-
-        pluginManager.apply(libs.plugins.gradle.test.suite.get().pluginId)
-
-        @Suppress("UnstableApiUsage")
-        configure<TestingExtension> {
-            suites {
-                val test by getting(org.gradle.api.plugins.jvm.JvmTestSuite::class) {
-                    useJUnitJupiter()
-                }
-            }
-        }
     }
 }
 
