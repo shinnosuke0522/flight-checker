@@ -137,9 +137,9 @@ data class FlightMonitoringFailedDto(
 
 fun FlightInfoEvent.toDto(): FlightInfoEventDynamoPayload = when (this) {
     is FlightInfoRegistered -> FlightInfoRegisteredDynamoPayload(
-        id = this.id.value.toString(),
+        id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
-        correlationId = this.meta.correlationId.value.toString(),
+        correlationId = this.meta.correlationId.value.value(),
         causationId = this.meta.causationId?.value?.toString(),
         departureCountryCode = this.departurePoint.countryCode.value,
         departureAirportCode = this.departurePoint.airportCode.value,
@@ -151,54 +151,54 @@ fun FlightInfoEvent.toDto(): FlightInfoEventDynamoPayload = when (this) {
         scheduledArrivalTime = this.scheduledArrivalTime.toString()
     )
     is FlightDelayed -> FlightDelayedDto(
-        id = this.id.value.toString(),
+        id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
-        correlationId = this.meta.correlationId.value.toString(),
+        correlationId = this.meta.correlationId.value.value(),
         causationId = this.meta.causationId?.value?.toString(),
         estimatedDepartureTime = this.estimatedDepartureTime?.toString(),
         estimatedArrivalTime = this.estimatedArrivalTime?.toString()
     )
     is FlightCanceled -> FlightCanceledDto(
-        id = this.id.value.toString(),
+        id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
-        correlationId = this.meta.correlationId.value.toString(),
+        correlationId = this.meta.correlationId.value.value(),
         causationId = this.meta.causationId?.value?.toString()
     )
     is FlightArrived -> FlightArrivedDto(
-        id = this.id.value.toString(),
+        id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
-        correlationId = this.meta.correlationId.value.toString(),
+        correlationId = this.meta.correlationId.value.value(),
         causationId = this.meta.causationId?.value?.toString()
     )
     is FlightStatusUncertain -> FlightStatusUncertainDto(
-        id = this.id.value.toString(),
+        id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
-        correlationId = this.meta.correlationId.value.toString(),
+        correlationId = this.meta.correlationId.value.value(),
         causationId = this.meta.causationId?.value?.toString(),
         reason = this.reason
     )
     is FlightOnScheduleReturned -> FlightOnScheduleReturnedDto(
-        id = this.id.value.toString(),
+        id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
-        correlationId = this.meta.correlationId.value.toString(),
+        correlationId = this.meta.correlationId.value.value(),
         causationId = this.meta.causationId?.value?.toString()
     )
     is FlightMonitoringActivated -> FlightMonitoringActivatedDto(
-        id = this.id.value.toString(),
+        id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
-        correlationId = this.meta.correlationId.value.toString(),
+        correlationId = this.meta.correlationId.value.value(),
         causationId = this.meta.causationId?.value?.toString()
     )
     is FlightMonitoringCompleted -> FlightMonitoringCompletedDto(
-        id = this.id.value.toString(),
+        id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
-        correlationId = this.meta.correlationId.value.toString(),
+        correlationId = this.meta.correlationId.value.value(),
         causationId = this.meta.causationId?.value?.toString()
     )
     is FlightMonitoringFailed -> FlightMonitoringFailedDto(
-        id = this.id.value.toString(),
+        id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
-        correlationId = this.meta.correlationId.value.toString(),
+        correlationId = this.meta.correlationId.value.value(),
         causationId = this.meta.causationId?.value?.toString(),
         reason = this.reason
     )

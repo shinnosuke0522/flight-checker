@@ -23,7 +23,7 @@ data class FlightIdentity private constructor(
         }
 
         fun fromString(value: String): Either<InvariantError, FlightIdentity> = either {
-            val dashIndex = value.lastIndexOf('-')
+            val dashIndex = value.indexOf('-')
             val flightCodeStr = value.substring(0, dashIndex)
             val dateStr = value.substring(dashIndex + 1)
             create(flightCodeStr, LocalDate.parse(dateStr)).bind()

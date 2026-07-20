@@ -6,8 +6,6 @@ dependencies {
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.aws.bom))
-    testImplementation(platform(libs.kotest.bom))
-
     // For Production
     implementation(libs.bundles.core)
     implementation(libs.bundles.spring.boot.base)
@@ -22,10 +20,17 @@ dependencies {
 
     // For Test
     listOf(
+        "testImplementation",
         "integrationTestImplementation",
         "testFixturesImplementation",
     ).forEach { configuration ->
+        add(configuration, platform(libs.kotest.bom))
         add(configuration, libs.bundles.test.core)
+    }
+    listOf(
+        "integrationTestImplementation",
+        "testFixturesImplementation",
+    ).forEach { configuration ->
         add(configuration, libs.bundles.container.test.base)
     }
 }
@@ -33,3 +38,4 @@ dependencies {
 tasks.withType<BootJar> {
     enabled = false
 }
+tasks.test { useJUnitPlatform() }
