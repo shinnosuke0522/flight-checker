@@ -4,3 +4,4 @@ run = "./gradlew detekt --auto-correct --continue"
 
 [tools]
 kotlin = "2.3.21"
+java = "corretto-21.0.5.11.1"

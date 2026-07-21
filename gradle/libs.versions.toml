@@ -1,12 +1,13 @@
 [versions]
+kotest-extensions-spring = "1.3.0"
+
 kotlin = "2.3.21"
 coroutines = "1.10.2"
 kotest = "6.1.11"
 spring-boot = "4.0.5"
-spring-dependency-management = "1.1.7"
 graalvm-native = "0.11.5"
 spring-cloud = "2025.1.1"
-aws-sdk-v2 = "2.42.20"
+aws-sdk-v2 = "2.47.6"
 aws-lambda-core = "1.4.0"
 aws-lambda-events = "3.16.1"
 detekt = "1.23.8"
@@ -22,8 +23,13 @@ spring-boot-starter-security = { group = "org.springframework.boot", name = "spr
 spring-boot-starter-webflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux" }
 spring-boot-graphql-starter = { group = "org.springframework.boot", name = "spring-boot-starter-graphql"}
 spring-boot-docker-compose = { group = "org.springframework.boot", name = "spring-boot-docker-compose" }
-jackson-module-kotlin = { group = "tools.jackson.module", name = "jackson-module-kotlin" }
+jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+spring-context = { group = "org.springframework", name = "spring-context" }
+spring-tx = { group = "org.springframework", name = "spring-tx" }
+spring-boot-core = { group = "org.springframework.boot", name = "spring-boot" }
+spring-boot-autoconfigure = { group = "org.springframework.boot", name = "spring-boot-autoconfigure" }
+spring-boot-jackson = { group = "org.springframework.boot", name = "spring-boot-jackson" }
 
 # Spring Cloud
 spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }
@@ -39,12 +45,18 @@ kotlinx-coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test" }
 reactor-kotlin-extensions = { group = "io.projectreactor.kotlin", name = "reactor-kotlin-extensions", version = "1.2.3" }
 
-# DB (DynamoDB)
-aws-sdk-dynamodb = { group = "software.amazon.awssdk", name = "dynamodb" }
-
-# AWS SDK & Lambda
+# AWS SDK
 aws-bom = { group = "software.amazon.awssdk", name = "bom", version.ref = "aws-sdk-v2" }
 spring-cloud-function-adapter-aws = { group = "org.springframework.cloud", name = "spring-cloud-function-adapter-aws" }
+aws-sdk-core = { group = "software.amazon.awssdk", name = "sdk-core" }
+aws-sdk-auth = { group = "software.amazon.awssdk", name = "auth" }
+aws-sdk-regions = { group = "software.amazon.awssdk", name = "regions" }
+
+# AWS DynamoDB
+aws-sdk-dynamodb = { group = "software.amazon.awssdk", name = "dynamodb" }
+aws-sdk-dynamodb-enhanced = { group = "software.amazon.awssdk", name = "dynamodb-enhanced" }
+
+# AWS Lambda
 aws-lambda-java-core = { group = "com.amazonaws", name = "aws-lambda-java-core", version.ref = "aws-lambda-core" }
 aws-lambda-java-events = { group = "com.amazonaws", name = "aws-lambda-java-events", version.ref = "aws-lambda-events" }
 
@@ -59,8 +71,10 @@ kotest-runner = { group = "io.kotest", name = "kotest-runner-junit5" }
 kotest-assertions = { group = "io.kotest", name = "kotest-assertions-core" }
 kotest-property = { group = "io.kotest", name = "kotest-property" }
 kotest-assertions-arrow = { group = "io.kotest", name = "kotest-assertions-arrow" }
+kotest-extensions-spring = { module = "io.kotest:kotest-extensions-spring", version.ref = "kotest" }
 
 # Spring Test dependencies
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 spring-boot-starter-restclient-test = { group = "org.springframework.boot", name = "spring-boot-starter-restclient-test" }
 spring-boot-starter-security-test = { group = "org.springframework.boot", name = "spring-boot-starter-security-test" }
 spring-boot-starter-webflux-test = { group = "org.springframework.boot", name = "spring-boot-starter-webflux-test" }
@@ -79,7 +93,6 @@ kotest-extentions-allure = { module = "io.kotest:kotest-extensions-allure", vers
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
-spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
 graalvm-native = { id = "org.graalvm.buildtools.native", version.ref = "graalvm-native" }
 detekt-plugin = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kover-plugin = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
@@ -106,27 +119,18 @@ test-core = [
     "kotest-runner",
     "kotest-assertions",
     "kotest-property",
+    "kotest-assertions-arrow",
+    "kotest-extensions-spring",
 ]
-spring-core = [
-    "spring-boot-starter-restclient",
-    "spring-cloud-starter-circuitbreaker-reactor-resilience4j",
-]
-spring-api = [
-    "spring-cloud-function-context",
-    "spring-boot-starter-webflux",
-    "spring-boot-starter-security",
-    "jackson-module-kotlin",
-]
-spring-test-core = [
-    "spring-boot-starter-restclient-test"
-]
-spring-api-test = [
-    "spring-boot-starter-webflux-test",
-    "spring-boot-starter-security-test"
-]
-spring-test-container = [
+container-test-base = [
+    "spring-boot-starter-test",
     "spring-boot-testcontainers",
     "testcontainers-junit-jupiter",
+]
+spring-boot-base = [
+    "spring-boot-core",
+    "spring-boot-autoconfigure",
+    "spring-boot-jackson",
 ]
 lambda-adapter = [
     "spring-cloud-function-adapter-aws",
