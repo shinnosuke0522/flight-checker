@@ -122,7 +122,7 @@ fun TicketEvent.toDto(): TicketEventDynamoPayload = when (this) {
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString(),
+        causationId = this.meta.causationId?.value?.value(),
         userId = this.userId.value(),
         flightIdentity = this.flightIdentity.asString()
     )
@@ -130,27 +130,27 @@ fun TicketEvent.toDto(): TicketEventDynamoPayload = when (this) {
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString(),
+        causationId = this.meta.causationId?.value?.value(),
         estimatedDepartureTime = this.detail.estimatedDepartureTime
     )
     is TicketFlightCanceled -> TicketFlightCanceledDynamoPayload(
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString()
+        causationId = this.meta.causationId?.value?.value()
     )
     is TicketFlightUncertain -> TicketFlightUncertainDynamoPayload(
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString(),
+        causationId = this.meta.causationId?.value?.value(),
         reason = this.detail.reason
     )
     is TicketAnomalyRecovered -> TicketAnomalyRecoveredDynamoPayload(
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString()
+        causationId = this.meta.causationId?.value?.value()
     )
     is TicketAnomalyAcknowledged -> {
         val (type, value) = when (val a = this.acknowledgedAnomaly) {
@@ -162,7 +162,7 @@ fun TicketEvent.toDto(): TicketEventDynamoPayload = when (this) {
             id = this.id.value.value(),
             occurredAt = this.meta.occurredAt.toString(),
             correlationId = this.meta.correlationId.value.value(),
-            causationId = this.meta.causationId?.value?.toString(),
+            causationId = this.meta.causationId?.value?.value(),
             anomalyType = type,
             anomalyValue = value
         )
@@ -171,7 +171,7 @@ fun TicketEvent.toDto(): TicketEventDynamoPayload = when (this) {
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString(),
+        causationId = this.meta.causationId?.value?.value(),
         reason = this.reason.name
     )
 }

@@ -140,7 +140,7 @@ fun FlightInfoEvent.toDto(): FlightInfoEventDynamoPayload = when (this) {
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString(),
+        causationId = this.meta.causationId?.value?.value(),
         departureCountryCode = this.departurePoint.countryCode.value,
         departureAirportCode = this.departurePoint.airportCode.value,
         departureZoneId = this.departurePoint.zoneId.id,
@@ -154,7 +154,7 @@ fun FlightInfoEvent.toDto(): FlightInfoEventDynamoPayload = when (this) {
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString(),
+        causationId = this.meta.causationId?.value?.value(),
         estimatedDepartureTime = this.estimatedDepartureTime?.toString(),
         estimatedArrivalTime = this.estimatedArrivalTime?.toString()
     )
@@ -162,44 +162,44 @@ fun FlightInfoEvent.toDto(): FlightInfoEventDynamoPayload = when (this) {
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString()
+        causationId = this.meta.causationId?.value?.value()
     )
     is FlightArrived -> FlightArrivedDto(
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString()
+        causationId = this.meta.causationId?.value?.value()
     )
     is FlightStatusUncertain -> FlightStatusUncertainDto(
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString(),
+        causationId = this.meta.causationId?.value?.value(),
         reason = this.reason
     )
     is FlightOnScheduleReturned -> FlightOnScheduleReturnedDto(
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString()
+        causationId = this.meta.causationId?.value?.value()
     )
     is FlightMonitoringActivated -> FlightMonitoringActivatedDto(
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString()
+        causationId = this.meta.causationId?.value?.value()
     )
     is FlightMonitoringCompleted -> FlightMonitoringCompletedDto(
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString()
+        causationId = this.meta.causationId?.value?.value()
     )
     is FlightMonitoringFailed -> FlightMonitoringFailedDto(
         id = this.id.value.value(),
         occurredAt = this.meta.occurredAt.toString(),
         correlationId = this.meta.correlationId.value.value(),
-        causationId = this.meta.causationId?.value?.toString(),
+        causationId = this.meta.causationId?.value?.value(),
         reason = this.reason
     )
 }
