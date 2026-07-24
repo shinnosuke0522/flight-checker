@@ -14,6 +14,9 @@ detekt = "1.23.8"
 kover = "0.9.8"
 allure = "4.0.1"
 kotest-allure = "6.1.11"
+swagger-annotations = "2.2.22"
+okhttp = "4.12.0"
+kotlinx-datetime = "0.5.0"
 
 [libraries]
 # Spring Boot
@@ -64,6 +67,9 @@ aws-lambda-java-events = { group = "com.amazonaws", name = "aws-lambda-java-even
 ulid = { module = "com.github.f4b6a3:ulid-creator", version = "5.2.3" }
 arrow-core = { group = "io.arrow-kt", name = "arrow-core", version = "2.2.2.1"}
 graphql-extended-validation = { group = "com.graphql-java", name = "graphql-java-extended-validation", version = "24.0" }
+swagger-annotations = { group = "io.swagger.core.v3", name = "swagger-annotations", version.ref = "swagger-annotations" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 # Kotest
 kotest-bom = { group = "io.kotest", name = "kotest-bom", version.ref = "kotest" }
