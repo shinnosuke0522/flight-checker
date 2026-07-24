@@ -6,12 +6,12 @@ import software.amazon.awssdk.auth.credentials.AwsCredentials
 import software.amazon.awssdk.regions.Region
 
 @ConditionalOnAwsEnabled
-@ConfigurationProperties(prefix = "infrastructure.aws")
+@ConfigurationProperties(prefix = AwsConfigConstants.PREFIX)
 data class AwsProps(
-    private val awsRegion: String,
-    private val awsAccessKey: String,
-    private val awsSecretKey: String,
+    private val region: String,
+    private val accessKey: String,
+    private val secretKey: String,
 ) {
-    val region: Region = Region.of(awsRegion)
-    val credentials: AwsCredentials = AwsBasicCredentials.create(awsAccessKey, awsSecretKey)
+    val awsRegion: Region = Region.of(region)
+    val credentials: AwsCredentials = AwsBasicCredentials.create(accessKey, secretKey)
 }

@@ -19,7 +19,7 @@ final class DynamoDbAdapterConfig {
     @ConditionalOnAwsEnabled
     fun dynamoDbClient(awsProps: AwsProps): DynamoDbClient =
         DynamoDbClient.builder()
-            .region(awsProps.region)
+            .region(awsProps.awsRegion)
             .credentialsProvider(
                 StaticCredentialsProvider.create(
                     awsProps.credentials

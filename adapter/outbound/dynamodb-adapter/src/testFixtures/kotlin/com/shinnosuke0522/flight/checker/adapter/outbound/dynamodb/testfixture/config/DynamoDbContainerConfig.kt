@@ -1,5 +1,6 @@
 package com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.testfixture.config
 
+import com.shinnosuke0522.flight.checker.common.aws.config.AwsConfigConstants
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.test.context.DynamicPropertyRegistrar
@@ -18,7 +19,7 @@ open class DynamoDbContainerConfig {
     @Bean
     open fun dynamoDbProperties(dynamoDbContainer: GenericContainer<*>): DynamicPropertyRegistrar {
         return DynamicPropertyRegistrar { registry ->
-            registry.add("infrastructure.aws.dynamodb.endpoint") {
+            registry.add("${AwsConfigConstants.PREFIX}.dynamodb.endpoint") {
                 "http://${dynamoDbContainer.host}:${dynamoDbContainer.firstMappedPort}"
             }
         }
