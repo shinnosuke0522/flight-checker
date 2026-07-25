@@ -4,14 +4,14 @@ import arrow.core.Either
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
-import com.shinnosuke0522.flight.checker.domain.flight.error.FlightInfoError
-import com.shinnosuke0522.flight.checker.domain.flight.error.SameFlightPointError
-import com.shinnosuke0522.flight.checker.domain.flight.error.ScheduledArrivalTimeBeforeDepartureTimeError
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoRegistered
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfoError
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfoRegistered
+import com.shinnosuke0522.flight.checker.domain.flight.model.SameFlightPointError
+import com.shinnosuke0522.flight.checker.domain.flight.model.ScheduledArrivalTimeBeforeDepartureTimeError
 
 object FlightInfoFactory {
 

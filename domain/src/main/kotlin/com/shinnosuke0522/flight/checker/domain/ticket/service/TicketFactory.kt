@@ -4,17 +4,17 @@ import arrow.core.Either
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
-import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAlreadyRegisteredError
-import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketError
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketRegistered
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.ticket.model.Ticket
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketAlreadyRegisteredError
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketDuplicatePolicy
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketError
 import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketId
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketRegistered
 import com.shinnosuke0522.flight.checker.domain.ticket.model.UserId
-import com.shinnosuke0522.flight.checker.domain.ticket.policy.TicketDuplicatePolicy
 import java.time.Instant
 
 /**

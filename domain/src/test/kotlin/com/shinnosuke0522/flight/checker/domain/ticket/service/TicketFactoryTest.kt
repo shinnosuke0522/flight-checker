@@ -1,11 +1,11 @@
 package com.shinnosuke0522.flight.checker.domain.ticket.service
 
 import arrow.core.Either
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
-import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAlreadyRegisteredError
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.ticket.model.NormalTicket
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketAlreadyRegisteredError
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketDuplicatePolicy
 import com.shinnosuke0522.flight.checker.domain.ticket.model.UserId
-import com.shinnosuke0522.flight.checker.domain.ticket.policy.TicketDuplicatePolicy
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf

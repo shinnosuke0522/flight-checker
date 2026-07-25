@@ -1,9 +1,6 @@
-package com.shinnosuke0522.flight.checker.domain.base.event
+package com.shinnosuke0522.flight.checker.domain.base.model
 
 import arrow.core.Either
-import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
-import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
-import com.shinnosuke0522.flight.checker.domain.base.primitive.ULID
 import java.time.Instant
 
 interface DomainEvent<AGGREGATE_ID : AggregateId> {

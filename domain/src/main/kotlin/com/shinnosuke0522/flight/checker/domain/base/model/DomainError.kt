@@ -1,4 +1,4 @@
-package com.shinnosuke0522.flight.checker.domain.base.error
+package com.shinnosuke0522.flight.checker.domain.base.model
 
 /**
  * ドメインロジックに起因するエラーの基底インターフェース。

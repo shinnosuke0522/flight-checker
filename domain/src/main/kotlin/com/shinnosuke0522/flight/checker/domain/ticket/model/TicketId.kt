@@ -2,9 +2,9 @@ package com.shinnosuke0522.flight.checker.domain.ticket.model
 
 import arrow.core.Either
 import arrow.core.raise.either
-import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
-import com.shinnosuke0522.flight.checker.domain.base.primitive.ULID
+import com.shinnosuke0522.flight.checker.domain.base.model.InvariantError
+import com.shinnosuke0522.flight.checker.domain.base.model.ULID
 
 @ConsistentCopyVisibility
 data class TicketId private constructor(val value: ULID) : AggregateId {

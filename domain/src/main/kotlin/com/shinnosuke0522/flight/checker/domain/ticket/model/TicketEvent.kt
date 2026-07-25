@@ -1,15 +1,9 @@
-package com.shinnosuke0522.flight.checker.domain.ticket.event
+package com.shinnosuke0522.flight.checker.domain.ticket.model
 
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEvent
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
-import com.shinnosuke0522.flight.checker.domain.ticket.model.Anomaly
-import com.shinnosuke0522.flight.checker.domain.ticket.model.AnomalyDelayed
-import com.shinnosuke0522.flight.checker.domain.ticket.model.AnomalyUncertain
-import com.shinnosuke0522.flight.checker.domain.ticket.model.FinishReason
-import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketId
-import com.shinnosuke0522.flight.checker.domain.ticket.model.UserId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEvent
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 
 /**
  * チケット（Ticket）に関するドメインイベントの基底インターフェース。

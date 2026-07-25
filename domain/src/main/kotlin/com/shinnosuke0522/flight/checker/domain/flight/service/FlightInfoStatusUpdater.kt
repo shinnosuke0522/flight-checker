@@ -3,20 +3,20 @@ package com.shinnosuke0522.flight.checker.domain.flight.service
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.flight.error.FlightInfoAlreadyFinishedError
-import com.shinnosuke0522.flight.checker.domain.flight.error.FlightInfoAlreadyOnScheduleError
-import com.shinnosuke0522.flight.checker.domain.flight.error.FlightInfoBusinessRuleError
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightArrived
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightCanceled
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightDelayed
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoEvent
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightOnScheduleReturned
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightStatusUncertain
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.flight.model.ArrivedFlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.model.CanceledFlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightArrived
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightCanceled
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightDelayed
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfoAlreadyFinishedError
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfoAlreadyOnScheduleError
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfoBusinessRuleError
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfoEvent
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightOnScheduleReturned
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightStatusUncertain
 import com.shinnosuke0522.flight.checker.domain.flight.model.ScheduledFlightInfo
 
 object FlightInfoStatusUpdater {

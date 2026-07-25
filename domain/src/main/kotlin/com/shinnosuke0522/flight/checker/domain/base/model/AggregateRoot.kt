@@ -1,6 +1,5 @@
 package com.shinnosuke0522.flight.checker.domain.base.model
 
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEvent
 import java.io.Serializable
 
 interface AggregateId : Serializable {

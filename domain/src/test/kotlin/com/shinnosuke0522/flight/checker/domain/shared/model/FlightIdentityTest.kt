@@ -1,6 +1,6 @@
-package com.shinnosuke0522.flight.checker.domain.shared.primitive
+package com.shinnosuke0522.flight.checker.domain.shared.model
 
-import com.shinnosuke0522.flight.checker.domain.base.error.InvalidFormatError
+import com.shinnosuke0522.flight.checker.domain.base.model.InvalidFormatError
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf

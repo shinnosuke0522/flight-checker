@@ -1,13 +1,13 @@
-package com.shinnosuke0522.flight.checker.domain.flight.error
+package com.shinnosuke0522.flight.checker.domain.flight.model
 
-import com.shinnosuke0522.flight.checker.domain.base.error.BusinessRuleError
-import com.shinnosuke0522.flight.checker.domain.base.error.CompositeInvariantError
-import com.shinnosuke0522.flight.checker.domain.base.error.DomainError
-import com.shinnosuke0522.flight.checker.domain.base.error.Error
-import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
-import com.shinnosuke0522.flight.checker.domain.base.error.RemoteError
-import com.shinnosuke0522.flight.checker.domain.base.error.toCause
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.base.model.BusinessRuleError
+import com.shinnosuke0522.flight.checker.domain.base.model.CompositeInvariantError
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainError
+import com.shinnosuke0522.flight.checker.domain.base.model.Error
+import com.shinnosuke0522.flight.checker.domain.base.model.InvariantError
+import com.shinnosuke0522.flight.checker.domain.base.model.RemoteError
+import com.shinnosuke0522.flight.checker.domain.base.model.toCause
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 
 interface FlightInfoError : DomainError
 

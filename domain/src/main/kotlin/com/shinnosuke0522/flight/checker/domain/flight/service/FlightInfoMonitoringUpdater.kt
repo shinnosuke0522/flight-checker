@@ -3,16 +3,16 @@ package com.shinnosuke0522.flight.checker.domain.flight.service
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.flight.error.FlightInfoBusinessRuleError
-import com.shinnosuke0522.flight.checker.domain.flight.error.FlightMonitoringAlreadyActivatedError
-import com.shinnosuke0522.flight.checker.domain.flight.error.FlightMonitoringNotActivatedError
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoEvent
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringActivated
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringCompleted
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringFailed
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfoBusinessRuleError
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfoEvent
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightMonitoringActivated
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightMonitoringAlreadyActivatedError
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightMonitoringCompleted
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightMonitoringFailed
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightMonitoringNotActivatedError
 import com.shinnosuke0522.flight.checker.domain.flight.model.MonitoringStatus
 
 object FlightInfoMonitoringUpdater {
