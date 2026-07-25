@@ -1,7 +1,6 @@
-package com.shinnosuke0522.flight.checker.domain.ticket.policy
+package com.shinnosuke0522.flight.checker.domain.ticket.model
 
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
-import com.shinnosuke0522.flight.checker.domain.ticket.model.UserId
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 
 /**
  * チケットの重複登録に関する判断基準（ポリシー）。

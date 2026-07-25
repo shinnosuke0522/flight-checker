@@ -3,15 +3,15 @@ package com.shinnosuke0522.flight.checker.domain.ticket.service
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.shinnosuke0522.flight.checker.domain.base.event.CorrelationId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketError
-import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketNotAlertStateError
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyAcknowledged
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketEvent
+import com.shinnosuke0522.flight.checker.domain.base.model.CorrelationId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.ticket.model.AlertTicket
 import com.shinnosuke0522.flight.checker.domain.ticket.model.Ticket
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketAnomalyAcknowledged
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketError
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketEvent
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketNotAlertStateError
 import java.time.Instant
 
 data class TicketAcknowledgeCommand(

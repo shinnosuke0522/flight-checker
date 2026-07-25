@@ -7,20 +7,7 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.base.model.EventSourcingAggregateRoot
-import com.shinnosuke0522.flight.checker.domain.flight.error.FlightInfoInvariantError
-import com.shinnosuke0522.flight.checker.domain.flight.error.SameFlightPointError
-import com.shinnosuke0522.flight.checker.domain.flight.error.ScheduledArrivalTimeBeforeDepartureTimeError
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightArrived
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightCanceled
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightDelayed
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoEvent
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoRegistered
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringActivated
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringCompleted
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringFailed
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightOnScheduleReturned
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightStatusUncertain
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import java.time.Instant
 
 /**

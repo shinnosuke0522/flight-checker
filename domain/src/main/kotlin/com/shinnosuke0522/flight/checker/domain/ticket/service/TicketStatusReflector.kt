@@ -3,18 +3,8 @@ package com.shinnosuke0522.flight.checker.domain.ticket.service
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAlreadyFinishedError
-import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAlreadyOnScheduleError
-import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketAnomalyAlreadyReflectedError
-import com.shinnosuke0522.flight.checker.domain.ticket.error.TicketError
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyRecovered
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketEvent
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFinished
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightCanceled
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightDelayed
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightUncertain
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.ticket.model.AcknowledgedTicket
 import com.shinnosuke0522.flight.checker.domain.ticket.model.AlertTicket
 import com.shinnosuke0522.flight.checker.domain.ticket.model.Anomaly
@@ -22,6 +12,16 @@ import com.shinnosuke0522.flight.checker.domain.ticket.model.AnomalyCanceled
 import com.shinnosuke0522.flight.checker.domain.ticket.model.FinishReason
 import com.shinnosuke0522.flight.checker.domain.ticket.model.FinishedTicket
 import com.shinnosuke0522.flight.checker.domain.ticket.model.Ticket
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketAlreadyFinishedError
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketAlreadyOnScheduleError
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketAnomalyAlreadyReflectedError
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketAnomalyRecovered
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketError
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketEvent
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketFinished
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketFlightCanceled
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketFlightDelayed
+import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketFlightUncertain
 
 /**
  * 外部の事実に基づき、[Ticket] の状態を更新するドメインサービス。

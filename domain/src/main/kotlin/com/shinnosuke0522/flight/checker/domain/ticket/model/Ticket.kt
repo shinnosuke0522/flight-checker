@@ -3,15 +3,7 @@ package com.shinnosuke0522.flight.checker.domain.ticket.model
 import arrow.core.NonEmptyList
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.base.model.EventSourcingAggregateRoot
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyAcknowledged
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyRecovered
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketEvent
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFinished
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightCanceled
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightDelayed
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightUncertain
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketRegistered
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 
 /**
  * ユーザーの特定のフライトに対する関心（監視対象チケット）を表す集約ルート。

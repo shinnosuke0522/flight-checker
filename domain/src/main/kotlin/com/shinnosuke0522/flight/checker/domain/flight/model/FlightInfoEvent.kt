@@ -1,10 +1,9 @@
-package com.shinnosuke0522.flight.checker.domain.flight.event
+package com.shinnosuke0522.flight.checker.domain.flight.model
 
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEvent
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEvent
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import java.time.Instant
 
 /**

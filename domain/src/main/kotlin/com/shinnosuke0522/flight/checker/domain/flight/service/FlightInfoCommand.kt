@@ -1,9 +1,9 @@
 package com.shinnosuke0522.flight.checker.domain.flight.service
 
-import com.shinnosuke0522.flight.checker.domain.base.event.CorrelationId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.CorrelationId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import java.time.Instant
 
 sealed interface FlightInfoCommand {

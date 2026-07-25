@@ -1,6 +1,5 @@
-package com.shinnosuke0522.flight.checker.domain.base.primitive
+package com.shinnosuke0522.flight.checker.domain.base.model
 
-import com.shinnosuke0522.flight.checker.domain.base.error.InvalidValueError
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

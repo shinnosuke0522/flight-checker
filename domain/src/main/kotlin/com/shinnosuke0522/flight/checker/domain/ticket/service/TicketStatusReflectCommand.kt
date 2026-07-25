@@ -1,7 +1,7 @@
 package com.shinnosuke0522.flight.checker.domain.ticket.service
 
-import com.shinnosuke0522.flight.checker.domain.base.event.CorrelationId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.CorrelationId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.ticket.model.AnomalyDelayed
 import com.shinnosuke0522.flight.checker.domain.ticket.model.AnomalyUncertain
 import java.time.Instant

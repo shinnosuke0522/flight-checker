@@ -1,6 +1,6 @@
 package com.shinnosuke0522.flight.checker.domain.ticket.model
 
-import com.shinnosuke0522.flight.checker.domain.base.error.InvalidValueError
+import com.shinnosuke0522.flight.checker.domain.base.model.InvalidValueError
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf

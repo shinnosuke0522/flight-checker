@@ -2,19 +2,11 @@ package com.shinnosuke0522.flight.checker.domain.flight.model
 
 import arrow.core.getOrElse
 import arrow.core.nonEmptyListOf
-import com.shinnosuke0522.flight.checker.domain.base.event.CorrelationId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightArrived
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightCanceled
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightDelayed
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoEvent
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoRegistered
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringCompleted
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringFailed
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightStatusUncertain
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.base.model.CorrelationId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData

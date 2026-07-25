@@ -1,9 +1,9 @@
-package com.shinnosuke0522.flight.checker.domain.shared.primitive
+package com.shinnosuke0522.flight.checker.domain.shared.model
 
 import arrow.core.Either
 import arrow.core.raise.either
-import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
+import com.shinnosuke0522.flight.checker.domain.base.model.InvariantError
 import java.time.LocalDate
 
 @ConsistentCopyVisibility

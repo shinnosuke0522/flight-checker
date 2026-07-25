@@ -1,4 +1,4 @@
-package com.shinnosuke0522.flight.checker.domain.base.error
+package com.shinnosuke0522.flight.checker.domain.base.model
 
 /**
  * アプリケーション全体で扱うエラーの基底インターフェース。

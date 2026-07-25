@@ -2,17 +2,10 @@ package com.shinnosuke0522.flight.checker.domain.ticket.model
 
 import arrow.core.getOrElse
 import arrow.core.nonEmptyListOf
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyAcknowledged
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketAnomalyRecovered
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketEvent
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFinished
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightCanceled
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketFlightDelayed
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketRegistered
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData

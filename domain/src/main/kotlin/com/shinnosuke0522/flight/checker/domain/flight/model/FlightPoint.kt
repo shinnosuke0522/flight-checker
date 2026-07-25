@@ -4,11 +4,11 @@ import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.raise.either
 import arrow.core.raise.zipOrAccumulate
-import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
-import com.shinnosuke0522.flight.checker.domain.base.error.UnKnownValueError
-import com.shinnosuke0522.flight.checker.domain.base.error.toCause
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.AirportCode
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.CountryCode
+import com.shinnosuke0522.flight.checker.domain.base.model.InvariantError
+import com.shinnosuke0522.flight.checker.domain.base.model.UnKnownValueError
+import com.shinnosuke0522.flight.checker.domain.base.model.toCause
+import com.shinnosuke0522.flight.checker.domain.shared.model.AirportCode
+import com.shinnosuke0522.flight.checker.domain.shared.model.CountryCode
 import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId

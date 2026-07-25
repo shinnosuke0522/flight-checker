@@ -1,12 +1,9 @@
-package com.shinnosuke0522.flight.checker.domain.base.primitive
+package com.shinnosuke0522.flight.checker.domain.base.model
 
 import arrow.core.Either
 import arrow.core.raise.either
 import com.github.f4b6a3.ulid.Ulid
 import com.github.f4b6a3.ulid.UlidCreator
-import com.shinnosuke0522.flight.checker.domain.base.error.InvalidValueError
-import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
-import com.shinnosuke0522.flight.checker.domain.base.error.toCause
 import java.time.Instant
 
 @JvmInline

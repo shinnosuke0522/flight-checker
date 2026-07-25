@@ -1,12 +1,9 @@
-package com.shinnosuke0522.flight.checker.domain.ticket.error
+package com.shinnosuke0522.flight.checker.domain.ticket.model
 
-import com.shinnosuke0522.flight.checker.domain.base.error.BusinessRuleError
-import com.shinnosuke0522.flight.checker.domain.base.error.DomainError
-import com.shinnosuke0522.flight.checker.domain.base.error.Error
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
-import com.shinnosuke0522.flight.checker.domain.ticket.model.Anomaly
-import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketId
-import com.shinnosuke0522.flight.checker.domain.ticket.model.UserId
+import com.shinnosuke0522.flight.checker.domain.base.model.BusinessRuleError
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainError
+import com.shinnosuke0522.flight.checker.domain.base.model.Error
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 
 sealed interface TicketError : DomainError
 

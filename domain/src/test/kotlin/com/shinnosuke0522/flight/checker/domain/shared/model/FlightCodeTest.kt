@@ -1,7 +1,7 @@
-package com.shinnosuke0522.flight.checker.domain.shared.primitive
+package com.shinnosuke0522.flight.checker.domain.shared.model
 
-import com.shinnosuke0522.flight.checker.domain.base.error.CannotBeBlankError
-import com.shinnosuke0522.flight.checker.domain.base.error.InvalidFormatError
+import com.shinnosuke0522.flight.checker.domain.base.model.CannotBeBlankError
+import com.shinnosuke0522.flight.checker.domain.base.model.InvalidFormatError
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.engine.names.WithDataTestName

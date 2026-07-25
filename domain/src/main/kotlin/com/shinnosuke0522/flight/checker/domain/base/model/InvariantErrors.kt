@@ -1,4 +1,4 @@
-package com.shinnosuke0522.flight.checker.domain.base.error
+package com.shinnosuke0522.flight.checker.domain.base.model
 
 /**
  * 具体的な標準不変条件違反エラーの実装。
