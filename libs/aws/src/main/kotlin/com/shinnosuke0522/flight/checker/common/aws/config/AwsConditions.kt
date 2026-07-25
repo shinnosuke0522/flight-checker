@@ -4,10 +4,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProp
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-@ConditionalOnBooleanProperty(value = [AwsConfigConstants.PROPERTY_ENABLED], havingValue = true)
+@ConditionalOnBooleanProperty(value = [AwsConfigConstants.PROPERTY_ENABLED], havingValue = true, matchIfMissing = false)
 annotation class ConditionalOnAwsEnabled
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-@ConditionalOnBooleanProperty(value = [AwsConfigConstants.PROPERTY_ENABLED], havingValue = false)
+@ConditionalOnBooleanProperty(value = [AwsConfigConstants.PROPERTY_ENABLED], havingValue = false, matchIfMissing = true)
 annotation class ConditionalOnAwsDisabled
