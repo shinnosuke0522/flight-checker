@@ -5,6 +5,8 @@ import com.shinnosuke0522.flight.checker.domain.base.error.CompositeInvariantErr
 import com.shinnosuke0522.flight.checker.domain.base.error.DomainError
 import com.shinnosuke0522.flight.checker.domain.base.error.Error
 import com.shinnosuke0522.flight.checker.domain.base.error.InvariantError
+import com.shinnosuke0522.flight.checker.domain.base.error.RemoteError
+import com.shinnosuke0522.flight.checker.domain.base.error.toCause
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 
 interface FlightInfoError : DomainError
@@ -93,4 +95,27 @@ data class FlightMonitoringNotActivatedError(
 ) : FlightInfoBusinessRuleError {
     override val cause: Error.Cause? = null
     override val message = "Monitoring for flight ${flightIdentity.asString()} is not activated."
+}
+
+sealed interface FlightInfoGatewayError : RemoteError
+
+data class FlightInfoNotExistError(
+    val flightIdentity: FlightIdentity,
+    override val cause: Error.Cause.ThrowableCause? = null
+) : FlightInfoGatewayError {
+    override val message: String = "Flight info does not exist: $flightIdentity"
+}
+
+data class FlightInfoCommunicationError(
+    val exception: Throwable
+) : FlightInfoGatewayError {
+    override val message: String = "Flight API通信に失敗しました"
+    override val cause: Error.Cause = exception.toCause()
+}
+
+data class FlightInfoInvalidDataError(
+    val exception: Throwable
+) : FlightInfoGatewayError {
+    override val message: String = "Flight APIから取得したデータの形式が不正、またはマッピングに失敗しました"
+    override val cause: Error.Cause = exception.toCause()
 }

@@ -12,6 +12,8 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.jackson.module.kotlin)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.arrow.core)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 }
 
 openApiGenerate {
@@ -22,6 +24,7 @@ openApiGenerate {
     outputDir.set("${layout.buildDirectory.get().asFile.path}/generated/openapi")
     apiPackage.set("com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.api")
     modelPackage.set("com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.model")
+    apiNameSuffix.set("Client")
 
     configOptions.put("useSpringBoot3", "true")
     configOptions.put("dateLibrary", "kotlinx-datetime")
@@ -29,15 +32,40 @@ openApiGenerate {
 
     generateApiTests.set(false)
     generateModelTests.set(false)
-
 }
 
 tasks.named("openApiGenerate") {
+    val buildDirPath = layout.buildDirectory.get().asFile.path
     doLast {
-        val apiClient = file("${layout.buildDirectory.get().asFile.path}/generated/openapi/src/main/kotlin/org/openapitools/client/infrastructure/ApiClient.kt")
+        val apiClient = file(
+            path = "$buildDirPath/generated/openapi/src/main/kotlin/org/openapitools/client/infrastructure/ApiClient.kt"
+        )
         if (apiClient.exists()) {
             val content = apiClient.readText()
-            apiClient.writeText(content.replace("parseDateToQueryString(value)", "parseDateToQueryString(value as Any)"))
+            apiClient.writeText(
+                content.replace(
+                    oldValue = "parseDateToQueryString(value)",
+                    newValue = "parseDateToQueryString(value as Any)"
+                )
+            )
+        }
+
+        // Rename *Api to *Client
+        val apiDir = file(
+            path = "$buildDirPath/generated/openapi/src/main/kotlin/"
+                    + "com/shinnosuke0522/flight/checker/adapter/outbound/aerodatabox/api"
+        )
+        if (apiDir.exists()) {
+            apiDir.listFiles()?.forEach { f ->
+                if (f.name.endsWith("Api.kt")) {
+                    val newName = f.name.replace("Api.kt", "Client.kt")
+                    val oldClassName = f.nameWithoutExtension
+                    val newClassName = newName.removeSuffix(".kt")
+                    val content = f.readText().replace(oldClassName, newClassName)
+                    f.writeText(content)
+                    f.renameTo(File(apiDir, newName))
+                }
+            }
         }
     }
 }
