@@ -30,6 +30,9 @@ class AeroDataBoxAPIConfig(
 
     @Bean
     fun flightAPIClient(aeroDataBoxOkHttpClient: OkHttpClient): FlightAPIClient {
-        return FlightAPIClient(client = aeroDataBoxOkHttpClient)
+        return FlightAPIClient(
+            basePath = properties.baseUrl,
+            client = aeroDataBoxOkHttpClient
+        )
     }
 }

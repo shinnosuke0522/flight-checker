@@ -16,5 +16,6 @@ object AeroDataBoxAPIConstants {
 @ConfigurationProperties(prefix = AeroDataBoxAPIConstants.PREFIX)
 data class AeroDataBoxAPIProperties(
     val rapidApiKey: String,
-    val rapidApiHost: String
+    val rapidApiHost: String,
+    val baseUrl: String = "https://prod.api.market/api/v1/aedbx/aerodatabox"
 )

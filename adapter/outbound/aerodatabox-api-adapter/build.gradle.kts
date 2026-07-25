@@ -15,8 +15,29 @@ dependencies {
     implementation(libs.arrow.core)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
-    testImplementation(platform(libs.kotest.bom))
-    testImplementation(libs.bundles.test.core)
+    // For Test
+    listOf(
+        "testImplementation",
+        "integrationTestImplementation",
+        "testFixturesImplementation",
+    ).forEach { configuration ->
+        add(configuration, platform(libs.kotest.bom))
+        add(configuration, libs.bundles.test.core)
+    }
+    listOf(
+        "integrationTestImplementation",
+        "testFixturesImplementation",
+    ).forEach { configuration ->
+        add(configuration, libs.bundles.container.test.base)
+        add(configuration, libs.wiremock)
+        add(configuration, libs.openapi.validator.wiremock)
+    }
+}
+
+configurations.all {
+    exclude(group = "com.github.tomakehurst", module = "wiremock-jre8")
+    exclude(group = "org.eclipse.jetty", module = "jetty-alpn-openjdk8-client")
+    exclude(group = "org.eclipse.jetty", module = "jetty-alpn-openjdk8-server")
 }
 
 tasks.test {
