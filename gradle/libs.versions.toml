@@ -86,7 +86,7 @@ spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-
 spring-boot-starter-restclient-test = { group = "org.springframework.boot", name = "spring-boot-starter-restclient-test" }
 spring-boot-starter-security-test = { group = "org.springframework.boot", name = "spring-boot-starter-security-test" }
 spring-boot-starter-webflux-test = { group = "org.springframework.boot", name = "spring-boot-starter-webflux-test" }
-wiremock = { group = "org.wiremock", name = "wiremock", version.ref = "wiremock" }
+wiremock = { group = "org.wiremock", name = "wiremock-standalone", version.ref = "wiremock" }
 openapi-validator-wiremock = { group = "com.atlassian.oai", name = "swagger-request-validator-wiremock", version.ref = "openapi-validator" }
 
 # Testcontainers

@@ -10,7 +10,6 @@ import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
 import com.shinnosuke0522.flight.checker.domain.flight.model.ScheduledFlightInfo
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
-import java.time.Instant
 
 object AeroDataBoxFlightMapper {
     fun toDomain(
@@ -20,13 +19,13 @@ object AeroDataBoxFlightMapper {
         val departureAirport = flight.departure.airport
         val arrivalAirport = flight.arrival.airport
 
-        val scheduledDepartureTimeStr = flight.departure.scheduledTime?.utc
-        val scheduledArrivalTimeStr = flight.arrival.scheduledTime?.utc
+        val scheduledDepartureTime = flight.departure.scheduledTime?.utc
+        val scheduledArrivalTime = flight.arrival.scheduledTime?.utc
 
-        ensureNotNull(scheduledDepartureTimeStr) {
+        ensureNotNull(scheduledDepartureTime) {
             FlightInfoInvalidDataError(IllegalArgumentException("Scheduled departure time is missing"))
         }
-        ensureNotNull(scheduledArrivalTimeStr) {
+        ensureNotNull(scheduledArrivalTime) {
             FlightInfoInvalidDataError(IllegalArgumentException("Scheduled arrival time is missing"))
         }
         ensureNotNull(departureAirport.countryCode) {
@@ -69,8 +68,8 @@ object AeroDataBoxFlightMapper {
             version = AggregateVersion(0),
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
-            scheduledDepartureTime = Instant.parse(scheduledDepartureTimeStr.toString()),
-            scheduledArrivalTime = Instant.parse(scheduledArrivalTimeStr.toString())
+            scheduledDepartureTime = scheduledDepartureTime.toInstant(),
+            scheduledArrivalTime = scheduledArrivalTime.toInstant()
         ).mapLeft { FlightInfoInvalidDataError(IllegalStateException(it.head.message)) }.bind()
     }
 }

@@ -14,8 +14,8 @@ import io.kotest.datatest.withData
 import io.kotest.engine.names.WithDataTestName
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import kotlinx.datetime.Instant
 import java.time.LocalDate
+import java.time.OffsetDateTime
 
 data class MissingFieldTestCase(
     val name: String,
@@ -169,13 +169,13 @@ class AeroDataBoxFlightMapperTest : FunSpec({
         )
 
         val validDepartureTime = DateTimeContract(
-            utc = Instant.parse("2026-05-01T10:00:00Z"),
-            local = Instant.parse("2026-05-01T19:00:00Z")
+            utc = OffsetDateTime.parse("2026-05-01T10:00:00Z"),
+            local = OffsetDateTime.parse("2026-05-01T19:00:00Z")
         )
 
         val validArrivalTime = DateTimeContract(
-            utc = Instant.parse("2026-05-01T20:00:00Z"),
-            local = Instant.parse("2026-05-01T16:00:00Z")
+            utc = OffsetDateTime.parse("2026-05-01T20:00:00Z"),
+            local = OffsetDateTime.parse("2026-05-01T16:00:00Z")
         )
 
         val validFlightContract = FlightContract(
@@ -189,7 +189,7 @@ class AeroDataBoxFlightMapperTest : FunSpec({
                 quality = emptyList(),
                 scheduledTime = validArrivalTime
             ),
-            lastUpdatedUtc = Instant.parse("2026-05-01T09:00:00Z"),
+            lastUpdatedUtc = OffsetDateTime.parse("2026-05-01T09:00:00Z"),
             number = "JL123",
             status = FlightStatus.Expected,
             codeshareStatus = CodeshareStatus.IsOperator,

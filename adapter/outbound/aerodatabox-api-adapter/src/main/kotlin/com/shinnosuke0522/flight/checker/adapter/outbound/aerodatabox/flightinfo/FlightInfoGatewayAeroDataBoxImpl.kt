@@ -15,11 +15,11 @@ import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfo
 import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Instant
 import org.openapitools.client.infrastructure.ClientException
 import org.openapitools.client.infrastructure.ServerException
 import org.springframework.stereotype.Component
 import java.io.IOException
+import java.time.OffsetDateTime
 
 private const val HTTP_STATUS_NOT_FOUND = 404
 
@@ -31,7 +31,7 @@ class FlightInfoGatewayAeroDataBoxImpl(
         withContext(Dispatchers.IO) {
             either {
                 val dateLocalStr = "${identity.departureDate}T00:00:00Z"
-                val dateLocal = Instant.parse(dateLocalStr)
+                val dateLocal = OffsetDateTime.parse(dateLocalStr)
 
                 val flights = try {
                     flightApiClient.getFlightFlightOnSpecificDate(

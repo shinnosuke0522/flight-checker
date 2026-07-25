@@ -55,7 +55,7 @@ openApiGenerate {
     apiNameSuffix.set("Client")
 
     configOptions.put("useSpringBoot3", "true")
-    configOptions.put("dateLibrary", "kotlinx-datetime")
+    configOptions.put("dateLibrary", "java8")
     configOptions.put("serializationLibrary", "jackson")
 
     generateApiTests.set(false)
