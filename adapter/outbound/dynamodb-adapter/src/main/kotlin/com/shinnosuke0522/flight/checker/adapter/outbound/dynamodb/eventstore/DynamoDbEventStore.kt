@@ -1,8 +1,8 @@
 package com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.eventstore
 
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEvent
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateId
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateRoot
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient

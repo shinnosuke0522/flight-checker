@@ -6,7 +6,7 @@ import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.model.Flig
 import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.model.FlightContract
 import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.model.FlightStatus
 import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.model.ListingAirportContract
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec

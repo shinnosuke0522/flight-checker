@@ -1,21 +1,21 @@
 package com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.flight
 
 import com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.config.DataDynamoDbTest
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventId
-import com.shinnosuke0522.flight.checker.domain.base.event.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightArrived
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightCanceled
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightDelayed
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoEvent
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoRegistered
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringActivated
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringCompleted
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightMonitoringFailed
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightOnScheduleReturned
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightStatusUncertain
-import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightArrived
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightCanceled
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightDelayed
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoEvent
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoRegistered
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitoringActivated
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitoringCompleted
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitoringFailed
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightOnScheduleReturned
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightPoint
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightStatusUncertain
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -95,7 +95,7 @@ class FlightInfoRepositoryDynamoDbImplIntegrationTest : FunSpec() {
                 val flightInfo1 = FlightInfo.replay(arrow.core.nonEmptyListOf(event1))
                 repository.save(event1, flightInfo1)
 
-                val event2 = com.shinnosuke0522.flight.checker.domain.flight.event.FlightDelayed(
+                val event2 = com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightDelayed(
                     id = DomainEventId.generate(),
                     meta = DomainEventMeta(
                         occurredAt = java.time.Instant.now(),
@@ -240,11 +240,11 @@ class FlightInfoRepositoryDynamoDbImplIntegrationTest : FunSpec() {
                 var currentFlightInfo = FlightInfo.replay(arrow.core.nonEmptyListOf(event1))
                 repository.save(event1, currentFlightInfo)
 
-                val events = mutableListOf<com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoEvent>(
+                val events = mutableListOf<com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoEvent>(
                     event1
                 )
                 for (i in 2L..10L) {
-                    val event = com.shinnosuke0522.flight.checker.domain.flight.event.FlightDelayed(
+                    val event = com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightDelayed(
                         id = DomainEventId.generate(),
                         meta = DomainEventMeta(
                             occurredAt = java.time.Instant.now(),

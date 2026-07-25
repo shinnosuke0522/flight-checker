@@ -1,0 +1,48 @@
+package com.shinnosuke0522.flight.checker.domain.flight.ticket.service
+
+import arrow.core.Either
+import arrow.core.raise.either
+import arrow.core.raise.ensure
+import com.shinnosuke0522.flight.checker.domain.base.model.CorrelationId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
+import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.AlertTicket
+import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.Ticket
+import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketAnomalyAcknowledged
+import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketError
+import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketEvent
+import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketNotAlertStateError
+import java.time.Instant
+
+data class TicketAcknowledgeCommand(
+    val occurredAt: Instant,
+    val correlationId: CorrelationId,
+    val causationId: DomainEventId
+)
+
+/**
+ * ユーザーがチケットの異常（遅延など）を認知・承諾したことを処理するドメインサービス。
+ */
+object TicketAnomalyAcknowledger {
+
+    fun acknowledge(
+        ticket: Ticket,
+        command: TicketAcknowledgeCommand
+    ): Either<TicketError, Pair<Ticket, TicketEvent>> = either {
+        ensure(ticket is AlertTicket) { TicketNotAlertStateError(ticket.id) }
+
+        val event = TicketAnomalyAcknowledged(
+            id = DomainEventId.generate(),
+            aggregateId = ticket.id,
+            sequenceNumber = ticket.version.nextVersion().value,
+            meta = DomainEventMeta.forCausedEvent(
+                clock = { command.occurredAt },
+                correlationId = command.correlationId,
+                causationId = command.causationId
+            ),
+            acknowledgedAnomaly = ticket.currentAnomaly
+        )
+
+        Pair(ticket.apply(event), event)
+    }
+}

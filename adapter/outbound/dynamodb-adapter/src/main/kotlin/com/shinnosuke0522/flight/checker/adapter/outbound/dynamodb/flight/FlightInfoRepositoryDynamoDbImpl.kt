@@ -2,10 +2,10 @@ package com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.flight
 
 import arrow.core.nonEmptyListOf
 import com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.eventstore.DynamoDbEventStore
-import com.shinnosuke0522.flight.checker.domain.flight.event.FlightInfoEvent
-import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.repository.FlightInfoRepository
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoEvent
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoRepository
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Repository
