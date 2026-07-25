@@ -5,11 +5,11 @@ import arrow.core.raise.either
 import arrow.core.raise.ensureNotNull
 import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.model.FlightContract
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
-import com.shinnosuke0522.flight.checker.domain.flight.error.FlightInfoInvalidDataError
-import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
-import com.shinnosuke0522.flight.checker.domain.flight.model.ScheduledFlightInfo
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoInvalidDataError
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightPoint
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.ScheduledFlightInfo
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 
 object AeroDataBoxFlightMapper {
     fun toDomain(

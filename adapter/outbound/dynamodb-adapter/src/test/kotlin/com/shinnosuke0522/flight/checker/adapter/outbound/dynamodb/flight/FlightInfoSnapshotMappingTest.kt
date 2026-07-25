@@ -1,15 +1,15 @@
 package com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.flight
 
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
-import com.shinnosuke0522.flight.checker.domain.flight.model.ArrivedFlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.model.CanceledFlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.model.DelayedFlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.model.FlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
-import com.shinnosuke0522.flight.checker.domain.flight.model.MonitoringStatus
-import com.shinnosuke0522.flight.checker.domain.flight.model.ScheduledFlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.model.UncertainFlightInfo
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.ArrivedFlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.CanceledFlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.DelayedFlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightPoint
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.MonitoringStatus
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.ScheduledFlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.UncertainFlightInfo
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData

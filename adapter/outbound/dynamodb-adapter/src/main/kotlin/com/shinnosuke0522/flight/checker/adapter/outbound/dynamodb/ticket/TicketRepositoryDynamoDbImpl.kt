@@ -2,12 +2,12 @@ package com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.ticket
 
 import arrow.core.nonEmptyListOf
 import com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.eventstore.DynamoDbEventStore
-import com.shinnosuke0522.flight.checker.domain.shared.primitive.FlightIdentity
-import com.shinnosuke0522.flight.checker.domain.ticket.event.TicketEvent
-import com.shinnosuke0522.flight.checker.domain.ticket.model.Ticket
-import com.shinnosuke0522.flight.checker.domain.ticket.model.TicketId
-import com.shinnosuke0522.flight.checker.domain.ticket.model.UserId
-import com.shinnosuke0522.flight.checker.domain.ticket.repository.TicketRepository
+import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.Ticket
+import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketEvent
+import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketId
+import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketRepository
+import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.UserId
+import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Repository
