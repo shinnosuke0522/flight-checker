@@ -14,6 +14,13 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.arrow.core)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+
+    testImplementation(platform(libs.kotest.bom))
+    testImplementation(libs.bundles.test.core)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 openApiGenerate {
@@ -67,6 +74,24 @@ tasks.named("openApiGenerate") {
                 }
             }
         }
+
+        // 警告抑止の追加 (RedundantCallOfConversionMethod, DEPRECATION)
+        val generatedSrcDir = file("$buildDirPath/generated/openapi/src/main/kotlin")
+        if (generatedSrcDir.exists()) {
+            generatedSrcDir.walkTopDown().filter { it.isFile && it.extension == "kt" }.forEach { ktFile ->
+                val content = ktFile.readText()
+                if (content.contains("@file:Suppress(\n")) {
+                    if (!content.contains("\"RedundantCallOfConversionMethod\"")) {
+                        ktFile.writeText(
+                            content.replace(
+                                "@file:Suppress(\n",
+                                "@file:Suppress(\n    \"RedundantCallOfConversionMethod\",\n    \"DEPRECATION\",\n"
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -78,6 +103,12 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     dependsOn(tasks.openApiGenerate)
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+        if (name == "compileKotlin") {
+            freeCompilerArgs.add("-nowarn")
+        }
+    }
 }
 
 tasks.bootJar {
