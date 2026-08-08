@@ -7,9 +7,9 @@ import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.model.Flig
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoInvalidDataError
-import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightPoint
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.ScheduledFlightInfo
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
 
 object AeroDataBoxFlightMapper {
     fun toDomain(

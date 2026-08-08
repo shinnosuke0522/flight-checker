@@ -13,7 +13,7 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitori
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitoringCompleted
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitoringFailed
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitoringNotActivatedError
-import com.shinnosuke0522.flight.checker.domain.flight.info.model.MonitoringStatus
+import com.shinnosuke0522.flight.checker.domain.flight.model.MonitoringStatus
 
 object FlightInfoMonitoringUpdater {
 

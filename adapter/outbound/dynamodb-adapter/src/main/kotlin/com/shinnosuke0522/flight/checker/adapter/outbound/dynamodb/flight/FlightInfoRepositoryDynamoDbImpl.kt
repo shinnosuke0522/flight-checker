@@ -5,7 +5,7 @@ import com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.eventstore.Dy
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoEvent
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoRepository
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Repository
@@ -96,8 +96,8 @@ final class FlightInfoRepositoryDynamoDbImpl(
     }
 
     companion object {
-        private const val JOURNAL_TABLE_NAME = "flight_info_event"
-        private const val SNAPSHOT_TABLE_NAME = "flight_info"
+        private const val JOURNAL_TABLE_NAME = "flight-journals"
+        private const val SNAPSHOT_TABLE_NAME = "flight-info-snapshots"
         private const val SNAPSHOT_INTERVAL = 10L
     }
 }

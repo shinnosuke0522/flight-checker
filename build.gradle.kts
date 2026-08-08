@@ -121,14 +121,14 @@ subprojects {
     }
 
     // Java
+    val javaLangVersion = 21
     extensions.configure<JavaPluginExtension> {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(21))
+            languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
         }
     }
-
     tasks.withType<Detekt>().configureEach {
-        jvmTarget = "21"
+        jvmTarget = javaLangVersion.toString()
 
         setSource(files("src"))
         include("**/*.kt", "**/*.kts")

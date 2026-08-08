@@ -3,7 +3,7 @@ package com.shinnosuke0522.flight.checker.domain.flight.ticket.model
 import arrow.core.NonEmptyList
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.base.model.EventSourcingAggregateRoot
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 
 /**
  * ユーザーの特定のフライトに対する関心（監視対象チケット）を表す集約ルート。

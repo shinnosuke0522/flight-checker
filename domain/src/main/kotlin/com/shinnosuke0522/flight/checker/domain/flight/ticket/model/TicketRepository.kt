@@ -1,6 +1,6 @@
 package com.shinnosuke0522.flight.checker.domain.flight.ticket.model
 
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 
 interface TicketRepository {
     suspend fun findById(ticketId: TicketId): Ticket?

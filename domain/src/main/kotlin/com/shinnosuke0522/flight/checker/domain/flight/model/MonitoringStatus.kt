@@ -1,4 +1,4 @@
-package com.shinnosuke0522.flight.checker.domain.flight.info.model
+package com.shinnosuke0522.flight.checker.domain.flight.model
 
 /**
  * 監視（能動的追跡）の状態。

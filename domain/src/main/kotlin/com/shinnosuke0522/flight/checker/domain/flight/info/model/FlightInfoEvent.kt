@@ -3,7 +3,8 @@ package com.shinnosuke0522.flight.checker.domain.flight.info.model
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEvent
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
 import java.time.Instant
 
 /**

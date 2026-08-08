@@ -1,7 +1,8 @@
-package com.shinnosuke0522.flight.checker.domain.shared.model
+package com.shinnosuke0522.flight.checker.domain.flight.shared.model
 
 import com.shinnosuke0522.flight.checker.domain.base.model.CannotBeBlankError
 import com.shinnosuke0522.flight.checker.domain.base.model.InvalidFormatError
+import com.shinnosuke0522.flight.checker.domain.flight.model.AirportCode
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.engine.names.WithDataTestName
@@ -22,7 +23,7 @@ class AirportCodeTest : FunSpec({
             "JFK",
             "LHR"
         ) { validCode ->
-            val result = AirportCode(validCode)
+            val result = AirportCode.Companion(validCode)
             result.isRight() shouldBe true
             result.getOrNull()?.value shouldBe validCode
         }
@@ -37,7 +38,7 @@ class AirportCodeTest : FunSpec({
             InvalidAirportCodeTestCase("小文字が含まれている場合", "Hnd", InvalidFormatError::class.java),
             InvalidAirportCodeTestCase("数字が含まれている場合", "HN1", InvalidFormatError::class.java)
         ) { testCase ->
-            val result = AirportCode(testCase.invalidValue)
+            val result = AirportCode.Companion(testCase.invalidValue)
             result.isLeft() shouldBe true
             result.leftOrNull()?.javaClass shouldBe testCase.expectedErrorType
         }

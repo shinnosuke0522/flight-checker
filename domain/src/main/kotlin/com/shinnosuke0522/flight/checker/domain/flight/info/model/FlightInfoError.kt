@@ -7,7 +7,7 @@ import com.shinnosuke0522.flight.checker.domain.base.model.Error
 import com.shinnosuke0522.flight.checker.domain.base.model.InvariantError
 import com.shinnosuke0522.flight.checker.domain.base.model.RemoteError
 import com.shinnosuke0522.flight.checker.domain.base.model.toCause
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 
 interface FlightInfoError : DomainError
 

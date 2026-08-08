@@ -5,11 +5,11 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.ArrivedFlightI
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.CanceledFlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.DelayedFlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightPoint
-import com.shinnosuke0522.flight.checker.domain.flight.info.model.MonitoringStatus
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.ScheduledFlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.UncertainFlightInfo
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
+import com.shinnosuke0522.flight.checker.domain.flight.model.MonitoringStatus
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 import java.time.Instant

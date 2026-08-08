@@ -1,4 +1,4 @@
-package com.shinnosuke0522.flight.checker.domain.shared.model
+package com.shinnosuke0522.flight.checker.domain.flight.model
 
 import arrow.core.Either
 import arrow.core.raise.either

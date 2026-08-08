@@ -8,6 +8,7 @@ import com.shinnosuke0522.flight.checker.adapter.outbound.dynamodb.eventstore.Ev
 import com.shinnosuke0522.flight.checker.domain.base.model.CorrelationId
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.AnomalyCanceled
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.AnomalyDelayed
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.AnomalyUncertain
@@ -22,7 +23,6 @@ import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketFlight
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketRegistered
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.UserId
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import org.springframework.stereotype.Component
 import java.time.Instant
 

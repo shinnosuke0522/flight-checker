@@ -7,6 +7,7 @@ import arrow.core.raise.ensure
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.Ticket
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketAlreadyRegisteredError
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketDuplicatePolicy
@@ -14,7 +15,6 @@ import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketError
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketRegistered
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.UserId
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
 import java.time.Instant
 
 /**
