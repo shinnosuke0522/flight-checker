@@ -7,6 +7,7 @@ kotest = "6.1.11"
 spring-boot = "4.0.5"
 graalvm-native = "0.11.5"
 spring-cloud = "2025.1.1"
+spring-cloud-gcp = "5.1.2"
 aws-sdk-v2 = "2.47.6"
 aws-lambda-core = "1.4.0"
 aws-lambda-events = "3.16.1"
@@ -40,6 +41,8 @@ spring-boot-jackson = { group = "org.springframework.boot", name = "spring-boot-
 spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }
 spring-cloud-starter-circuitbreaker-reactor-resilience4j = { group = "org.springframework.cloud", name = "spring-cloud-starter-circuitbreaker-reactor-resilience4j" }
 spring-cloud-function-context = { group = "org.springframework.cloud", name = "spring-cloud-function-context" }
+spring-cloud-gcp-dependencies = { group = "com.google.cloud", name = "spring-cloud-gcp-dependencies", version.ref = "spring-cloud-gcp" }
+spring-cloud-gcp-starter-data-firestore = { group = "com.google.cloud", name = "spring-cloud-gcp-starter-data-firestore" }
 
 # Kotlin
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
