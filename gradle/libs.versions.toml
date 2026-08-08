@@ -61,9 +61,7 @@ aws-sdk-core = { group = "software.amazon.awssdk", name = "sdk-core" }
 aws-sdk-auth = { group = "software.amazon.awssdk", name = "auth" }
 aws-sdk-regions = { group = "software.amazon.awssdk", name = "regions" }
 
-# AWS DynamoDB
-aws-sdk-dynamodb = { group = "software.amazon.awssdk", name = "dynamodb" }
-aws-sdk-dynamodb-enhanced = { group = "software.amazon.awssdk", name = "dynamodb-enhanced" }
+
 
 # AWS Lambda
 aws-lambda-java-core = { group = "com.amazonaws", name = "aws-lambda-java-core", version.ref = "aws-lambda-core" }
