@@ -3,7 +3,7 @@ package com.shinnosuke0522.flight.checker.domain.flight.ticket.model
 import com.shinnosuke0522.flight.checker.domain.base.model.BusinessRuleError
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainError
 import com.shinnosuke0522.flight.checker.domain.base.model.Error
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 
 sealed interface TicketError : DomainError
 

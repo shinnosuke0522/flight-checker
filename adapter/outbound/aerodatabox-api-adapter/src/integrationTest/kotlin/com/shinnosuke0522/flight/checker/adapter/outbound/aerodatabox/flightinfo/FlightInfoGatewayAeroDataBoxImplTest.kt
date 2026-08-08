@@ -10,7 +10,7 @@ import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.config.Aer
 import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.config.AeroDataBoxAPIProperties
 import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.testfixture.config.EnableAeroDataBoxAPIMock
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoNotExistError
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec

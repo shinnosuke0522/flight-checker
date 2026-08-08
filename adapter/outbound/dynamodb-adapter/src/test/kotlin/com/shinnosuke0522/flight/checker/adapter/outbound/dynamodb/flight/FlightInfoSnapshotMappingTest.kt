@@ -5,17 +5,18 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.ArrivedFlightI
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.CanceledFlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.DelayedFlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfo
-import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightPoint
-import com.shinnosuke0522.flight.checker.domain.flight.info.model.MonitoringStatus
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.ScheduledFlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.UncertainFlightInfo
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
+import com.shinnosuke0522.flight.checker.domain.flight.model.MonitoringStatus
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.engine.names.WithDataTestName
 import io.kotest.matchers.shouldBe
 import java.time.Instant
+import java.time.LocalDate
 
 class FlightInfoSnapshotMappingTest : FunSpec({
     context("FlightInfoSnapshotDynamoItem のマッピング検証") {
@@ -154,7 +155,7 @@ class FlightInfoSnapshotMappingTest : FunSpec({
     }
 }) {
     companion object {
-        val aggregateId = FlightIdentity.create("JL123", java.time.LocalDate.of(2026, 5, 1)).fold({
+        val aggregateId = FlightIdentity.create("JL123", LocalDate.of(2026, 5, 1)).fold({
             error(it.toString())
         }, { it })
         val version = AggregateVersion(1L)

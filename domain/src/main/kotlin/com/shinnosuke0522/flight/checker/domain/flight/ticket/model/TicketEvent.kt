@@ -3,7 +3,7 @@ package com.shinnosuke0522.flight.checker.domain.flight.ticket.model
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEvent
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 
 /**
  * チケット（Ticket）に関するドメインイベントの基底インターフェース。

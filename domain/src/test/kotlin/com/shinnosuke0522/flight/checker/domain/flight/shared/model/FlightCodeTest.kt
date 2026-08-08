@@ -1,7 +1,8 @@
-package com.shinnosuke0522.flight.checker.domain.shared.model
+package com.shinnosuke0522.flight.checker.domain.flight.shared.model
 
 import com.shinnosuke0522.flight.checker.domain.base.model.CannotBeBlankError
 import com.shinnosuke0522.flight.checker.domain.base.model.InvalidFormatError
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightCode
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.engine.names.WithDataTestName
@@ -23,7 +24,7 @@ class FlightCodeTest : FunSpec({
             "7G12",
             "JL123A"
         ) { validCode ->
-            val result = FlightCode(validCode)
+            val result = FlightCode.Companion(validCode)
             result.isRight() shouldBe true
             result.getOrNull()?.value shouldBe validCode
         }
@@ -31,7 +32,7 @@ class FlightCodeTest : FunSpec({
 
     context("プロパティが正しく取得できること") {
         test("キャリアコードと便名が正しく分割される") {
-            val code = FlightCode("JL123A").getOrNull()
+            val code = FlightCode.Companion("JL123A").getOrNull()
             code?.carrierCode shouldBe "JL"
             code?.flightNumber shouldBe "123A"
         }
@@ -46,7 +47,7 @@ class FlightCodeTest : FunSpec({
             InvalidFlightCodeTestCase("小文字が含まれている場合", "Jl123", InvalidFormatError::class.java),
             InvalidFlightCodeTestCase("不正な文字が含まれている場合", "JL-123", InvalidFormatError::class.java)
         ) { testCase ->
-            val result = FlightCode(testCase.invalidValue)
+            val result = FlightCode.Companion(testCase.invalidValue)
             result.isLeft() shouldBe true
             result.leftOrNull()?.javaClass shouldBe testCase.expectedErrorType
         }

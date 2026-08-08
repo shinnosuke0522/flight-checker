@@ -13,9 +13,9 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitori
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitoringCompleted
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitoringFailed
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightOnScheduleReturned
-import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightPoint
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightStatusUncertain
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe

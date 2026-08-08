@@ -17,13 +17,14 @@ import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketFlight
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketRegistered
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.UserId
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.engine.names.WithDataTestName
 import io.kotest.matchers.shouldBe
 import java.time.Instant
+import java.time.LocalDate
 
 class TicketEventMappingTest : FunSpec({
     context("TicketEvent のマッピング検証") {
@@ -194,7 +195,7 @@ class TicketEventMappingTest : FunSpec({
         val userId = UserId.fromString("01H9YXP882K1G2VQ6Q5YJ50J9S").fold({ error(it.toString()) }, { it })
         val flightIdentity = FlightIdentity.create(
             "JL123",
-            java.time.LocalDate.of(2026, 5, 1)
+            LocalDate.of(2026, 5, 1)
         ).fold({ error(it.toString()) }, { it })
     }
 }

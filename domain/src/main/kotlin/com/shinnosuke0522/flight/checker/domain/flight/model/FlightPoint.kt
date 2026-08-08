@@ -1,4 +1,4 @@
-package com.shinnosuke0522.flight.checker.domain.flight.info.model
+package com.shinnosuke0522.flight.checker.domain.flight.model
 
 import arrow.core.Either
 import arrow.core.NonEmptyList
@@ -7,8 +7,6 @@ import arrow.core.raise.zipOrAccumulate
 import com.shinnosuke0522.flight.checker.domain.base.model.InvariantError
 import com.shinnosuke0522.flight.checker.domain.base.model.UnKnownValueError
 import com.shinnosuke0522.flight.checker.domain.base.model.toCause
-import com.shinnosuke0522.flight.checker.domain.shared.model.AirportCode
-import com.shinnosuke0522.flight.checker.domain.shared.model.CountryCode
 import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId

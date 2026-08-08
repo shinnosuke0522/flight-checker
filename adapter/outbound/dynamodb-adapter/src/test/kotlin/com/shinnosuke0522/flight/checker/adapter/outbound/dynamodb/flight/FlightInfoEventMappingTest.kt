@@ -12,15 +12,16 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitori
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitoringCompleted
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightMonitoringFailed
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightOnScheduleReturned
-import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightPoint
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightStatusUncertain
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.engine.names.WithDataTestName
 import io.kotest.matchers.shouldBe
 import java.time.Instant
+import java.time.LocalDate
 
 class FlightInfoEventMappingTest : FunSpec({
     context("FlightInfoEvent のマッピング検証") {
@@ -171,7 +172,7 @@ class FlightInfoEventMappingTest : FunSpec({
         val domainEventId = DomainEventId.invoke("01H9YXP882K1G2VQ6Q5YJ50J9P").fold({ error(it.toString()) }, { it })
         val aggregateId = FlightIdentity.create(
             "JL123",
-            java.time.LocalDate.of(2026, 5, 1)
+            LocalDate.of(2026, 5, 1)
         ).fold({ error(it.toString()) }, { it })
         val meta = DomainEventMeta(
             occurredAt = Instant.parse("2026-05-01T00:00:00Z"),

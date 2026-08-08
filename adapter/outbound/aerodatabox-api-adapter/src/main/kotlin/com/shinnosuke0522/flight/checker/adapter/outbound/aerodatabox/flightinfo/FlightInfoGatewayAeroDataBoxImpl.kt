@@ -12,7 +12,7 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoComm
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoGateway
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoGatewayError
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoNotExistError
-import com.shinnosuke0522.flight.checker.domain.shared.model.FlightIdentity
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.openapitools.client.infrastructure.ClientException
