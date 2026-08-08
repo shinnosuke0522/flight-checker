@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.spring.cloud.gcp.starter.data.firestore)
     implementation(libs.jackson.module.kotlin)
     implementation(libs.spring.tx)
+    implementation(libs.kotlinx.coroutines.guava)
 
     // For Test
     listOf(
@@ -32,6 +33,8 @@ dependencies {
     ).forEach { configuration ->
         add(configuration, libs.bundles.container.test.base)
     }
+    
+    testFixturesApi(libs.testcontainers.gcloud)
 }
 
 tasks.withType<BootJar> {
