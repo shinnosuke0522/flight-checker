@@ -4,6 +4,7 @@ import arrow.core.getOrElse
 import com.shinnosuke0522.flight.checker.domain.base.model.AggregateVersion
 import com.shinnosuke0522.flight.checker.domain.base.model.CorrelationId
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.AcknowledgedTicket
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.AlertTicket
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.AnomalyDelayed
@@ -18,7 +19,6 @@ import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketFlight
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketFlightDelayed
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.UserId
-import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec

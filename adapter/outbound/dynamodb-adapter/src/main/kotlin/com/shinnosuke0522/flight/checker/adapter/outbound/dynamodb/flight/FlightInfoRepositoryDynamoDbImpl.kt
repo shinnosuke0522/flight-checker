@@ -96,8 +96,8 @@ final class FlightInfoRepositoryDynamoDbImpl(
     }
 
     companion object {
-        private const val JOURNAL_TABLE_NAME = "journal"
-        private const val SNAPSHOT_TABLE_NAME = "flight_info"
+        private const val JOURNAL_TABLE_NAME = "flight-journals"
+        private const val SNAPSHOT_TABLE_NAME = "flight-info-snapshots"
         private const val SNAPSHOT_INTERVAL = 10L
     }
 }

@@ -15,10 +15,9 @@ open class DynamoDbTableInitializerConfig(
 ) {
     @PostConstruct
     fun createTables() {
+        createTableIfNotExists("flight-info-snapshots", FlightInfoSnapshotDynamoItem::class.java)
         createTableIfNotExists("ticket-snapshots", TicketSnapshotDynamoItem::class.java)
-        createTableIfNotExists("flight_info", FlightInfoSnapshotDynamoItem::class.java)
-        createTableIfNotExists("ticket-journals", EventStoreItem::class.java)
-        createTableIfNotExists("flight_info_event", EventStoreItem::class.java)
+        createTableIfNotExists("flight-journals", EventStoreItem::class.java)
     }
 
     private fun <T> createTableIfNotExists(tableName: String, beanClass: Class<T>) {
