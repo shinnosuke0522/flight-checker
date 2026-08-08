@@ -10,7 +10,7 @@ import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.Ticket
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketRegistered
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.UserId
-import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -18,14 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.Instant
 
 @DataFirestoreTest
-class TicketRepositoryFirestoreImplIntegrationTest : StringSpec() {
+class TicketRepositoryFirestoreImplIntegrationTest : FunSpec() {
 
     @Autowired
     lateinit var ticketRepository: TicketRepositoryFirestoreImpl
 
     init {
         extension(SpringExtension())
-        "should save and find ticket" {
+        test("should save and find ticket") {
             val ticketId = TicketId.generate()
             val userId = UserId.generate()
             val flightIdentity = FlightIdentity.create("NH123", java.time.LocalDate.of(2023, 12, 1)).getOrNull()!!

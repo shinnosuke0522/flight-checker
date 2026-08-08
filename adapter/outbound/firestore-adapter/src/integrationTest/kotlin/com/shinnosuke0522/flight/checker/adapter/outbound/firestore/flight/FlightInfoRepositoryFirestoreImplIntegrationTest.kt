@@ -7,7 +7,7 @@ import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoRegistered
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
-import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -16,14 +16,14 @@ import java.time.Instant
 import java.time.LocalDate
 
 @DataFirestoreTest
-class FlightInfoRepositoryFirestoreImplIntegrationTest : StringSpec() {
+class FlightInfoRepositoryFirestoreImplIntegrationTest : FunSpec() {
 
     @Autowired
     lateinit var flightInfoRepository: FlightInfoRepositoryFirestoreImpl
 
     init {
         extension(SpringExtension())
-        "should save and find flight info" {
+        test("should save and find flight info") {
             val flightIdentity = FlightIdentity.create("NH123", LocalDate.of(2023, 12, 1)).getOrNull()!!
 
             val event = FlightInfoRegistered(
