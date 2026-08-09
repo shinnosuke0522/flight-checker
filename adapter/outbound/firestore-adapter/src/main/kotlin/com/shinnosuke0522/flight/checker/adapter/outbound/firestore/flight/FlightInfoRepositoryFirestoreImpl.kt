@@ -1,0 +1,102 @@
+package com.shinnosuke0522.flight.checker.adapter.outbound.firestore.flight
+
+import arrow.core.nonEmptyListOf
+import com.google.cloud.firestore.Firestore
+import com.shinnosuke0522.flight.checker.adapter.outbound.firestore.eventstore.EventStoreDocument
+import com.shinnosuke0522.flight.checker.adapter.outbound.firestore.eventstore.FirestoreEventStore
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfo
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoEvent
+import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoRepository
+import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.springframework.stereotype.Repository
+
+@Repository
+class FlightInfoRepositoryFirestoreImpl(
+    private val firestore: Firestore,
+    private val eventPayloadCodec: FlightInfoEventFirestorePayloadCodec,
+) : FlightInfoRepository {
+
+    private val eventStore = FirestoreEventStore<FlightIdentity, FlightInfo, FlightInfoEvent>(
+        firestore = firestore,
+        collectionName = JOURNAL_COLLECTION_NAME,
+        serialize = eventPayloadCodec.serialize(),
+        deserialize = eventPayloadCodec.deserialize()
+    )
+
+    override suspend fun findByFlightIdentity(flightIdentity: FlightIdentity): FlightInfo? =
+        withContext(Dispatchers.IO) {
+            val snapshotDoc = firestore.collection(SNAPSHOT_COLLECTION_NAME)
+                .document(flightIdentity.asString())
+                .get()
+                .get()
+
+            if (snapshotDoc.exists()) {
+                val snapshotItem = snapshotDoc.toObject(FlightInfoSnapshotFirestoreDocument::class.java)
+                if (snapshotItem != null) {
+                    return@withContext replayAggregateFromSnapshot(snapshotItem.toDomain())
+                }
+            }
+
+            val events = eventStore.load(flightIdentity)
+            if (events.isEmpty()) return@withContext null
+
+            @Suppress("SpreadOperator")
+            FlightInfo.replay(nonEmptyListOf(events.first(), *events.drop(1).toTypedArray()))
+        }
+
+    override suspend fun save(event: FlightInfoEvent, snapshot: FlightInfo): Unit =
+        withContext(Dispatchers.IO) {
+            val shouldSnapshot = event.sequenceNumber == 1L || event.sequenceNumber % SNAPSHOT_INTERVAL == 0L
+
+            if (shouldSnapshot) {
+                val eventDocId = "${event.aggregateId.asString()}_${event.sequenceNumber}"
+                val eventRef = firestore.collection(JOURNAL_COLLECTION_NAME).document(eventDocId)
+                val snapshotRef = firestore.collection(SNAPSHOT_COLLECTION_NAME).document(snapshot.id.asString())
+
+                firestore.runTransaction { transaction ->
+                    val eventSnapshot = transaction.get(eventRef).get()
+                    if (eventSnapshot.exists()) {
+                        throw IllegalStateException(
+                            "Transaction canceled. Optimistic locking failed for " +
+                                "aggregateId: ${event.aggregateId.asString()}, " +
+                                "sequenceNumber: ${event.sequenceNumber}"
+                        )
+                    }
+
+                    val eventItem = EventStoreDocument(
+                        aggregateId = event.aggregateId.asString(),
+                        sequenceNumber = event.sequenceNumber,
+                        payload = eventPayloadCodec.serialize()(event)
+                    )
+
+                    transaction.set(eventRef, eventItem)
+                    transaction.set(snapshotRef, FlightInfoSnapshotFirestoreDocument.fromDomain(snapshot))
+                    null
+                }.get()
+            } else {
+                eventStore.append(event)
+            }
+        }
+
+    private suspend fun replayAggregateFromSnapshot(
+        snapshot: FlightInfo
+    ): FlightInfo {
+        val events = eventStore.loadSince(
+            aggregateId = snapshot.id,
+            sequenceNumber = snapshot.version.value
+        )
+        return if (events.isEmpty()) {
+            snapshot
+        } else {
+            events.fold(snapshot) { acc, e -> acc.apply(e) }
+        }
+    }
+
+    companion object {
+        private const val JOURNAL_COLLECTION_NAME = "flight-journals"
+        private const val SNAPSHOT_COLLECTION_NAME = "flight-info-snapshots"
+        private const val SNAPSHOT_INTERVAL = 10L
+    }
+}
