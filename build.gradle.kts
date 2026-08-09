@@ -1,4 +1,5 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 
 plugins {
@@ -109,7 +110,7 @@ subprojects {
         add("componentTestImplementation", libs.kotest.extentions.allure)
     }
 
-    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+    configure<DetektExtension> {
         // Detekt に関する設定ファイル
         config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
         // 並列処理

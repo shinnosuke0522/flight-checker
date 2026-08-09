@@ -1,11 +1,12 @@
 package com.shinnosuke0522.flight.checker.adapter.inbound.graphql.resolver
 
-import com.shinnosuke0522.flight.checker.adapter.inbound.graphql.model.TicketRegisterRequest
-import com.shinnosuke0522.flight.checker.adapter.inbound.graphql.model.TicketRegisterResponse
-import com.shinnosuke0522.flight.checker.adapter.inbound.graphql.model.TicketUnregisterRequest
-import com.shinnosuke0522.flight.checker.adapter.inbound.graphql.model.TicketUnregisterResponse
+import com.expediagroup.graphql.server.operations.Mutation
+import com.shinnosuke0522.flight.checker.adapter.inbound.graphql.model.TicketRegisterInput
+import com.shinnosuke0522.flight.checker.adapter.inbound.graphql.model.TicketRegisterPayload
+import com.shinnosuke0522.flight.checker.adapter.inbound.graphql.model.TicketUnregisterInput
+import com.shinnosuke0522.flight.checker.adapter.inbound.graphql.model.TicketUnregisterPayload
 
-interface TicketMutationResolver {
-    suspend fun registerFlightTicket(input: TicketRegisterRequest): TicketRegisterResponse
-    suspend fun unregisterFlightTicket(input: TicketUnregisterRequest): TicketUnregisterResponse
+interface TicketMutationResolver : Mutation {
+    suspend fun registerFlightTicket(input: TicketRegisterInput): TicketRegisterPayload
+    suspend fun unregisterFlightTicket(input: TicketUnregisterInput): TicketUnregisterPayload
 }
