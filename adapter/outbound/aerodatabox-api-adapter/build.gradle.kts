@@ -69,7 +69,7 @@ openApiGenerate {
     modelPackage.set("com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.model")
     apiNameSuffix.set("Client")
 
-    configOptions.put("useSpringBoot3", "true")
+    configOptions.put("useJakartaEe", "true")
     configOptions.put("dateLibrary", "java8")
     configOptions.put("serializationLibrary", "jackson")
 
