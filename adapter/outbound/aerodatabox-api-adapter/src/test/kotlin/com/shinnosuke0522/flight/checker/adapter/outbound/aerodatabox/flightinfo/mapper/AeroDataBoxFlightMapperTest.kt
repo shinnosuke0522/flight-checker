@@ -29,7 +29,7 @@ class AeroDataBoxFlightMapperTest : FunSpec({
 
     context("正常系: 有効なFlightContractの場合") {
         test("FlightInfoに変換できること") {
-            val result = AeroDataBoxFlightMapper.toDomain(validFlightContract, validFlightIdentity)
+            val result = AeroDataBoxFlightMapper.toDomain(createValidFlightContract(), validFlightIdentity)
 
             val flightInfo = result.shouldBeRight()
             flightInfo.id shouldBe validFlightIdentity
@@ -44,20 +44,12 @@ class AeroDataBoxFlightMapperTest : FunSpec({
         withData(
             MissingFieldTestCase(
                 name = "Departure Timeがnullの場合",
-                modifyContract = {
-                    it.copy(
-                        departure = it.departure.copy(scheduledTime = null)
-                    )
-                },
+                modifyContract = { it.copy(departure = it.departure.copy(scheduledTime = null)) },
                 expectedErrorMessage = "Scheduled departure time is missing"
             ),
             MissingFieldTestCase(
                 name = "Arrival Timeがnullの場合",
-                modifyContract = {
-                    it.copy(
-                        arrival = it.arrival.copy(scheduledTime = null)
-                    )
-                },
+                modifyContract = { it.copy(arrival = it.arrival.copy(scheduledTime = null)) },
                 expectedErrorMessage = "Scheduled arrival time is missing"
             ),
             MissingFieldTestCase(
@@ -127,7 +119,7 @@ class AeroDataBoxFlightMapperTest : FunSpec({
                 expectedErrorMessage = "Arrival IATA/ICAO is missing"
             )
         ) { testCase ->
-            val invalidContract = testCase.modifyContract(validFlightContract)
+            val invalidContract = testCase.modifyContract(createValidFlightContract())
             val result = AeroDataBoxFlightMapper.toDomain(invalidContract, validFlightIdentity)
 
             val error = result.shouldBeLeft()
@@ -138,9 +130,8 @@ class AeroDataBoxFlightMapperTest : FunSpec({
 
     context("異常系: ドメインの生成ルールに違反する場合") {
         test("DepartureとArrivalの空港が同じ場合、IllegalStateExceptionが返ること") {
-            val invalidContract = validFlightContract.copy(
-                arrival = validFlightContract.departure
-            )
+            val base = createValidFlightContract()
+            val invalidContract = base.copy(arrival = base.departure)
             val result = AeroDataBoxFlightMapper.toDomain(invalidContract, validFlightIdentity)
 
             val error = result.shouldBeLeft()
@@ -152,48 +143,48 @@ class AeroDataBoxFlightMapperTest : FunSpec({
     companion object {
         val validFlightIdentity = FlightIdentity.create("JL123", LocalDate.of(2026, 5, 1)).shouldBeRight()
 
-        val validListingAirport = ListingAirportContract(
-            name = "Tokyo Haneda",
-            iata = "HND",
-            icao = "RJTT",
-            countryCode = "JP",
-            timeZone = "Asia/Tokyo"
-        )
+        fun createValidListingAirport(isDeparture: Boolean): ListingAirportContract {
+            return ListingAirportContract(
+                name = if (isDeparture) "Tokyo Haneda" else "New York JFK",
+                iata = if (isDeparture) "HND" else "JFK",
+                icao = if (isDeparture) "RJTT" else "KJFK",
+                countryCode = if (isDeparture) "JP" else "US",
+                timeZone = if (isDeparture) "Asia/Tokyo" else "America/New_York"
+            )
+        }
 
-        val validArrivalAirport = ListingAirportContract(
-            name = "New York JFK",
-            iata = "JFK",
-            icao = "KJFK",
-            countryCode = "US",
-            timeZone = "America/New_York"
-        )
+        fun createValidFlightContract(): FlightContract {
+            val departureTime = DateTimeContract(
+                utc = OffsetDateTime.parse("2026-05-01T10:00:00Z"),
+                local = OffsetDateTime.parse("2026-05-01T19:00:00Z")
+            )
 
-        val validDepartureTime = DateTimeContract(
-            utc = OffsetDateTime.parse("2026-05-01T10:00:00Z"),
-            local = OffsetDateTime.parse("2026-05-01T19:00:00Z")
-        )
+            val arrivalTime = DateTimeContract(
+                utc = OffsetDateTime.parse("2026-05-01T20:00:00Z"),
+                local = OffsetDateTime.parse("2026-05-01T16:00:00Z")
+            )
 
-        val validArrivalTime = DateTimeContract(
-            utc = OffsetDateTime.parse("2026-05-01T20:00:00Z"),
-            local = OffsetDateTime.parse("2026-05-01T16:00:00Z")
-        )
-
-        val validFlightContract = FlightContract(
-            departure = FlightAirportMovementContract(
-                airport = validListingAirport,
+            val departureMovement = FlightAirportMovementContract(
+                airport = createValidListingAirport(true),
                 quality = emptyList(),
-                scheduledTime = validDepartureTime
-            ),
-            arrival = FlightAirportMovementContract(
-                airport = validArrivalAirport,
+                scheduledTime = departureTime
+            )
+
+            val arrivalMovement = FlightAirportMovementContract(
+                airport = createValidListingAirport(false),
                 quality = emptyList(),
-                scheduledTime = validArrivalTime
-            ),
-            lastUpdatedUtc = OffsetDateTime.parse("2026-05-01T09:00:00Z"),
-            number = "JL123",
-            status = FlightStatus.Expected,
-            codeshareStatus = CodeshareStatus.IsOperator,
-            isCargo = false
-        )
+                scheduledTime = arrivalTime
+            )
+
+            return FlightContract(
+                departure = departureMovement,
+                arrival = arrivalMovement,
+                lastUpdatedUtc = OffsetDateTime.parse("2026-05-01T09:00:00Z"),
+                number = "JL123",
+                status = FlightStatus.Expected,
+                codeshareStatus = CodeshareStatus.IsOperator,
+                isCargo = false
+            )
+        }
     }
 }

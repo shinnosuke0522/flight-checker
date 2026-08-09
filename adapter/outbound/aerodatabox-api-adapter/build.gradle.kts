@@ -73,6 +73,12 @@ openApiGenerate {
     configOptions.put("dateLibrary", "java8")
     configOptions.put("serializationLibrary", "jackson")
 
+    globalProperties.set(mapOf(
+        "models" to "",
+        "apis" to "false",
+        "supportingFiles" to "false"
+    ))
+    
     generateApiTests.set(false)
     generateModelTests.set(false)
 }
@@ -131,10 +137,8 @@ tasks.named("openApiGenerate") {
     }
 }
 
-sourceSets {
-    main {
-        kotlin.srcDir("${layout.buildDirectory.get().asFile.path}/generated/openapi/src/main/kotlin")
-    }
+sourceSets.getByName("main") {
+    java.srcDir("${layout.buildDirectory.get().asFile.path}/generated/openapi/src/main/kotlin")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

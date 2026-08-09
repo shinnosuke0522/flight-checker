@@ -18,7 +18,8 @@ class AeroDataBoxWireMockResource : QuarkusTestResourceLifecycleManager {
         wireMockServer.start()
 
         return mapOf(
-            "integration.external.api.aerodatabox.base-url" to wireMockServer.baseUrl()
+            "integration.external.api.aerodatabox.base-url" to wireMockServer.baseUrl(),
+            "quarkus.rest-client.aerodatabox.url" to wireMockServer.baseUrl()
         )
     }
 
