@@ -157,17 +157,5 @@ quarkus-test-core = [
     "kotest-assertions-arrow",
 ]
 container-test-base = [
-    "spring-boot-starter-test",
-    "spring-boot-testcontainers",
     "testcontainers-junit-jupiter",
-]
-spring-boot-base = [
-    "spring-boot-core",
-    "spring-boot-autoconfigure",
-    "spring-boot-jackson",
-]
-lambda-adapter = [
-    "spring-cloud-function-adapter-aws",
-    "aws-lambda-java-core",
-    "aws-lambda-java-events",
 ]
