@@ -1,4 +1,3 @@
-import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     alias(libs.plugins.quarkus.plugin)
@@ -33,9 +32,6 @@ dependencies {
     testImplementation(libs.quarkus.junit5)
 }
 
-tasks.withType<BootJar> {
-    enabled = false
-}
 tasks.test { useJUnitPlatform() }
 
 tasks.register<Test>("integrationTest") {

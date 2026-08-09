@@ -1,13 +1,12 @@
 import org.gradle.kotlin.dsl.withType
-import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     alias(libs.plugins.dgs.codegen)
+    alias(libs.plugins.quarkus.plugin)
 }
 
 dependencies {
     // BOM
-    implementation(platform(libs.spring.boot.bom))
     implementation(enforcedPlatform(libs.quarkus.bom))
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.coroutines.bom))
@@ -15,7 +14,6 @@ dependencies {
     // Dependencies
     implementation(libs.bundles.core)
     implementation(libs.jackson.module.kotlin)
-    implementation(libs.spring.boot.graphql.starter)
     implementation(libs.graphql.extended.validation)
 
     // Quarkus
@@ -26,7 +24,7 @@ dependencies {
 
     // Quarkus Test
     testImplementation(libs.quarkus.junit5)
-    testImplementation(libs.kotest.extensions.quarkus)
+    testFixturesImplementation(libs.quarkus.junit5)
 }
 
 tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {
@@ -34,7 +32,7 @@ tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {
     packageName = "com.shinnosuke0522.flight.checker.adapter.inbound.graphql"
     subPackageNameTypes = "model"
     language = "kotlin"
-    generateClient = true
+    generateClient = false
     typeMapping = mutableMapOf(
         "Date" to "java.time.LocalDate",
         "DateTime" to "java.time.OffsetDateTime",
@@ -44,8 +42,4 @@ tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {
 
 tasks.withType<Jar> {
     enabled = true
-}
-
-tasks.withType<BootJar> {
-    enabled = false
 }

@@ -105,6 +105,7 @@ kotest-extentions-allure = { module = "io.kotest:kotest-extensions-allure", vers
 # Quarkus
 quarkus-bom = { group = "io.quarkus.platform", name = "quarkus-bom", version.ref = "quarkus" }
 quarkus-kotlin = { group = "io.quarkus", name = "quarkus-kotlin" }
+quarkus-arc = { group = "io.quarkus", name = "quarkus-arc" }
 quarkus-jackson = { group = "io.quarkus", name = "quarkus-jackson" }
 quarkus-googlecloud-firestore = { group = "io.quarkiverse.googlecloudservices", name = "quarkus-google-cloud-firestore", version = "2.23.1" }
 quarkus-junit5 = { group = "io.quarkus", name = "quarkus-junit5" }
@@ -150,6 +151,7 @@ quarkus-test-core = [
     "junit-platform-launcher",
     "kotlin-test-junit5",
     "kotlinx-coroutines-test",
+    "kotest-runner",
     "kotest-assertions",
     "kotest-property",
     "kotest-assertions-arrow",

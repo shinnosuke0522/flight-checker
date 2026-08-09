@@ -1,18 +1,17 @@
-import org.springframework.boot.gradle.tasks.bundling.BootJar
+plugins {
+    alias(libs.plugins.quarkus.plugin)
+}
 
 dependencies {
-    implementation(platform(libs.spring.boot.bom))
+    implementation(enforcedPlatform(libs.quarkus.bom))
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.aws.bom))
 
     implementation(libs.bundles.core)
-    implementation(libs.bundles.spring.boot.base)
+    implementation(libs.quarkus.kotlin)
+    implementation(libs.quarkus.arc)
 
     implementation(libs.aws.sdk.core)
     implementation(libs.aws.sdk.auth)
     implementation(libs.aws.sdk.regions)
-}
-
-tasks.withType<BootJar> {
-    enabled = false
 }

@@ -1,13 +1,13 @@
 package com.shinnosuke0522.flight.checker.common.aws.config
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty
+import io.quarkus.arc.properties.IfBuildProperty
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-@ConditionalOnBooleanProperty(value = [AwsConfigConstants.PROPERTY_ENABLED], havingValue = true, matchIfMissing = false)
+@IfBuildProperty(name = AwsConfigConstants.PROPERTY_ENABLED, stringValue = "true")
 annotation class ConditionalOnAwsEnabled
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-@ConditionalOnBooleanProperty(value = [AwsConfigConstants.PROPERTY_ENABLED], havingValue = false, matchIfMissing = true)
+@IfBuildProperty(name = AwsConfigConstants.PROPERTY_ENABLED, stringValue = "false", enableIfMissing = true)
 annotation class ConditionalOnAwsDisabled

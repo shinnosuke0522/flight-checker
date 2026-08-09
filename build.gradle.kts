@@ -4,8 +4,6 @@ import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 plugins {
     alias(libs.plugins.detekt.plugin) apply false
     alias(libs.plugins.kotlin.jvm) apply false
-    alias(libs.plugins.kotlin.spring) apply false
-    alias(libs.plugins.spring.boot) apply false
     alias(libs.plugins.kover.plugin)
     alias(libs.plugins.allure.report)
     alias(libs.plugins.allure.adapter) apply false
@@ -14,7 +12,6 @@ plugins {
 allprojects {
     repositories {
         mavenCentral()
-        maven { url = uri("https://repo.spring.io/snapshot") }
     }
 }
 
@@ -48,7 +45,10 @@ subprojects {
             val test by getting(JvmTestSuite::class) {
                 useJUnitJupiter()
             }
-            if (path != ":adapter:outbound:firestore-adapter" && path != ":adapter:outbound:aerodatabox-api-adapter") {
+            if (path != ":adapter:outbound:firestore-adapter" && 
+                path != ":adapter:outbound:aerodatabox-api-adapter" && 
+                path != ":adapter:inbound:graphql-adapter" &&
+                path != ":libs:aws") {
                 register<JvmTestSuite>("integrationTest") {
                     useJUnitJupiter()
                     dependencies {
@@ -90,7 +90,10 @@ subprojects {
         named("testFixturesRuntimeOnly") {
             extendsFrom(configurations.getByName("runtimeOnly"))
         }
-        if (path != ":adapter:outbound:firestore-adapter" && path != ":adapter:outbound:aerodatabox-api-adapter") {
+        if (path != ":adapter:outbound:firestore-adapter" && 
+            path != ":adapter:outbound:aerodatabox-api-adapter" && 
+            path != ":adapter:inbound:graphql-adapter" &&
+            path != ":libs:aws") {
             named("integrationTestImplementation") {
                 extendsFrom(configurations.getByName("testImplementation"))
             }
@@ -109,7 +112,10 @@ subprojects {
     dependencies {
         add("detektPlugins", libs.detekt.formatting)
         add("testImplementation", libs.kotest.extentions.allure)
-        if (path != ":adapter:outbound:firestore-adapter" && path != ":adapter:outbound:aerodatabox-api-adapter") {
+        if (path != ":adapter:outbound:firestore-adapter" && 
+            path != ":adapter:outbound:aerodatabox-api-adapter" && 
+            path != ":adapter:inbound:graphql-adapter" &&
+            path != ":libs:aws") {
             add("integrationTestImplementation", libs.kotest.extentions.allure)
         }
         add("componentTestImplementation", libs.kotest.extentions.allure)
@@ -143,9 +149,8 @@ subprojects {
     // ==================================
     // App & Infra
     // ==================================
-    if (path.startsWith(":app") || path.startsWith(":adapter")) {
-        pluginManager.apply(libs.plugins.kotlin.spring.get().pluginId)
-        pluginManager.apply(libs.plugins.spring.boot.get().pluginId)
+    if (path.startsWith(":app")) {
+        // Reserved for future app module if needed, but we use Quarkus now.
     }
 }
 
