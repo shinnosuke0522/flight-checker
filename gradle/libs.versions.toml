@@ -42,11 +42,13 @@ ktor-client-core = { group = "io.ktor", name = "ktor-client-core-jvm", version.r
 ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio-jvm", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 graphql-kotlin-ktor-server = { group = "com.expediagroup", name = "graphql-kotlin-ktor-server", version.ref = "graphql-kotlin" }
+ktor-serialization-jackson = { group = "io.ktor", name = "ktor-serialization-jackson", version.ref = "ktor" }
 
 # Koin
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-ktor = { group = "io.insert-koin", name = "koin-ktor", version.ref = "koin" }
 koin-logger-slf4j = { group = "io.insert-koin", name = "koin-logger-slf4j", version.ref = "koin" }
+koin-test-junit5 = { group = "io.insert-koin", name = "koin-test-junit5", version.ref = "koin" }
 koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
 
 # Google Cloud (Official)
@@ -126,7 +128,7 @@ openapi-validator-wiremock = { group = "com.atlassian.oai", name = "swagger-requ
 
 # Testcontainers
 spring-boot-testcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers" }
-testcontainers-junit-jupiter = { group = "org.testcontainers", name = "testcontainers-junit-jupiter" }
+testcontainers-junit-jupiter = { group = "org.testcontainers", name = "junit-jupiter", version.ref = "testcontainers-version" }
 testcontainers-gcloud = { group = "org.testcontainers", name = "gcloud", version = "1.19.7" }
 
 # Formatter
@@ -167,11 +169,9 @@ test-core = [
     "kotest-assertions",
     "kotest-property",
     "kotest-assertions-arrow",
-    "kotest-extensions-spring",
+    "koin-test",
 ]
 container-test-base = [
-    "spring-boot-starter-test",
-    "spring-boot-testcontainers",
     "testcontainers-junit-jupiter",
 ]
 spring-boot-base = [

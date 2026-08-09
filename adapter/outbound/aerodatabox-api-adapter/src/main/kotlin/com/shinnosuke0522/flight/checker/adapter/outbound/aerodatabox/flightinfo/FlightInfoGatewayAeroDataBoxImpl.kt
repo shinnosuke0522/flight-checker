@@ -13,17 +13,15 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoGate
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoGatewayError
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoNotExistError
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ServerResponseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.openapitools.client.infrastructure.ClientException
-import org.openapitools.client.infrastructure.ServerException
-import org.springframework.stereotype.Component
 import java.io.IOException
 import java.time.OffsetDateTime
 
 private const val HTTP_STATUS_NOT_FOUND = 404
 
-@Component
 class FlightInfoGatewayAeroDataBoxImpl(
     private val flightApiClient: FlightAPIClient
 ) : FlightInfoGateway {
@@ -37,17 +35,21 @@ class FlightInfoGatewayAeroDataBoxImpl(
                     flightApiClient.getFlightFlightOnSpecificDate(
                         searchBy = FlightSearchByEnum.Number,
                         searchParam = identity.flightCode.value,
-                        dateLocal = dateLocal
-                    )
-                } catch (e: ClientException) {
-                    if (e.statusCode == HTTP_STATUS_NOT_FOUND) {
+                        dateLocal = dateLocal,
+                        dateLocalRole = null,
+                        withAircraftImage = false,
+                        withLocation = false,
+                        withFlightPlan = false
+                    ).body()
+                } catch (e: ClientRequestException) {
+                    if (e.response.status.value == HTTP_STATUS_NOT_FOUND) {
                         FlightInfoNotExistError(
                             flightIdentity = identity,
                             cause = e.toCause()
                         ).left().bind()
                     }
                     FlightInfoCommunicationError(e).left().bind()
-                } catch (e: ServerException) {
+                } catch (e: ServerResponseException) {
                     FlightInfoCommunicationError(e).left().bind()
                 } catch (e: IOException) {
                     FlightInfoCommunicationError(e).left().bind()

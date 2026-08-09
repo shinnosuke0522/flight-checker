@@ -6,46 +6,40 @@ import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.notFound
 import com.github.tomakehurst.wiremock.client.WireMock.okJson
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
-import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.config.AeroDataBoxAPIConfig
-import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.config.AeroDataBoxAPIProperties
-import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.testfixture.config.EnableAeroDataBoxAPIMock
+import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.config.aeroDataBoxApiModule
+import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.testfixture.config.aeroDataBoxMockModule
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoNotExistError
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.test.KoinTest
+import org.koin.test.inject
 import java.time.LocalDate
 
-@SpringBootTest(
-    classes = [
-        AeroDataBoxAPIConfig::class,
-        FlightInfoGatewayAeroDataBoxImpl::class
-    ],
-    properties = [
-        "integration.external.api.aerodatabox.rapid-api-key=test-key",
-        "integration.external.api.aerodatabox.rapid-api-host=test-host"
-    ]
-)
-@EnableConfigurationProperties(AeroDataBoxAPIProperties::class)
-@EnableAeroDataBoxAPIMock
-@ActiveProfiles("test")
-class FlightInfoGatewayAeroDataBoxImplTest : FunSpec() {
+class FlightInfoGatewayAeroDataBoxImplTest : FunSpec(), KoinTest {
 
-    @Autowired
-    private lateinit var sut: FlightInfoGatewayAeroDataBoxImpl
-
-    @Autowired
-    private lateinit var wireMockServer: WireMockServer
+    private val sut: FlightInfoGatewayAeroDataBoxImpl by inject()
+    private val wireMockServer: WireMockServer by inject()
 
     init {
-        extension(SpringExtension())
+        beforeSpec {
+            startKoin {
+                modules(
+                    aeroDataBoxMockModule,
+                    aeroDataBoxApiModule
+                )
+            }
+        }
+
+        afterSpec {
+            wireMockServer.stop()
+            stopKoin()
+        }
 
         beforeTest {
             wireMockServer.resetAll()

@@ -1,16 +1,22 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
     id("org.openapi.generator") version "7.8.0"
 }
 
 dependencies {
-    implementation(platform(libs.spring.boot.bom))
+    implementation(platform(libs.kotlin.bom))
+    implementation(platform(libs.coroutines.bom))
     implementation(project(":domain"))
-    implementation(libs.spring.boot.starter.restclient)
-    implementation(libs.spring.boot.starter.webflux)
-    // OpenAPI Generatorが自動生成するコード（モデル等）に付与される@Schemaなどのアノテーションを解決するため
     implementation(libs.swagger.annotations)
-    implementation(libs.okhttp)
     implementation(libs.jackson.module.kotlin)
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.jackson)
+    implementation(libs.koin.core)
     implementation(libs.kotlinx.datetime)
     implementation(libs.arrow.core)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
@@ -46,7 +52,7 @@ tasks.test {
 
 openApiGenerate {
     generatorName.set("kotlin")
-    library.set("jvm-okhttp4")
+    library.set("jvm-ktor")
     validateSpec.set(false)
     inputSpec.set("$projectDir/src/main/resources/contract/aerodatabox-api-v1.15.1.0.yaml")
     outputDir.set("${layout.buildDirectory.get().asFile.path}/generated/openapi")
@@ -54,7 +60,6 @@ openApiGenerate {
     modelPackage.set("com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.model")
     apiNameSuffix.set("Client")
 
-    configOptions.put("useSpringBoot3", "true")
     configOptions.put("dateLibrary", "java8")
     configOptions.put("serializationLibrary", "jackson")
 
@@ -113,6 +118,22 @@ tasks.named("openApiGenerate") {
                 }
             }
         }
+
+        // Ktor 3.x 互換性対応: generated/openapi 内の @InternalAPI アノテーションを削除する
+        val authDir = file("$buildDirPath/generated/openapi/src/main/kotlin/org/openapitools/client/auth")
+        if (authDir.exists()) {
+            authDir.listFiles()?.forEach { f ->
+                if (f.extension == "kt") {
+                    val content = f.readText()
+                    if (content.contains("InternalAPI")) {
+                        f.writeText(
+                            content.replace("import io.ktor.util.InternalAPI", "")
+                                .replace("@OptIn(InternalAPI::class)", "")
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -122,7 +143,7 @@ sourceSets {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+tasks.withType<KotlinCompile>().configureEach {
     dependsOn(tasks.openApiGenerate)
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-parameters")
@@ -132,7 +153,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     }
 }
 
-tasks.bootJar {
+tasks.withType<BootJar> {
     enabled = false
 }
 
