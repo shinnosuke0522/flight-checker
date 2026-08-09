@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.raise.either
 import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.api.FlightAPIClient
+import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.config.AeroDataBoxAPIConstants
 import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.flightinfo.mapper.AeroDataBoxFlightMapper
 import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.model.FlightSearchByEnum
 import com.shinnosuke0522.flight.checker.domain.base.model.toCause
@@ -13,17 +14,22 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoGate
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoGatewayError
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoNotExistError
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
+import io.quarkus.arc.properties.IfBuildProperty
+import jakarta.enterprise.context.ApplicationScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.openapitools.client.infrastructure.ClientException
 import org.openapitools.client.infrastructure.ServerException
-import org.springframework.stereotype.Component
 import java.io.IOException
 import java.time.OffsetDateTime
 
 private const val HTTP_STATUS_NOT_FOUND = 404
 
-@Component
+@ApplicationScoped
+@IfBuildProperty(
+    name = AeroDataBoxAPIConstants.PROPERTY_ENABLED,
+    stringValue = "true"
+)
 class FlightInfoGatewayAeroDataBoxImpl(
     private val flightApiClient: FlightAPIClient
 ) : FlightInfoGateway {

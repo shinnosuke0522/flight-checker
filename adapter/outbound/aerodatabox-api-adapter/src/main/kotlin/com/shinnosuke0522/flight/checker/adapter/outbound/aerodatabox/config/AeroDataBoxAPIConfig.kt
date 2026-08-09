@@ -1,37 +1,38 @@
 package com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.config
 
 import com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.api.FlightAPIClient
+import io.quarkus.arc.properties.IfBuildProperty
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.inject.Produces
 import okhttp3.OkHttpClient
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 
-@Configuration
-@ConditionalOnProperty(
-    value = [AeroDataBoxAPIConstants.PROPERTY_ENABLED],
-    havingValue = "true",
-    matchIfMissing = false
+@ApplicationScoped
+@IfBuildProperty(
+    name = AeroDataBoxAPIConstants.PROPERTY_ENABLED,
+    stringValue = "true"
 )
 class AeroDataBoxAPIConfig(
     private val properties: AeroDataBoxAPIProperties
 ) {
-    @Bean
+    @Produces
+    @ApplicationScoped
     fun aeroDataBoxOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
-                    .addHeader("x-rapidapi-key", properties.rapidApiKey)
-                    .addHeader("x-rapidapi-host", properties.rapidApiHost)
+                    .addHeader("x-rapidapi-key", properties.rapidApiKey())
+                    .addHeader("x-rapidapi-host", properties.rapidApiHost())
                     .build()
                 chain.proceed(request)
             }
             .build()
     }
 
-    @Bean
+    @Produces
+    @ApplicationScoped
     fun flightAPIClient(aeroDataBoxOkHttpClient: OkHttpClient): FlightAPIClient {
         return FlightAPIClient(
-            basePath = properties.baseUrl,
+            basePath = properties.baseUrl(),
             client = aeroDataBoxOkHttpClient
         )
     }

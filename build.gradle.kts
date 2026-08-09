@@ -48,7 +48,7 @@ subprojects {
             val test by getting(JvmTestSuite::class) {
                 useJUnitJupiter()
             }
-            if (path != ":adapter:outbound:firestore-adapter") {
+            if (path != ":adapter:outbound:firestore-adapter" && path != ":adapter:outbound:aerodatabox-api-adapter") {
                 register<JvmTestSuite>("integrationTest") {
                     useJUnitJupiter()
                     dependencies {
@@ -90,7 +90,7 @@ subprojects {
         named("testFixturesRuntimeOnly") {
             extendsFrom(configurations.getByName("runtimeOnly"))
         }
-        if (path != ":adapter:outbound:firestore-adapter") {
+        if (path != ":adapter:outbound:firestore-adapter" && path != ":adapter:outbound:aerodatabox-api-adapter") {
             named("integrationTestImplementation") {
                 extendsFrom(configurations.getByName("testImplementation"))
             }
@@ -109,7 +109,7 @@ subprojects {
     dependencies {
         add("detektPlugins", libs.detekt.formatting)
         add("testImplementation", libs.kotest.extentions.allure)
-        if (path != ":adapter:outbound:firestore-adapter") {
+        if (path != ":adapter:outbound:firestore-adapter" && path != ":adapter:outbound:aerodatabox-api-adapter") {
             add("integrationTestImplementation", libs.kotest.extentions.allure)
         }
         add("componentTestImplementation", libs.kotest.extentions.allure)

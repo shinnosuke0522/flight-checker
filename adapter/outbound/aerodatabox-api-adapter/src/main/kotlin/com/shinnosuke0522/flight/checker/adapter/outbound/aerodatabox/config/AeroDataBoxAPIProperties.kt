@@ -1,21 +1,21 @@
 package com.shinnosuke0522.flight.checker.adapter.outbound.aerodatabox.config
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty
-import org.springframework.boot.context.properties.ConfigurationProperties
+import io.smallrye.config.ConfigMapping
+import io.smallrye.config.WithDefault
 
 object AeroDataBoxAPIConstants {
     const val PREFIX = "integration.external.api.aerodatabox"
     const val PROPERTY_ENABLED = "$PREFIX.enabled"
 }
 
-@ConditionalOnBooleanProperty(
-    value = [AeroDataBoxAPIConstants.PROPERTY_ENABLED],
-    havingValue = true,
-    matchIfMissing = false
-)
-@ConfigurationProperties(prefix = AeroDataBoxAPIConstants.PREFIX)
-data class AeroDataBoxAPIProperties(
-    val rapidApiKey: String,
-    val rapidApiHost: String,
-    val baseUrl: String = "https://prod.api.market/api/v1/aedbx/aerodatabox"
-)
+@ConfigMapping(prefix = AeroDataBoxAPIConstants.PREFIX)
+interface AeroDataBoxAPIProperties {
+    fun rapidApiKey(): String
+    fun rapidApiHost(): String
+
+    @WithDefault("true")
+    fun enabled(): Boolean
+
+    @WithDefault("https://prod.api.market/api/v1/aedbx/aerodatabox")
+    fun baseUrl(): String
+}

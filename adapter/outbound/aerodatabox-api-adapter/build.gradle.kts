@@ -1,13 +1,11 @@
 plugins {
     id("org.openapi.generator") version "7.8.0"
+    alias(libs.plugins.quarkus.plugin)
 }
 
 dependencies {
-    implementation(platform(libs.spring.boot.bom))
     implementation(enforcedPlatform(libs.quarkus.bom))
     implementation(project(":domain"))
-    implementation(libs.spring.boot.starter.restclient)
-    implementation(libs.spring.boot.starter.webflux)
     // OpenAPI Generatorが自動生成するコード（モデル等）に付与される@Schemaなどのアノテーションを解決するため
     implementation(libs.swagger.annotations)
     implementation(libs.okhttp)
@@ -27,20 +25,21 @@ dependencies {
         "testFixturesImplementation",
     ).forEach { configuration ->
         add(configuration, platform(libs.kotest.bom))
-        add(configuration, libs.bundles.test.core)
+        add(configuration, libs.bundles.quarkus.test.core)
     }
     listOf(
         "integrationTestImplementation",
         "testFixturesImplementation",
     ).forEach { configuration ->
-        add(configuration, libs.bundles.container.test.base)
         add(configuration, libs.wiremock)
         add(configuration, libs.openapi.validator.wiremock)
     }
 
     // Quarkus Test
     testImplementation(libs.quarkus.junit5)
-    testImplementation(libs.kotest.extensions.quarkus)
+    integrationTestImplementation(libs.quarkus.junit5)
+    testFixturesImplementation(libs.quarkus.junit5)
+
 }
 
 configurations.all {
@@ -51,6 +50,13 @@ configurations.all {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.register<Test>("integrationTest") {
+    useJUnitPlatform()
+    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+    classpath = sourceSets["integrationTest"].runtimeClasspath
+    shouldRunAfter(tasks.named("test"))
 }
 
 openApiGenerate {
