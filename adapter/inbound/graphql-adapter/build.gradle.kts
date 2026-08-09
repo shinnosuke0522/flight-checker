@@ -8,6 +8,7 @@ plugins {
 dependencies {
     // BOM
     implementation(platform(libs.spring.boot.bom))
+    implementation(enforcedPlatform(libs.quarkus.bom))
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.coroutines.bom))
     testImplementation(platform(libs.kotest.bom))
@@ -16,7 +17,16 @@ dependencies {
     implementation(libs.jackson.module.kotlin)
     implementation(libs.spring.boot.graphql.starter)
     implementation(libs.graphql.extended.validation)
+
+    // Quarkus
+    implementation(libs.quarkus.kotlin)
+    implementation(libs.quarkus.jackson)
+    implementation(libs.quarkus.smallrye.graphql)
     testImplementation(libs.bundles.test.core)
+
+    // Quarkus Test
+    testImplementation(libs.quarkus.junit5)
+    testImplementation(libs.kotest.extensions.quarkus)
 }
 
 tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {

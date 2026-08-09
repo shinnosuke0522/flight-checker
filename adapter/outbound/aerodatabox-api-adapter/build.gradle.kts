@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(platform(libs.spring.boot.bom))
+    implementation(enforcedPlatform(libs.quarkus.bom))
     implementation(project(":domain"))
     implementation(libs.spring.boot.starter.restclient)
     implementation(libs.spring.boot.starter.webflux)
@@ -15,6 +16,10 @@ dependencies {
     implementation(libs.arrow.core)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
+    // Quarkus
+    implementation(libs.quarkus.kotlin)
+    implementation(libs.quarkus.jackson)
+    implementation(libs.quarkus.rest.client.jackson)
     // For Test
     listOf(
         "testImplementation",
@@ -32,6 +37,10 @@ dependencies {
         add(configuration, libs.wiremock)
         add(configuration, libs.openapi.validator.wiremock)
     }
+
+    // Quarkus Test
+    testImplementation(libs.quarkus.junit5)
+    testImplementation(libs.kotest.extensions.quarkus)
 }
 
 configurations.all {

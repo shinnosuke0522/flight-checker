@@ -6,7 +6,7 @@ dependencies {
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.spring.cloud.gcp.dependencies))
-
+    implementation(enforcedPlatform(libs.quarkus.bom))
     // For Production
     implementation(libs.bundles.core)
     implementation(libs.bundles.spring.boot.base)
@@ -18,6 +18,10 @@ dependencies {
     implementation(libs.spring.tx)
     implementation(libs.kotlinx.coroutines.guava)
 
+    // Quarkus
+    implementation(libs.quarkus.kotlin)
+    implementation(libs.quarkus.jackson)
+    implementation(libs.quarkus.googlecloud.firestore)
     // For Test
     listOf(
         "testImplementation",
@@ -35,6 +39,10 @@ dependencies {
     }
     
     testFixturesApi(libs.testcontainers.gcloud)
+
+    // Quarkus Test
+    testImplementation(libs.quarkus.junit5)
+    testImplementation(libs.kotest.extensions.quarkus)
 }
 
 tasks.withType<BootJar> {
