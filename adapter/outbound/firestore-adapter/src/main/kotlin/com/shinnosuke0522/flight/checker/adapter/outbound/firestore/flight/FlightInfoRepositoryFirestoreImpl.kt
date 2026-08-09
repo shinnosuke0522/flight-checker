@@ -8,11 +8,11 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoEvent
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoRepository
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
+import jakarta.enterprise.context.ApplicationScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.springframework.stereotype.Repository
 
-@Repository
+@ApplicationScoped
 class FlightInfoRepositoryFirestoreImpl(
     private val firestore: Firestore,
     private val eventPayloadCodec: FlightInfoEventFirestorePayloadCodec,

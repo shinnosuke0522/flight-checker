@@ -20,7 +20,7 @@ okhttp = "4.12.0"
 kotlinx-datetime = "0.5.0"
 wiremock = "3.9.1"
 openapi-validator = "2.46.1"
-quarkus = "3.15.2"
+quarkus = "3.38.1"
 [libraries]
 # Spring Boot
 spring-boot-bom = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "spring-boot" }
@@ -106,11 +106,11 @@ kotest-extentions-allure = { module = "io.kotest:kotest-extensions-allure", vers
 quarkus-bom = { group = "io.quarkus.platform", name = "quarkus-bom", version.ref = "quarkus" }
 quarkus-kotlin = { group = "io.quarkus", name = "quarkus-kotlin" }
 quarkus-jackson = { group = "io.quarkus", name = "quarkus-jackson" }
-quarkus-googlecloud-firestore = { group = "io.quarkiverse.googlecloudservices", name = "quarkus-googlecloud-firestore" }
+quarkus-googlecloud-firestore = { group = "io.quarkiverse.googlecloudservices", name = "quarkus-google-cloud-firestore", version = "2.23.1" }
 quarkus-junit5 = { group = "io.quarkus", name = "quarkus-junit5" }
 quarkus-rest-client-jackson = { group = "io.quarkus", name = "quarkus-rest-client-jackson" }
 quarkus-smallrye-graphql = { group = "io.quarkus", name = "quarkus-smallrye-graphql" }
-kotest-extensions-quarkus = { group = "io.kotest", name = "kotest-extensions-quarkus", version = "3.3.0" }
+
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -145,6 +145,14 @@ test-core = [
     "kotest-property",
     "kotest-assertions-arrow",
     "kotest-extensions-spring",
+]
+quarkus-test-core = [
+    "junit-platform-launcher",
+    "kotlin-test-junit5",
+    "kotlinx-coroutines-test",
+    "kotest-assertions",
+    "kotest-property",
+    "kotest-assertions-arrow",
 ]
 container-test-base = [
     "spring-boot-starter-test",

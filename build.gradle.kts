@@ -48,16 +48,18 @@ subprojects {
             val test by getting(JvmTestSuite::class) {
                 useJUnitJupiter()
             }
-            register<JvmTestSuite>("integrationTest") {
-                useJUnitJupiter()
-                dependencies {
-                    implementation(project())
-                    implementation(testFixtures(project()))
-                }
-                targets {
-                    all {
-                        testTask.configure {
-                            shouldRunAfter(test)
+            if (path != ":adapter:outbound:firestore-adapter") {
+                register<JvmTestSuite>("integrationTest") {
+                    useJUnitJupiter()
+                    dependencies {
+                        implementation(project())
+                        implementation(testFixtures(project()))
+                    }
+                    targets {
+                        all {
+                            testTask.configure {
+                                shouldRunAfter(test)
+                            }
                         }
                     }
                 }
@@ -72,7 +74,7 @@ subprojects {
                     all {
                         testTask.configure {
                             shouldRunAfter(test)
-                            shouldRunAfter(suites.named("integrationTest"))
+                            shouldRunAfter(tasks.matching { it.name == "integrationTest" })
                         }
                     }
                 }
@@ -88,11 +90,13 @@ subprojects {
         named("testFixturesRuntimeOnly") {
             extendsFrom(configurations.getByName("runtimeOnly"))
         }
-        named("integrationTestImplementation") {
-            extendsFrom(configurations.getByName("testImplementation"))
-        }
-        named("integrationTestRuntimeOnly") {
-            extendsFrom(configurations.getByName("testRuntimeOnly"))
+        if (path != ":adapter:outbound:firestore-adapter") {
+            named("integrationTestImplementation") {
+                extendsFrom(configurations.getByName("testImplementation"))
+            }
+            named("integrationTestRuntimeOnly") {
+                extendsFrom(configurations.getByName("testRuntimeOnly"))
+            }
         }
         named("componentTestImplementation") {
             extendsFrom(configurations.getByName("testImplementation"))
@@ -105,7 +109,9 @@ subprojects {
     dependencies {
         add("detektPlugins", libs.detekt.formatting)
         add("testImplementation", libs.kotest.extentions.allure)
-        add("integrationTestImplementation", libs.kotest.extentions.allure)
+        if (path != ":adapter:outbound:firestore-adapter") {
+            add("integrationTestImplementation", libs.kotest.extentions.allure)
+        }
         add("componentTestImplementation", libs.kotest.extentions.allure)
     }
 

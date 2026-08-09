@@ -23,10 +23,10 @@ import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketFlight
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketRegistered
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.UserId
-import org.springframework.stereotype.Component
+import jakarta.enterprise.context.ApplicationScoped
 import java.time.Instant
 
-@Component
+@ApplicationScoped
 class TicketEventFirestorePayloadCodec(
     private val objectMapper: ObjectMapper
 ) {
