@@ -14,11 +14,12 @@ dependencies {
     // For Production
     implementation(libs.bundles.core)
     implementation(project(":domain"))
+    implementation(project(":libs:gcp"))
 
     implementation(libs.google.cloud.firestore.official)
     implementation(libs.jackson.module.kotlin)
     implementation(libs.kotlinx.coroutines.guava)
-    
+
     implementation(libs.koin.core)
 
     // For Test
@@ -30,7 +31,7 @@ dependencies {
         add(configuration, platform(libs.kotest.bom))
         add(configuration, libs.bundles.test.core)
     }
-    
+
     testFixturesApi(libs.testcontainers.gcloud)
     testFixturesApi(libs.testcontainers.core)
     testFixturesApi(libs.koin.test)

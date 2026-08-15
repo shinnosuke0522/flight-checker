@@ -85,8 +85,8 @@ tasks.named("openApiGenerate") {
 
         // Rename *Api to *Client
         val apiDir = file(
-            path = "$buildDirPath/generated/openapi/src/main/kotlin/"
-                    + "com/shinnosuke0522/flight/checker/adapter/outbound/aerodatabox/api"
+            path = "$buildDirPath/generated/openapi/src/main/kotlin/" +
+                "com/shinnosuke0522/flight/checker/adapter/outbound/aerodatabox/api"
         )
         if (apiDir.exists()) {
             apiDir.listFiles()?.forEach { f ->

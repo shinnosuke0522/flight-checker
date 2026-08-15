@@ -1,8 +1,7 @@
 package com.shinnosuke0522.flight.checker.adapter.outbound.firestore.testfixture.config
 
-import com.google.cloud.NoCredentials
-import com.google.cloud.firestore.Firestore
-import com.google.cloud.firestore.FirestoreOptions
+import com.shinnosuke0522.flight.checker.adapter.outbound.firestore.config.FirestoreProperties
+import com.shinnosuke0522.flight.checker.common.gcp.config.GcpProps
 import org.koin.dsl.module
 import org.testcontainers.containers.FirestoreEmulatorContainer
 import org.testcontainers.utility.DockerImageName
@@ -14,19 +13,20 @@ object FirestoreContainerConfig {
     )
 
     val testModule = module {
-        single<Firestore> { createFirestore() }
+        single<GcpProps> {
+            GcpProps(
+                enabled = false,
+                projectId = "test-project",
+            )
+        }
+        single<FirestoreProperties> {
+            FirestoreProperties(
+                emulatorHost = container.emulatorEndpoint
+            )
+        }
     }
 
     init {
         container.start()
-    }
-
-    fun createFirestore(): Firestore {
-        val options = FirestoreOptions.getDefaultInstance().toBuilder()
-            .setHost(container.emulatorEndpoint)
-            .setCredentials(NoCredentials.getInstance())
-            .setProjectId("test-project")
-            .build()
-        return options.service
     }
 }
