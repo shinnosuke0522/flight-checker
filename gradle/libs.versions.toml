@@ -1,4 +1,6 @@
 [versions]
+junit = "5.10.2"
+junit-platform = "1.10.2"
 ktor = "3.1.0"
 koin = "4.0.0"
 google-cloud-firestore-official = "3.31.0"
@@ -25,8 +27,10 @@ okhttp = "4.12.0"
 kotlinx-datetime = "0.5.0"
 wiremock = "3.9.1"
 openapi-validator = "2.46.1"
+jackson = "2.15.3"
 
 [libraries]
+junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }
 # Ktor
 ktor-server-core = { group = "io.ktor", name = "ktor-server-core-jvm", version.ref = "ktor" }
 ktor-server-cio = { group = "io.ktor", name = "ktor-server-cio-jvm", version.ref = "ktor" }
@@ -56,8 +60,8 @@ spring-boot-starter-security = { group = "org.springframework.boot", name = "spr
 spring-boot-starter-webflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux" }
 spring-boot-graphql-starter = { group = "org.springframework.boot", name = "spring-boot-starter-graphql"}
 spring-boot-docker-compose = { group = "org.springframework.boot", name = "spring-boot-docker-compose" }
-jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin" }
-junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit-platform" }
 spring-context = { group = "org.springframework", name = "spring-context" }
 spring-tx = { group = "org.springframework", name = "spring-tx" }
 spring-boot-core = { group = "org.springframework.boot", name = "spring-boot" }
