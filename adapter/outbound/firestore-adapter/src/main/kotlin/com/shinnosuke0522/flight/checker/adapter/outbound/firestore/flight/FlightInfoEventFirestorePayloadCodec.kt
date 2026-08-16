@@ -20,7 +20,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.time.Instant
+import kotlin.time.Instant
 
 class FlightInfoEventFirestorePayloadCodec(
     private val json: Json

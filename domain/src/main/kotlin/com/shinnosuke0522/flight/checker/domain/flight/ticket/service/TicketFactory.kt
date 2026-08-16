@@ -15,7 +15,7 @@ import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketError
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketRegistered
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.UserId
-import java.time.Instant
+import kotlin.time.Instant
 
 /**
  * [Ticket] 集約の新規生成（登録）を担当するドメインサービス。

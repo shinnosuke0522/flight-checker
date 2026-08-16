@@ -4,7 +4,7 @@ import com.shinnosuke0522.flight.checker.domain.base.model.CorrelationId
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.AnomalyDelayed
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.AnomalyUncertain
-import java.time.Instant
+import kotlin.time.Instant
 
 /**
  * チケットの状況を外部の事実（フライト状況）に基づいて反映するためのコマンド。

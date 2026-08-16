@@ -10,7 +10,7 @@ import com.shinnosuke0522.flight.checker.domain.base.model.EventSourcingAggregat
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
 import com.shinnosuke0522.flight.checker.domain.flight.model.MonitoringStatus
-import java.time.Instant
+import kotlin.time.Instant
 
 /**
  * 特定のフライト便の状況（事実）を表すモデル。
@@ -162,7 +162,7 @@ data class ScheduledFlightInfo private constructor(
             ensure(scheduledDepartureTime != scheduledArrivalTime) {
                 nonEmptyListOf(SameFlightPointError)
             }
-            ensure(scheduledDepartureTime.isBefore(scheduledArrivalTime)) {
+            ensure(scheduledDepartureTime < scheduledArrivalTime) {
                 nonEmptyListOf(ScheduledArrivalTimeBeforeDepartureTimeError)
             }
             ScheduledFlightInfo(

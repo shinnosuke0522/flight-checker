@@ -7,9 +7,9 @@ import arrow.core.raise.zipOrAccumulate
 import com.shinnosuke0522.flight.checker.domain.base.model.InvariantError
 import com.shinnosuke0522.flight.checker.domain.base.model.UnKnownValueError
 import com.shinnosuke0522.flight.checker.domain.base.model.toCause
-import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
+import kotlin.time.Instant
 
 data class FlightPoint(
     val countryCode: CountryCode,
@@ -17,7 +17,7 @@ data class FlightPoint(
     val zoneId: ZoneId
 ) {
     fun localTime(instant: Instant): LocalTime =
-        Instant.from(instant).atZone(zoneId).toLocalTime()
+        java.time.Instant.ofEpochMilli(instant.toEpochMilliseconds()).atZone(zoneId).toLocalTime()
 
     companion object {
         fun create(

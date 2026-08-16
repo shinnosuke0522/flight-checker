@@ -10,6 +10,7 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightInfoInva
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.ScheduledFlightInfo
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
+import kotlin.time.Instant
 
 object AeroDataBoxFlightMapper {
     fun toDomain(
@@ -68,8 +69,8 @@ object AeroDataBoxFlightMapper {
             version = AggregateVersion(0),
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
-            scheduledDepartureTime = scheduledDepartureTime.toInstant(),
-            scheduledArrivalTime = scheduledArrivalTime.toInstant()
+            scheduledDepartureTime = Instant.parse(scheduledDepartureTime.toInstant().toString()),
+            scheduledArrivalTime = Instant.parse(scheduledArrivalTime.toInstant().toString())
         ).mapLeft { FlightInfoInvalidDataError(IllegalStateException(it.head.message)) }.bind()
     }
 }

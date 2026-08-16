@@ -21,7 +21,7 @@ object FlightInfoFactory {
         ensure(command.departurePoint != command.arrivalPoint) {
             SameFlightPointError
         }
-        ensure(!command.scheduledArrivalTime.isBefore(command.scheduledDepartureTime)) {
+        ensure(command.scheduledArrivalTime >= command.scheduledDepartureTime) {
             ScheduledArrivalTimeBeforeDepartureTimeError
         }
 

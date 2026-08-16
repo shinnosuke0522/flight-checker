@@ -6,9 +6,9 @@ import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
+import kotlin.time.Instant
 
 class FlightPointTest : FunSpec({
     context("FlightPointの生成と検証") {
