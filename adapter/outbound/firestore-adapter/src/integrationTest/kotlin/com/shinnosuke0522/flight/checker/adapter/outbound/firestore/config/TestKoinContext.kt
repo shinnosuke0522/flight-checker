@@ -1,7 +1,7 @@
 package com.shinnosuke0522.flight.checker.adapter.outbound.firestore.config
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.shinnosuke0522.flight.checker.adapter.outbound.firestore.testfixture.config.FirestoreContainerConfig
+import kotlinx.serialization.json.Json
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -14,7 +14,13 @@ object TestKoinContext {
                     FirestoreContainerConfig.testModule,
                     firestoreAdapterModule,
                     module {
-                        single { jacksonObjectMapper() }
+                        single {
+                            Json {
+                                ignoreUnknownKeys = true
+                                encodeDefaults = true
+                                classDiscriminator = "eventType"
+                            }
+                        }
                     }
                 )
             }

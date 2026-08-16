@@ -8,7 +8,8 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.header
-import io.ktor.serialization.jackson.jackson
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -18,7 +19,12 @@ val aeroDataBoxApiModule = module {
         val properties = get<AeroDataBoxAPIProperties>()
         HttpClient(CIO) {
             install(ContentNegotiation) {
-                jackson()
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                        serializersModule = aeroDataBoxSerializersModule
+                    }
+                )
             }
             defaultRequest {
                 header("x-rapidapi-key", properties.rapidApiKey)
@@ -34,6 +40,14 @@ val aeroDataBoxApiModule = module {
             httpClientEngine = get<HttpClient>().engine,
             httpClientConfig = {
                 it.expectSuccess = true
+                it.install(ContentNegotiation) {
+                    json(
+                        Json {
+                            ignoreUnknownKeys = true
+                            serializersModule = aeroDataBoxSerializersModule
+                        }
+                    )
+                }
                 it.defaultRequest {
                     header("x-rapidapi-key", properties.rapidApiKey)
                     header("x-rapidapi-host", properties.rapidApiHost)

@@ -28,7 +28,7 @@ okhttp = "4.12.0"
 kotlinx-datetime = "0.5.0"
 wiremock = "3.9.1"
 openapi-validator = "2.46.1"
-jackson = "2.15.3"
+kotlinx-serialization = "1.8.0"
 
 [libraries]
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }
@@ -42,7 +42,6 @@ ktor-client-core = { group = "io.ktor", name = "ktor-client-core-jvm", version.r
 ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio-jvm", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 graphql-kotlin-ktor-server = { group = "com.expediagroup", name = "graphql-kotlin-ktor-server", version.ref = "graphql-kotlin" }
-ktor-serialization-jackson = { group = "io.ktor", name = "ktor-serialization-jackson", version.ref = "ktor" }
 
 # Koin
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
@@ -62,15 +61,14 @@ spring-boot-bom = { group = "org.springframework.boot", name = "spring-boot-depe
 spring-boot-starter-restclient = { group = "org.springframework.boot", name = "spring-boot-starter-restclient" }
 spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
 spring-boot-starter-webflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux" }
-spring-boot-graphql-starter = { group = "org.springframework.boot", name = "spring-boot-starter-graphql"}
+spring-boot-starter-graphql = { group = "org.springframework.boot", name = "spring-boot-starter-graphql"}
 spring-boot-docker-compose = { group = "org.springframework.boot", name = "spring-boot-docker-compose" }
-jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit-platform" }
 spring-context = { group = "org.springframework", name = "spring-context" }
 spring-tx = { group = "org.springframework", name = "spring-tx" }
 spring-boot-core = { group = "org.springframework.boot", name = "spring-boot" }
 spring-boot-autoconfigure = { group = "org.springframework.boot", name = "spring-boot-autoconfigure" }
-spring-boot-jackson = { group = "org.springframework.boot", name = "spring-boot-jackson" }
 
 # Spring Cloud
 spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }
@@ -141,6 +139,7 @@ kotest-extentions-allure = { module = "io.kotest:kotest-extensions-allure", vers
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 graalvm-native = { id = "org.graalvm.buildtools.native", version.ref = "graalvm-native" }
 detekt-plugin = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
@@ -177,7 +176,6 @@ container-test-base = [
 spring-boot-base = [
     "spring-boot-core",
     "spring-boot-autoconfigure",
-    "spring-boot-jackson",
 ]
 lambda-adapter = [
     "spring-cloud-function-adapter-aws",

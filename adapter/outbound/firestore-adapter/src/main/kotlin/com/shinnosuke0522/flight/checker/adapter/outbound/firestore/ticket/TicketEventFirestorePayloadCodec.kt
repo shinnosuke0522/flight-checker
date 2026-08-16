@@ -1,9 +1,5 @@
 package com.shinnosuke0522.flight.checker.adapter.outbound.firestore.ticket
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.shinnosuke0522.flight.checker.adapter.outbound.firestore.eventstore.EventStoreDocument
 import com.shinnosuke0522.flight.checker.domain.base.model.CorrelationId
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
@@ -23,42 +19,33 @@ import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketFlight
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketRegistered
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.UserId
-import java.time.Instant
-
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 class TicketEventFirestorePayloadCodec(
-    private val objectMapper: ObjectMapper
+    private val json: Json
 ) {
     fun serialize(): (TicketEvent) -> String = { event ->
-        objectMapper.writeValueAsString(event.toDto())
+        json.encodeToString<TicketEventFirestorePayload>(event.toDto())
     }
 
     fun deserialize(): (EventStoreDocument) -> TicketEvent = { item ->
-        objectMapper.readValue<TicketEventFirestorePayload>(item.payload)
+        json.decodeFromString<TicketEventFirestorePayload>(item.payload)
             .toDomain(item.aggregateId, item.sequenceNumber)
     }
 }
 
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.PROPERTY,
-    property = "eventType"
-)
-@JsonSubTypes(
-    JsonSubTypes.Type(value = TicketRegisteredFirestorePayload::class, name = "TicketRegistered"),
-    JsonSubTypes.Type(value = TicketFlightDelayedFirestorePayload::class, name = "TicketFlightDelayed"),
-    JsonSubTypes.Type(value = TicketFlightCanceledFirestorePayload::class, name = "TicketFlightCanceled"),
-    JsonSubTypes.Type(value = TicketFlightUncertainFirestorePayload::class, name = "TicketFlightUncertain"),
-    JsonSubTypes.Type(value = TicketAnomalyRecoveredFirestorePayload::class, name = "TicketAnomalyRecovered"),
-    JsonSubTypes.Type(value = TicketAnomalyAcknowledgedFirestorePayload::class, name = "TicketAnomalyAcknowledged"),
-    JsonSubTypes.Type(value = TicketFinishedFirestorePayload::class, name = "TicketFinished")
-)
-sealed interface TicketEventFirestorePayload {
-    val id: String
-    val occurredAt: String
-    val correlationId: String
-    val causationId: String?
+@Serializable
+sealed class TicketEventFirestorePayload {
+    abstract val id: String
+    abstract val occurredAt: String
+    abstract val correlationId: String
+    abstract val causationId: String?
 }
 
+@Serializable
+@SerialName("TicketRegistered")
 data class TicketRegisteredFirestorePayload(
     override val id: String,
     override val occurredAt: String,
@@ -66,38 +53,48 @@ data class TicketRegisteredFirestorePayload(
     override val causationId: String?,
     val userId: String,
     val flightIdentity: String
-) : TicketEventFirestorePayload
+) : TicketEventFirestorePayload()
 
+@Serializable
+@SerialName("TicketFlightDelayed")
 data class TicketFlightDelayedFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?,
     val estimatedDepartureTime: String
-) : TicketEventFirestorePayload
+) : TicketEventFirestorePayload()
 
+@Serializable
+@SerialName("TicketFlightCanceled")
 data class TicketFlightCanceledFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?
-) : TicketEventFirestorePayload
+) : TicketEventFirestorePayload()
 
+@Serializable
+@SerialName("TicketFlightUncertain")
 data class TicketFlightUncertainFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?,
     val reason: String
-) : TicketEventFirestorePayload
+) : TicketEventFirestorePayload()
 
+@Serializable
+@SerialName("TicketAnomalyRecovered")
 data class TicketAnomalyRecoveredFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?
-) : TicketEventFirestorePayload
+) : TicketEventFirestorePayload()
 
+@Serializable
+@SerialName("TicketAnomalyAcknowledged")
 data class TicketAnomalyAcknowledgedFirestorePayload(
     override val id: String,
     override val occurredAt: String,
@@ -105,15 +102,17 @@ data class TicketAnomalyAcknowledgedFirestorePayload(
     override val causationId: String?,
     val anomalyType: String,
     val anomalyValue: String?
-) : TicketEventFirestorePayload
+) : TicketEventFirestorePayload()
 
+@Serializable
+@SerialName("TicketFinished")
 data class TicketFinishedFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?,
     val reason: String
-) : TicketEventFirestorePayload
+) : TicketEventFirestorePayload()
 
 fun TicketEvent.toDto(): TicketEventFirestorePayload = when (this) {
     is TicketRegistered -> TicketRegisteredFirestorePayload(
@@ -179,7 +178,7 @@ fun TicketEventFirestorePayload.toDomain(aggregateIdStr: String, sequenceNumber:
     val domainEventId = DomainEventId.invoke(this.id).getOrNull() ?: error("Invalid id")
     val aggregateId = TicketId.fromString(aggregateIdStr).getOrNull() ?: error("Invalid aggregateId")
     val meta = DomainEventMeta(
-        occurredAt = Instant.parse(this.occurredAt),
+        occurredAt = java.time.Instant.parse(this.occurredAt),
         correlationId = CorrelationId.invoke(this.correlationId).getOrNull() ?: error("Invalid correlationId"),
         causationId = this.causationId?.let { DomainEventId.invoke(it).getOrNull() ?: error("Invalid causationId") }
     )

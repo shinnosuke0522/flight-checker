@@ -2,6 +2,7 @@ import org.gradle.kotlin.dsl.withType
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
+    alias(libs.plugins.kotlin.serialization)
 }
 
 dependencies {
@@ -11,7 +12,7 @@ dependencies {
     implementation(platform(libs.coroutines.bom))
     testImplementation(platform(libs.kotest.bom))
     implementation(libs.bundles.core)
-    implementation(libs.jackson.module.kotlin)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.graphql.kotlin.ktor.server)
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger.slf4j)
