@@ -24,8 +24,8 @@ import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import java.time.Instant
 import java.time.LocalDate
+import kotlin.time.Clock
 
 class TicketStatusReflectorTest : FunSpec({
     test("監視中の通常のチケット (NormalTicket) がフライト欠航の事実を受け取った場合、欠航検知イベントが発行されること") {
@@ -155,7 +155,7 @@ class TicketStatusReflectorTest : FunSpec({
         val userId = UserId.generate()
         val flightIdentity = FlightIdentity.create("JL123", LocalDate.of(2026, 6, 7)).getOrElse { error(it) }
         val ticketId = TicketId.generate()
-        val now = Instant.now()
+        val now = Clock.System.now()
         val correlationId = CorrelationId.generate()
         val causationId = DomainEventId.generate()
 

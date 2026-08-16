@@ -68,8 +68,8 @@ object AeroDataBoxFlightMapper {
             version = AggregateVersion(0),
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
-            scheduledDepartureTime = scheduledDepartureTime.toInstant(),
-            scheduledArrivalTime = scheduledArrivalTime.toInstant()
+            scheduledDepartureTime = kotlin.time.Instant.parse(scheduledDepartureTime.toInstant().toString()),
+            scheduledArrivalTime = kotlin.time.Instant.parse(scheduledArrivalTime.toInstant().toString())
         ).mapLeft { FlightInfoInvalidDataError(IllegalStateException(it.head.message)) }.bind()
     }
 }

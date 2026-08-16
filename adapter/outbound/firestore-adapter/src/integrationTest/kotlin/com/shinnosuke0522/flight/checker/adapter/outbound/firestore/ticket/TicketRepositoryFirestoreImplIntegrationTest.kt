@@ -16,8 +16,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.koin.test.KoinTest
 import org.koin.test.inject
-import java.time.Instant
 import java.time.LocalDate
+import kotlin.time.Clock
 
 class TicketRepositoryFirestoreImplIntegrationTest : FunSpec(), KoinTest {
 
@@ -34,7 +34,7 @@ class TicketRepositoryFirestoreImplIntegrationTest : FunSpec(), KoinTest {
                 id = DomainEventId.generate(),
                 aggregateId = ticketId,
                 sequenceNumber = 1L,
-                meta = DomainEventMeta(occurredAt = Instant.now(), correlationId = CorrelationId.generate()),
+                meta = DomainEventMeta(occurredAt = Clock.System.now(), correlationId = CorrelationId.generate()),
                 userId = userId,
                 flightIdentity = flightIdentity
             )

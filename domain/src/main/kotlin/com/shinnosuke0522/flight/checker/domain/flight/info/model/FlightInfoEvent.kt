@@ -5,7 +5,7 @@ import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventMeta
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
-import java.time.Instant
+import kotlin.time.Instant
 
 /**
  * フライト情報（FlightInfo）に関するドメインイベントの基底インターフェース。

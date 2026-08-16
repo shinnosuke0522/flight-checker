@@ -35,8 +35,8 @@ class AeroDataBoxFlightMapperTest : FunSpec({
             flightInfo.id shouldBe validFlightIdentity
             flightInfo.departurePoint.airportCode.value shouldBe "HND"
             flightInfo.arrivalPoint.airportCode.value shouldBe "JFK"
-            flightInfo.scheduledDepartureTime shouldBe java.time.Instant.parse("2026-05-01T10:00:00Z")
-            flightInfo.scheduledArrivalTime shouldBe java.time.Instant.parse("2026-05-01T20:00:00Z")
+            flightInfo.scheduledDepartureTime shouldBe kotlin.time.Instant.parse("2026-05-01T10:00:00Z")
+            flightInfo.scheduledArrivalTime shouldBe kotlin.time.Instant.parse("2026-05-01T20:00:00Z")
         }
     }
 

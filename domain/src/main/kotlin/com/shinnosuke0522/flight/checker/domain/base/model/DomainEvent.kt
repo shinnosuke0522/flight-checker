@@ -1,7 +1,7 @@
 package com.shinnosuke0522.flight.checker.domain.base.model
 
 import arrow.core.Either
-import java.time.Instant
+import kotlin.time.Instant
 
 interface DomainEvent<AGGREGATE_ID : AggregateId> {
     val id: DomainEventId

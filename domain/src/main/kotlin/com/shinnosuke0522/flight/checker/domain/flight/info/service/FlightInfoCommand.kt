@@ -4,7 +4,7 @@ import com.shinnosuke0522.flight.checker.domain.base.model.CorrelationId
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
-import java.time.Instant
+import kotlin.time.Instant
 
 sealed interface FlightInfoCommand {
     val occurredAt: Instant

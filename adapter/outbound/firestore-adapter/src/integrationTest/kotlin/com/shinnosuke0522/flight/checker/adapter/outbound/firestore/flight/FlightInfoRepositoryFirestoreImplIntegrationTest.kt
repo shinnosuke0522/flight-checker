@@ -15,8 +15,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.koin.test.KoinTest
 import org.koin.test.inject
-import java.time.Instant
 import java.time.LocalDate
+import kotlin.time.Clock
 
 class FlightInfoRepositoryFirestoreImplIntegrationTest : FunSpec(), KoinTest {
 
@@ -31,11 +31,11 @@ class FlightInfoRepositoryFirestoreImplIntegrationTest : FunSpec(), KoinTest {
                 id = DomainEventId.generate(),
                 aggregateId = flightIdentity,
                 sequenceNumber = 1L,
-                meta = DomainEventMeta(occurredAt = Instant.now(), correlationId = CorrelationId.generate()),
+                meta = DomainEventMeta(occurredAt = Clock.System.now(), correlationId = CorrelationId.generate()),
                 departurePoint = FlightPoint.create("JP", "HND", "Asia/Tokyo").getOrNull()!!,
                 arrivalPoint = FlightPoint.create("US", "JFK", "America/New_York").getOrNull()!!,
-                scheduledDepartureTime = Instant.now(),
-                scheduledArrivalTime = Instant.now().plusSeconds(3600)
+                scheduledDepartureTime = Clock.System.now(),
+                scheduledArrivalTime = Clock.System.now().plus(kotlin.time.Duration.parse("1h"))
             )
 
             val snapshot = FlightInfo.replay(

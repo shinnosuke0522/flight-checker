@@ -11,8 +11,9 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.engine.names.WithDataTestName
 import io.kotest.matchers.shouldBe
-import java.time.Instant
 import java.time.LocalDate
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 data class TicketApplyTestCase(
     val name: String,
@@ -210,7 +211,7 @@ class TicketTest : FunSpec({
         val userId = UserId.generate()
         val flightIdentity = FlightIdentity.create("JL123", LocalDate.of(2026, 6, 7)).getOrElse { error(it) }
         val ticketId = TicketId.generate()
-        val now: Instant = Instant.now()
+        val now: Instant = Clock.System.now()
         val delay = AnomalyDelayed("10:00")
         val initialAnomaly = AnomalyCanceled
 

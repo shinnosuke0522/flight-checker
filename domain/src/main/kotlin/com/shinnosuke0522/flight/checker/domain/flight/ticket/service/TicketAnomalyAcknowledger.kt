@@ -12,7 +12,7 @@ import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketAnomal
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketError
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketEvent
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketNotAlertStateError
-import java.time.Instant
+import kotlin.time.Instant
 
 data class TicketAcknowledgeCommand(
     val occurredAt: Instant,

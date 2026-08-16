@@ -4,12 +4,12 @@ import arrow.core.Either
 import arrow.core.raise.either
 import com.github.f4b6a3.ulid.Ulid
 import com.github.f4b6a3.ulid.UlidCreator
-import java.time.Instant
+import kotlin.time.Instant
 
 @JvmInline
 value class ULID private constructor(private val value: Ulid) : Comparable<ULID> {
 
-    fun toInstant(): Instant = value.instant
+    fun toInstant(): Instant = Instant.parse(value.instant.toString())
 
     fun value() = value.toString()
 
