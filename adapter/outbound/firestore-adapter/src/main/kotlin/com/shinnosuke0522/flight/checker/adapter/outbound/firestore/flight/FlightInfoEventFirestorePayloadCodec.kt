@@ -20,7 +20,7 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightOnSchedu
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightStatusUncertain
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
-import java.time.Instant
+import kotlin.time.Instant
 
 class FlightInfoEventFirestorePayloadCodec(
     private val objectMapper: ObjectMapper

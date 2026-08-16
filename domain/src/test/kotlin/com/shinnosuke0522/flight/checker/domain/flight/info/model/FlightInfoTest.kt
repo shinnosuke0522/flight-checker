@@ -14,8 +14,13 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.engine.names.WithDataTestName
 import io.kotest.matchers.shouldBe
-import java.time.Instant
 import java.time.LocalDate
+import kotlin.time.Clock
+import kotlin.time.Instant
+
+private val testClock: Clock = object : Clock {
+    override fun now(): Instant = Instant.parse("2026-08-16T00:00:00Z")
+}
 
 data class FlightInfoApplyTestCase(
     val name: String,
@@ -44,7 +49,7 @@ class FlightInfoTest : FunSpec({
                     id = DomainEventId.generate(),
                     aggregateId = flightIdentity,
                     sequenceNumber = 1,
-                    meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
+                    meta = DomainEventMeta(testClock.now(), CorrelationId.generate()),
                     estimatedDepartureTime = newDepartureTime,
                     estimatedArrivalTime = newArrivalTime
                 ),
@@ -67,7 +72,7 @@ class FlightInfoTest : FunSpec({
                     id = DomainEventId.generate(),
                     aggregateId = flightIdentity,
                     sequenceNumber = 1,
-                    meta = DomainEventMeta(Instant.now(), CorrelationId.generate())
+                    meta = DomainEventMeta(testClock.now(), CorrelationId.generate())
                 ),
                 expectedFlightInfo = CanceledFlightInfo(
                     id = flightIdentity,
@@ -99,7 +104,7 @@ class FlightInfoTest : FunSpec({
             id = DomainEventId.generate(),
             aggregateId = flightIdentity,
             sequenceNumber = 2,
-            meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
+            meta = DomainEventMeta(testClock.now(), CorrelationId.generate()),
             estimatedDepartureTime = newDepartureTime,
             estimatedArrivalTime = newArrivalTime
         )
@@ -131,7 +136,7 @@ class FlightInfoTest : FunSpec({
                         id = DomainEventId.generate(),
                         aggregateId = flightIdentity,
                         sequenceNumber = 1,
-                        meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
+                        meta = DomainEventMeta(testClock.now(), CorrelationId.generate()),
                         estimatedDepartureTime = newDepartureTime,
                         estimatedArrivalTime = newArrivalTime
                     )
@@ -155,7 +160,7 @@ class FlightInfoTest : FunSpec({
                         id = DomainEventId.generate(),
                         aggregateId = flightIdentity,
                         sequenceNumber = 1,
-                        meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
+                        meta = DomainEventMeta(testClock.now(), CorrelationId.generate()),
                         reason = "Weather condition"
                     )
                 ),
@@ -177,7 +182,7 @@ class FlightInfoTest : FunSpec({
                         id = DomainEventId.generate(),
                         aggregateId = flightIdentity,
                         sequenceNumber = 1,
-                        meta = DomainEventMeta(Instant.now(), CorrelationId.generate())
+                        meta = DomainEventMeta(testClock.now(), CorrelationId.generate())
                     )
                 ),
                 expectedFlightInfo = CanceledFlightInfo(
@@ -197,7 +202,7 @@ class FlightInfoTest : FunSpec({
                         id = DomainEventId.generate(),
                         aggregateId = flightIdentity,
                         sequenceNumber = 1,
-                        meta = DomainEventMeta(Instant.now(), CorrelationId.generate())
+                        meta = DomainEventMeta(testClock.now(), CorrelationId.generate())
                     )
                 ),
                 expectedFlightInfo = ArrivedFlightInfo(
@@ -217,7 +222,7 @@ class FlightInfoTest : FunSpec({
                         id = DomainEventId.generate(),
                         aggregateId = flightIdentity,
                         sequenceNumber = 1,
-                        meta = DomainEventMeta(Instant.now(), CorrelationId.generate())
+                        meta = DomainEventMeta(testClock.now(), CorrelationId.generate())
                     )
                 ),
                 expectedFlightInfo = ScheduledFlightInfo(
@@ -237,7 +242,7 @@ class FlightInfoTest : FunSpec({
                         id = DomainEventId.generate(),
                         aggregateId = flightIdentity,
                         sequenceNumber = 1,
-                        meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
+                        meta = DomainEventMeta(testClock.now(), CorrelationId.generate()),
                         reason = "Webhook registration failed"
                     )
                 ),
@@ -270,7 +275,7 @@ class FlightInfoTest : FunSpec({
             id = DomainEventId.generate(),
             aggregateId = flightIdentity,
             sequenceNumber = 0,
-            meta = DomainEventMeta(Instant.now(), CorrelationId.generate()),
+            meta = DomainEventMeta(testClock.now(), CorrelationId.generate()),
             departurePoint = departurePoint,
             arrivalPoint = arrivalPoint,
             scheduledDepartureTime = departureTime,

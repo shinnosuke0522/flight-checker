@@ -10,7 +10,7 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.UncertainFligh
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
 import com.shinnosuke0522.flight.checker.domain.flight.model.MonitoringStatus
-import java.time.Instant
+import kotlin.time.Instant
 
 @Suppress("DataClassShouldBeImmutable")
 data class FlightInfoSnapshotFirestoreDocument(

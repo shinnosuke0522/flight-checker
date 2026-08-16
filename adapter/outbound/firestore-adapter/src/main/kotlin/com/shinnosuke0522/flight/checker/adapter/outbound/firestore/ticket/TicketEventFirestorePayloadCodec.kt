@@ -23,7 +23,7 @@ import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketFlight
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketId
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.TicketRegistered
 import com.shinnosuke0522.flight.checker.domain.flight.ticket.model.UserId
-import java.time.Instant
+import kotlin.time.Instant
 
 class TicketEventFirestorePayloadCodec(
     private val objectMapper: ObjectMapper
