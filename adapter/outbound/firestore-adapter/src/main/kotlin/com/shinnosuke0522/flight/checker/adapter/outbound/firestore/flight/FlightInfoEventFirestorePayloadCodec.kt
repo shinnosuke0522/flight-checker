@@ -1,9 +1,5 @@
 package com.shinnosuke0522.flight.checker.adapter.outbound.firestore.flight
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.shinnosuke0522.flight.checker.adapter.outbound.firestore.eventstore.EventStoreDocument
 import com.shinnosuke0522.flight.checker.domain.base.model.CorrelationId
 import com.shinnosuke0522.flight.checker.domain.base.model.DomainEventId
@@ -20,44 +16,36 @@ import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightOnSchedu
 import com.shinnosuke0522.flight.checker.domain.flight.info.model.FlightStatusUncertain
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightIdentity
 import com.shinnosuke0522.flight.checker.domain.flight.model.FlightPoint
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.time.Instant
 
 class FlightInfoEventFirestorePayloadCodec(
-    private val objectMapper: ObjectMapper
+    private val json: Json
 ) {
     fun serialize(): (FlightInfoEvent) -> String = { event ->
-        objectMapper.writeValueAsString(event.toDto())
+        json.encodeToString(event.toDto())
     }
 
     fun deserialize(): (EventStoreDocument) -> FlightInfoEvent = { item ->
-        objectMapper.readValue<FlightInfoEventFirestorePayload>(item.payload)
+        json.decodeFromString<FlightInfoEventFirestorePayload>(item.payload)
             .toDomain(item.aggregateId, item.sequenceNumber)
     }
 }
 
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.PROPERTY,
-    property = "eventType"
-)
-@JsonSubTypes(
-    JsonSubTypes.Type(value = FlightInfoRegisteredFirestorePayload::class, name = "FlightInfoRegistered"),
-    JsonSubTypes.Type(value = FlightDelayedFirestorePayload::class, name = "FlightDelayed"),
-    JsonSubTypes.Type(value = FlightCanceledFirestorePayload::class, name = "FlightCanceled"),
-    JsonSubTypes.Type(value = FlightArrivedFirestorePayload::class, name = "FlightArrived"),
-    JsonSubTypes.Type(value = FlightStatusUncertainFirestorePayload::class, name = "FlightStatusUncertain"),
-    JsonSubTypes.Type(value = FlightOnScheduleReturnedFirestorePayload::class, name = "FlightOnScheduleReturned"),
-    JsonSubTypes.Type(value = FlightMonitoringActivatedFirestorePayload::class, name = "FlightMonitoringActivated"),
-    JsonSubTypes.Type(value = FlightMonitoringCompletedFirestorePayload::class, name = "FlightMonitoringCompleted"),
-    JsonSubTypes.Type(value = FlightMonitoringFailedFirestorePayload::class, name = "FlightMonitoringFailed")
-)
-sealed interface FlightInfoEventFirestorePayload {
-    val id: String
-    val occurredAt: String
-    val correlationId: String
-    val causationId: String?
+@Serializable
+sealed class FlightInfoEventFirestorePayload {
+
+    abstract val id: String
+    abstract val occurredAt: String
+    abstract val correlationId: String
+    abstract val causationId: String?
 }
 
+@Serializable
+@SerialName("FlightInfoRegistered")
 data class FlightInfoRegisteredFirestorePayload(
     override val id: String,
     override val occurredAt: String,
@@ -71,8 +59,10 @@ data class FlightInfoRegisteredFirestorePayload(
     val arrivalZoneId: String,
     val scheduledDepartureTime: String,
     val scheduledArrivalTime: String
-) : FlightInfoEventFirestorePayload
+) : FlightInfoEventFirestorePayload()
 
+@Serializable
+@SerialName("FlightDelayed")
 data class FlightDelayedFirestorePayload(
     override val id: String,
     override val occurredAt: String,
@@ -80,58 +70,72 @@ data class FlightDelayedFirestorePayload(
     override val causationId: String?,
     val estimatedDepartureTime: String?,
     val estimatedArrivalTime: String?
-) : FlightInfoEventFirestorePayload
+) : FlightInfoEventFirestorePayload()
 
+@Serializable
+@SerialName("FlightCanceled")
 data class FlightCanceledFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?
-) : FlightInfoEventFirestorePayload
+) : FlightInfoEventFirestorePayload()
 
+@Serializable
+@SerialName("FlightArrived")
 data class FlightArrivedFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?
-) : FlightInfoEventFirestorePayload
+) : FlightInfoEventFirestorePayload()
 
+@Serializable
+@SerialName("FlightStatusUncertain")
 data class FlightStatusUncertainFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?,
     val reason: String
-) : FlightInfoEventFirestorePayload
+) : FlightInfoEventFirestorePayload()
 
+@Serializable
+@SerialName("FlightOnScheduleReturned")
 data class FlightOnScheduleReturnedFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?
-) : FlightInfoEventFirestorePayload
+) : FlightInfoEventFirestorePayload()
 
+@Serializable
+@SerialName("FlightMonitoringActivated")
 data class FlightMonitoringActivatedFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?
-) : FlightInfoEventFirestorePayload
+) : FlightInfoEventFirestorePayload()
 
+@Serializable
+@SerialName("FlightMonitoringCompleted")
 data class FlightMonitoringCompletedFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?
-) : FlightInfoEventFirestorePayload
+) : FlightInfoEventFirestorePayload()
 
+@Serializable
+@SerialName("FlightMonitoringFailed")
 data class FlightMonitoringFailedFirestorePayload(
     override val id: String,
     override val occurredAt: String,
     override val correlationId: String,
     override val causationId: String?,
     val reason: String
-) : FlightInfoEventFirestorePayload
+) : FlightInfoEventFirestorePayload()
 
 fun FlightInfoEvent.toDto(): FlightInfoEventFirestorePayload = when (this) {
     is FlightInfoRegistered -> FlightInfoRegisteredFirestorePayload(
