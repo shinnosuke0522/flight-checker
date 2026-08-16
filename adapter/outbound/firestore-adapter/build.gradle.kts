@@ -1,5 +1,9 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
+plugins {
+    kotlin("plugin.serialization")
+}
+
 dependencies {
     configurations.all {
         exclude(group = "io.kotest", module = "kotest-extensions-spring")
@@ -17,7 +21,7 @@ dependencies {
     implementation(project(":libs:gcp"))
 
     implementation(libs.google.cloud.firestore.official)
-    implementation(libs.jackson.module.kotlin)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation(libs.kotlinx.coroutines.guava)
 
     implementation(libs.koin.core)

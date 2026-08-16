@@ -3,6 +3,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     id("org.openapi.generator") version "7.8.0"
+    kotlin("plugin.serialization")
 }
 
 dependencies {
@@ -10,12 +11,10 @@ dependencies {
     implementation(platform(libs.coroutines.bom))
     implementation(project(":domain"))
     implementation(libs.swagger.annotations)
-    implementation(libs.jackson.module.kotlin)
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.jackson)
+    implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.koin.core)
     implementation(libs.kotlinx.datetime)
     implementation(libs.arrow.core)
@@ -61,7 +60,7 @@ openApiGenerate {
     apiNameSuffix.set("Client")
 
     configOptions.put("dateLibrary", "java8")
-    configOptions.put("serializationLibrary", "jackson")
+    configOptions.put("serializationLibrary", "kotlinx_serialization")
 
     generateApiTests.set(false)
     generateModelTests.set(false)

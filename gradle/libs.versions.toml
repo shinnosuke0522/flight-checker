@@ -141,6 +141,7 @@ kotest-extentions-allure = { module = "io.kotest:kotest-extensions-allure", vers
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 graalvm-native = { id = "org.graalvm.buildtools.native", version.ref = "graalvm-native" }
 detekt-plugin = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

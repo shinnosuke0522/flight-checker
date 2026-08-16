@@ -17,7 +17,7 @@ data class FlightPoint(
     val zoneId: ZoneId
 ) {
     fun localTime(instant: Instant): LocalTime =
-        java.time.Instant.parse(instant.toString()).atZone(zoneId).toLocalTime()
+        java.time.Instant.ofEpochMilli(instant.toEpochMilliseconds()).atZone(zoneId).toLocalTime()
 
     companion object {
         fun create(
