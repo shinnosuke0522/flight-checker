@@ -18,6 +18,11 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 import java.time.LocalDate
 import kotlin.time.Clock
+import kotlin.time.Instant
+
+private val testClock: Clock = object : Clock {
+    override fun now(): Instant = Instant.parse("2026-08-16T00:00:00Z")
+}
 
 class TicketRepositoryFirestoreImplIntegrationTest : FunSpec(), KoinTest {
 
@@ -34,7 +39,7 @@ class TicketRepositoryFirestoreImplIntegrationTest : FunSpec(), KoinTest {
                 id = DomainEventId.generate(),
                 aggregateId = ticketId,
                 sequenceNumber = 1L,
-                meta = DomainEventMeta(occurredAt = Clock.System.now(), correlationId = CorrelationId.generate()),
+                meta = DomainEventMeta(occurredAt = testClock.now(), correlationId = CorrelationId.generate()),
                 userId = userId,
                 flightIdentity = flightIdentity
             )

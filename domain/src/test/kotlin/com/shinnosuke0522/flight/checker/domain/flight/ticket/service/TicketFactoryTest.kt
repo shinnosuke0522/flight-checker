@@ -11,6 +11,11 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import java.time.LocalDate
 import kotlin.time.Clock
+import kotlin.time.Instant
+
+private val testClock: Clock = object : Clock {
+    override fun now(): Instant = Instant.parse("2026-08-16T00:00:00Z")
+}
 
 class TicketFactoryTest : FunSpec({
     test("まだ登録されていないチケットを登録しようとした場合、正常に登録されNormalTicketが生成されること") {
@@ -46,6 +51,6 @@ class TicketFactoryTest : FunSpec({
     companion object {
         val userId = UserId.generate()
         val flightIdentity = FlightIdentity.create("JL123", LocalDate.of(2026, 6, 7)).getOrNull()!!
-        val now = Clock.System.now()
+        val now = testClock.now()
     }
 }
