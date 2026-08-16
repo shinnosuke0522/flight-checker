@@ -17,6 +17,7 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 import java.time.LocalDate
 import kotlin.time.Clock
+import kotlin.time.Duration
 
 class FlightInfoRepositoryFirestoreImplIntegrationTest : FunSpec(), KoinTest {
 
@@ -35,7 +36,7 @@ class FlightInfoRepositoryFirestoreImplIntegrationTest : FunSpec(), KoinTest {
                 departurePoint = FlightPoint.create("JP", "HND", "Asia/Tokyo").getOrNull()!!,
                 arrivalPoint = FlightPoint.create("US", "JFK", "America/New_York").getOrNull()!!,
                 scheduledDepartureTime = Clock.System.now(),
-                scheduledArrivalTime = Clock.System.now().plus(kotlin.time.Duration.parse("1h"))
+                scheduledArrivalTime = Clock.System.now().plus(Duration.parse("1h"))
             )
 
             val snapshot = FlightInfo.replay(
